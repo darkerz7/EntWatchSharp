@@ -1,0 +1,10 @@
+{
+	"_comment": "TypeDB is sqlite or mysql",
+	"TypeDB": "sqlite",
+	"SQLite_File": "database.db",
+	"Mysql_Server": "localhost",
+	"Mysql_Port": "3306",
+	"Mysql_User": "root",
+	"Mysql_Password": "_pw",
+	"Mysql_NameDatabase": "entwatch"
+}
