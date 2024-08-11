@@ -135,10 +135,10 @@ Admin Command | Privilege | Description
 `ew_reload` | `@css/ew_reload` | Reloads config and Scheme
 `ew_showitems` | `@css/ew_reload` | Shows a list of spawned items
 `ew_showscheme` | `@css/ew_reload` | Shows the scheme
-`ew_ban` | `@css/ew_ban`+`@css/ew_ban_perm`+`@css/ew_ban_long` | Allows the admin to restrict items for the player {<#userid|name> \<time>\ \<reason>\}
-`ew_unban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player {<#userid|name> \<reason>\}
+`ew_ban` | `@css/ew_ban`+`@css/ew_ban_perm`+`@css/ew_ban_long` | Allows the admin to restrict items for the player `<#userid|name> [<time>] [<reason>]`
+`ew_unban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player `<#userid|name> [<reason>]`
 `ew_banlist` | `@css/ew_ban` | Displays a list of restrictions
-`ew_transfer` | `@css/ew_transfer` | Allows the admin to transfer items {<owner>/$<itemname> <receiver>}
+`ew_transfer` | `@css/ew_transfer` | Allows the admin to transfer items `<owner>/$<itemname> <receiver>`
 
 ## Future plans
 1. Fixes Errors
