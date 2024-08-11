@@ -100,24 +100,24 @@ Privilege | Description
 ## CVARs
 Cvar | Parameters | Description
 --- | --- | ---
-`ewc_teamonly` | <false-true> | Enable/Disable team only mode. (Default true)
-`ewc_adminchat` | <0-2> | Change Admin Chat Mode (0 - All Messages, 1 - Only Pickup/Drop Items, 2 - Nothing). (Default 0)
-`ewc_adminhud` | <0-2> | Change Admin Hud Mode (0 - All Items, 1 - Only Item Name, 2 - Nothing). (Default 0)
-`ewc_blockepick` | <false-true> | Block players from using E key to grab items. (Default true)
-`ewc_delay_use` | <0.0-60.0> | Change delay before use. (Default 1.0)
-`ewc_globalblock` | <false-true> | Blocks the pickup of any items by players. (Default false)
-`ewc_display_ability` | <0-4> | Count of the abilities to display on the HUD. (Default 4)
-`ewc_use_priority` | <false-true> | Enable/Disable forced pressing of the button. (Default true)
-`ewc_path_scheme` | <string> | Path with filename for the scheme. (Default addons/entwatch/scheme/default.json)
-`ewc_path_cfg` | <string> | Directory for configs. (Default addons/entwatch/maps/)
-`ewc_triggeronce` | <false-true> | Exclude trigger_once from ban check. (Default true)
-`ewc_glow_spawn` | <false-true> | Enable/Disable the glow after Spawn Items. (Default true)
-`ewc_glow_particle` | <false-true> | Enable/Disable the glow using a particle. (Default true)
-`ewc_bantime` | <0-43200> | Default ban time. 0 - Permanent. (Default 0)
-`ewc_banlong` | <1-1440000> | Max ban time with once @css/ew_ban privilege. (Default 720)
-`ewc_banreason` | <string> | Default ban reason. (Default Trolling)
-`ewc_unbanreason` | <string> | Default unban reason. (Default Giving another chance)
-`ewc_keep_expired_ban` | <false-true> | Enable/Disable keep expired bans. (Default true)
+`ewc_teamonly` | `<false-true>` | Enable/Disable team only mode. (Default true)
+`ewc_adminchat` | `<0-2>` | Change Admin Chat Mode (0 - All Messages, 1 - Only Pickup/Drop Items, 2 - Nothing). (Default 0)
+`ewc_adminhud` | `<0-2>` | Change Admin Hud Mode (0 - All Items, 1 - Only Item Name, 2 - Nothing). (Default 0)
+`ewc_blockepick` | `<false-true>` | Block players from using E key to grab items. (Default true)
+`ewc_delay_use` | `<0.0-60.0>` | Change delay before use. (Default 1.0)
+`ewc_globalblock` | `<false-true>` | Blocks the pickup of any items by players. (Default false)
+`ewc_display_ability` | `<0-4>` | Count of the abilities to display on the HUD. (Default 4)
+`ewc_use_priority` | `<false-true>` | Enable/Disable forced pressing of the button. (Default true)
+`ewc_path_scheme` | `<string>` | Path with filename for the scheme. (Default addons/entwatch/scheme/default.json)
+`ewc_path_cfg` | `<string>` | Directory for configs. (Default addons/entwatch/maps/)
+`ewc_triggeronce` | `<false-true>` | Exclude trigger_once from ban check. (Default true)
+`ewc_glow_spawn` | `<false-true> `| Enable/Disable the glow after Spawn Items. (Default true)
+`ewc_glow_particle` | `<false-true>` | Enable/Disable the glow using a particle. (Default true)
+`ewc_bantime` | `<0-43200>` | Default ban time. 0 - Permanent. (Default 0)
+`ewc_banlong` | `<1-1440000>` | Max ban time with once @css/ew_ban privilege. (Default 720)
+`ewc_banreason` | `<string>` | Default ban reason. (Default Trolling)
+`ewc_unbanreason` | `<string>` | Default unban reason. (Default Giving another chance)
+`ewc_keep_expired_ban` | `<false-true>` | Enable/Disable keep expired bans. (Default true)
 
 ## Commands
 Client Command | Description
@@ -141,10 +141,10 @@ Admin Command | Privilege | Description
 `ew_transfer` | `@css/ew_transfer` | Allows the admin to transfer items {<owner>/$<itemname> <receiver>}
 
 ## Future plans
--Fixes Errors
--Add mods 6 and 7 for counters
--Add filter processing
--Add display to clan tag
--Add commands to change items
--Add ban offline players
--Add item spawn
+1. Fixes Errors
+2. Add mods 6 and 7 for counters
+3. Add filter processing
+4. Add display to clan tag
+5. Add commands to change items
+6. Add ban offline players
+7. Add item spawn
