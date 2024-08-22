@@ -56,8 +56,13 @@ namespace EntWatchSharp
 				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}Buttons: ", bConsole);
 				foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 				{
-					if(AbilityTest.Entity != null)
-						UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}BI: {EW.g_Scheme.color_tag}{AbilityTest.Entity.Index} {EW.g_Scheme.color_warning}Name: {EW.g_Scheme.color_tag}{AbilityTest.Name} {EW.g_Scheme.color_warning}ButtonID: {EW.g_Scheme.color_tag}{AbilityTest.ButtonID} {EW.g_Scheme.color_warning}ButtonClass: {EW.g_Scheme.color_tag}{AbilityTest.ButtonClass} {EW.g_Scheme.color_warning}Chat_Uses: {EW.g_Scheme.color_tag}{AbilityTest.Chat_Uses} {EW.g_Scheme.color_warning}Mode: {EW.g_Scheme.color_tag}{AbilityTest.Mode} {EW.g_Scheme.color_warning}MaxUses: {EW.g_Scheme.color_tag}{AbilityTest.MaxUses} {EW.g_Scheme.color_warning}CoolDown: {EW.g_Scheme.color_tag}{AbilityTest.CoolDown}", bConsole);
+					if (AbilityTest.Entity != null)
+					{
+						string sMathID = "";
+						if (AbilityTest.MathID > 0) sMathID = $" {EW.g_Scheme.color_warning}MathID: {EW.g_Scheme.color_tag}{AbilityTest.MathID}";
+						if (AbilityTest.MathCounter != null) sMathID += $" {EW.g_Scheme.color_warning}MathCounterID: {EW.g_Scheme.color_tag}{AbilityTest.MathCounter.Index}";
+						UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}BI: {EW.g_Scheme.color_tag}{AbilityTest.Entity.Index} {EW.g_Scheme.color_warning}Name: {EW.g_Scheme.color_tag}{AbilityTest.Name} {EW.g_Scheme.color_warning}ButtonID: {EW.g_Scheme.color_tag}{AbilityTest.ButtonID} {EW.g_Scheme.color_warning}ButtonClass: {EW.g_Scheme.color_tag}{AbilityTest.ButtonClass} {EW.g_Scheme.color_warning}Chat_Uses: {EW.g_Scheme.color_tag}{AbilityTest.Chat_Uses} {EW.g_Scheme.color_warning}Mode: {EW.g_Scheme.color_tag}{AbilityTest.Mode} {EW.g_Scheme.color_warning}MaxUses: {EW.g_Scheme.color_tag}{AbilityTest.MaxUses} {EW.g_Scheme.color_warning}CoolDown: {EW.g_Scheme.color_tag}{AbilityTest.CoolDown}{sMathID}", bConsole);
+					}
 				}
 				UI.ReplyToCommand(player, " ", bConsole);
 			}

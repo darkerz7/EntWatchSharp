@@ -9,6 +9,7 @@ using EntWatchSharp.Helpers;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
+using Microsoft.Extensions.Logging;
 
 namespace EntWatchSharp
 {
@@ -32,10 +33,38 @@ namespace EntWatchSharp
 			RegisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
 			RegisterEventHandler<EventPlayerSpawn>(OnEventPlayerSpawn);
 
-			HookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
+			//Garbage collector crashes when reloading plugin on these hooks
+			/*HookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
 			HookEntityOutput("func_rot_button", "OnPressed", OnButtonPressed, HookMode.Pre);
 			HookEntityOutput("func_door", "OnOpen", OnButtonPressed, HookMode.Pre);
 			HookEntityOutput("func_door_rotating", "OnOpen", OnButtonPressed, HookMode.Pre);
+			HookEntityOutput("func_physbox", "OnPlayerUse", OnButtonPressed, HookMode.Pre);*/
+
+			HookEntityOutput("func_button", "OnPressed", (_, _, activator, caller, _, _) =>
+			{
+				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
+				return HookResult.Continue;
+			});
+			HookEntityOutput("func_rot_button", "OnPressed", (_, _, activator, caller, _, _) =>
+			{
+				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
+				return HookResult.Continue;
+			});
+			HookEntityOutput("func_door", "OnOpen", (_, _, activator, caller, _, _) =>
+			{
+				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
+				return HookResult.Continue;
+			});
+			HookEntityOutput("func_door_rotating", "OnOpen", (_, _, activator, caller, _, _) =>
+			{
+				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
+				return HookResult.Continue;
+			});
+			HookEntityOutput("func_physbox", "OnPlayerUse", (_, _, activator, caller, _, _) =>
+			{
+				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
+				return HookResult.Continue;
+			});
 		}
 
 		public void UnRegEvents()
@@ -54,10 +83,11 @@ namespace EntWatchSharp
 			DeregisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
 			DeregisterEventHandler<EventPlayerSpawn>(OnEventPlayerSpawn);
 
-			UnhookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
+			/*UnhookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
 			UnhookEntityOutput("func_rot_button", "OnPressed", OnButtonPressed, HookMode.Pre);
 			UnhookEntityOutput("func_door", "OnOpen", OnButtonPressed, HookMode.Pre);
 			UnhookEntityOutput("func_door_rotating", "OnOpen", OnButtonPressed, HookMode.Pre);
+			UnhookEntityOutput("func_physbox", "OnPlayerUse", OnButtonPressed, HookMode.Pre);*/
 		}
 
 		private void OnPrecacheResources(ResourceManifest manifest)
@@ -147,30 +177,30 @@ namespace EntWatchSharp
 		private void OnEntitySpawned_Listener(CEntityInstance entity)
 		{
 			if (!EW.g_CfgLoaded) return;
-			if (!entity.IsValid) return;
+			if (entity == null || !entity.IsValid) return;
 			if (entity.DesignerName.Contains("weapon_"))
 			{
 				Server.NextFrame(() =>
 				{
-					if (!EW.g_CfgLoaded) return;
-
 					EW.WeaponIsItem(entity);
 				});
 			}
 			else if (entity.DesignerName.CompareTo("func_button") == 0 || entity.DesignerName.CompareTo("func_rot_button") == 0 ||
-				entity.DesignerName.CompareTo("func_door") == 0 || entity.DesignerName.CompareTo("func_door_rotating") == 0)
+				entity.DesignerName.CompareTo("func_physbox") == 0 || entity.DesignerName.CompareTo("func_door") == 0 || entity.DesignerName.CompareTo("func_door_rotating") == 0)
 			{
 				Server.NextFrame(() =>
 				{
-					if (!EW.g_CfgLoaded) return;
-
 					var weapon = EW.EntityParentRecursive(entity);
 					if (weapon != null && weapon.IsValid)
 					{
 						int iButtonID = 0;
 						if (entity.DesignerName.CompareTo("func_button") == 0 || entity.DesignerName.CompareTo("func_rot_button") == 0)
 							iButtonID = Int32.Parse(new CBaseButton(entity.Handle).UniqueHammerID);
-						else
+						else if(entity.DesignerName.CompareTo("func_physbox") == 0)
+						{
+							iButtonID = Int32.Parse(new CPhysBox(entity.Handle).UniqueHammerID);
+						}
+						else 
 						{
 							var cDoor = new CBasePropDoor(entity.Handle);
 							if ((cDoor.Spawnflags & 256) != 1) return;
@@ -196,6 +226,40 @@ namespace EntWatchSharp
 						}
 					}
 				});
+			} else if(entity.DesignerName.CompareTo("math_counter") == 0)
+			{
+				Server.NextFrame(() =>
+				{
+					CMathCounter cMathCounter = new CMathCounter(entity.Handle); // Server NextFrame or Timer - Need tests??
+					new CounterStrikeSharp.API.Modules.Timers.Timer(2.0f, () =>
+					{
+						if (cMathCounter == null || !cMathCounter.IsValid || cMathCounter.Entity == null || string.IsNullOrEmpty(cMathCounter.Entity.Name)) return; //Bad math_counter
+						foreach (Item ItemTest in EW.g_ItemList.ToList())
+						{
+							if (ItemTest.WeaponHandle == null || !ItemTest.WeaponHandle.IsValid || ItemTest.WeaponHandle.Entity == null) continue;
+							foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+							{
+								if (AbilityTest.MathID > 0 && AbilityTest.MathID == Int32.Parse(cMathCounter.UniqueHammerID))
+								{
+									if (AbilityTest.MathNameFix) // <objectname> + _ + <serial number from 1> example: weapon_fire_125
+									{
+										if (string.IsNullOrEmpty(ItemTest.WeaponHandle.Entity.Name)) continue;
+										int iIndexWeapon = ItemTest.WeaponHandle.Entity.Name.LastIndexOf("_");
+										if (iIndexWeapon == -1) continue;
+										int iIndexMathCounter = cMathCounter.Entity.Name.LastIndexOf("_");
+										if (iIndexMathCounter == -1) return; //Another math_counter or bad EW config
+										string sFix = cMathCounter.Entity.Name.Substring(iIndexMathCounter);
+										if (sFix.CompareTo(ItemTest.WeaponHandle.Entity.Name.Substring(iIndexWeapon)) != 0) continue;
+									}
+									AbilityTest.MathCounter = cMathCounter;
+									return;
+								}
+							}
+
+						}
+
+					});
+				});
 			}
 		}
 
@@ -215,7 +279,7 @@ namespace EntWatchSharp
 				});
 			}
 			else if (entity.DesignerName.CompareTo("func_button") == 0 || entity.DesignerName.CompareTo("func_rot_button") == 0 ||
-				entity.DesignerName.CompareTo("func_door") == 0 || entity.DesignerName.CompareTo("func_door_rotating") == 0)
+				entity.DesignerName.CompareTo("func_physbox") == 0 || entity.DesignerName.CompareTo("func_door") == 0 || entity.DesignerName.CompareTo("func_door_rotating") == 0)
 			{
 				Server.NextFrame(() =>
 				{
@@ -224,6 +288,23 @@ namespace EntWatchSharp
 						foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 						{
 							if (AbilityTest.Entity == entity)
+							{
+								ItemTest.AbilityList.Remove(AbilityTest);
+								if (EW.CheckDictionary(ItemTest.Owner, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[ItemTest.Owner].UpdateCountButton();
+							}
+						}
+					}
+				});
+			}else if (entity.DesignerName.CompareTo("math_counter") == 0)
+			{
+				CMathCounter cMathCounter = new CMathCounter(entity.Handle);
+				Server.NextFrame(() =>
+				{
+					foreach (Item ItemTest in EW.g_ItemList.ToList())
+					{
+						foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+						{
+							if (AbilityTest.MathID > 0 && AbilityTest.MathCounter == cMathCounter)
 							{
 								ItemTest.AbilityList.Remove(AbilityTest);
 								if (EW.CheckDictionary(ItemTest.Owner, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[ItemTest.Owner].UpdateCountButton();
@@ -462,15 +543,16 @@ namespace EntWatchSharp
 		//[EntityOutputHook("func_rot_button", "OnPressed")]
 		//[EntityOutputHook("func_door", "OnOpen")]
 		//[EntityOutputHook("func_door_rotating", "OnOpen")]
-		public HookResult OnButtonPressed(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
+		//public HookResult OnButtonPressed(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
+		private bool OnButtonPressed(CEntityInstance activator, CEntityInstance caller)
 		{
-			if (!EW.g_CfgLoaded) return HookResult.Continue;
+			if (!EW.g_CfgLoaded) return true;
 			try
 			{
-				if (!activator.IsValid || !caller.IsValid) return HookResult.Continue;
+				if (activator == null || !activator.IsValid || caller == null || !caller.IsValid) return true;
 
 				EW.UpdateTime();
-				foreach(Item ItemTest in EW.g_ItemList.ToList())
+				foreach (Item ItemTest in EW.g_ItemList.ToList())
 				{
 					foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 					{
@@ -480,18 +562,21 @@ namespace EntWatchSharp
 							{
 								AbilityTest.Used();
 								UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
-								return HookResult.Continue;
+								return true;
 							}
-							else return HookResult.Handled;
+							else return false;
 						}
 					}
 				}
-			}catch (Exception) { }
-			return HookResult.Continue;
+			}
+			catch (Exception) { }
+			return true;
 		}
+
 		private HookResult OnInput(DynamicHook hook)
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
+
 			//var cEntity = hook.GetParam<CEntityIdentity>(0);
 			var cInput = hook.GetParam<CUtlSymbolLarge>(1);
 			var cActivator = hook.GetParam<CEntityInstance>(2);
@@ -518,16 +603,6 @@ namespace EntWatchSharp
 					}
 				}
 			}
-			return HookResult.Continue;
-		}
-			private HookResult OnGameUI(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
-		{
-			if (!EW.g_CfgLoaded) return HookResult.Continue;
-			try
-			{
-				
-			}
-			catch (Exception) { }
 			return HookResult.Continue;
 		}
 

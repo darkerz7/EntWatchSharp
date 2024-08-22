@@ -18,6 +18,7 @@ namespace EntWatchSharp
 		public FakeConVar<bool> FakeCvar_globalblock = new("ewc_globalblock", "Blocks the pickup of any items by players", false, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
 		public FakeConVar<byte> FakeCvar_display_ability = new("ewc_display_ability", "Count of the abilities to display on the HUD", 4, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<byte>(0, 4));
 		public FakeConVar<bool> FakeCvar_use_priority = new("ewc_use_priority", "Enable/Disable forced pressing of the button", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_display_mapcommands = new("ewc_display_mapcommands", "Enable/Disable display of item changes", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
 
 		public FakeConVar<string> FakeCvar_path_scheme = new("ewc_path_scheme", "Path with filename for the scheme", "addons/entwatch/scheme/default.json", flags: ConVarFlags.FCVAR_NONE);
 		public FakeConVar<string> FakeCvar_path_cfg = new("ewc_path_cfg", "Directory for configs", "addons/entwatch/maps/", flags: ConVarFlags.FCVAR_NONE);
@@ -44,6 +45,7 @@ namespace EntWatchSharp
 			Cvar.GlobalBlock = FakeCvar_globalblock.Value;
 			Cvar.DisplayAbility = FakeCvar_display_ability.Value;
 			Cvar.UsePriority = FakeCvar_use_priority.Value;
+			Cvar.DisplayMapCommands = FakeCvar_display_mapcommands.Value;
 
 			Cvar.PathScheme = FakeCvar_path_scheme.Value;
 			Cvar.PathCfg = FakeCvar_path_cfg.Value;
@@ -100,6 +102,11 @@ namespace EntWatchSharp
 			{
 				Cvar.UsePriority = value;
 				UI.CvarChangeNotify(FakeCvar_use_priority.Name, value.ToString(), FakeCvar_use_priority.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
+			};
+			FakeCvar_display_mapcommands.ValueChanged += (sender, value) =>
+			{
+				Cvar.DisplayMapCommands = value;
+				UI.CvarChangeNotify(FakeCvar_display_mapcommands.Name, value.ToString(), FakeCvar_display_mapcommands.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
 			};
 
 			FakeCvar_path_scheme.ValueChanged += (sender, value) =>
@@ -189,6 +196,7 @@ namespace EntWatchSharp
 		public static bool GlobalBlock;
 		public static byte DisplayAbility;
 		public static bool UsePriority;
+		public static bool DisplayMapCommands;
 
 		public static string PathScheme;
 		public static string PathCfg;

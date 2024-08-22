@@ -14,7 +14,7 @@ namespace EntWatchSharp
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.1.alpha";
+		public override string ModuleVersion => "0.DZ.2.alpha";
 
 		public override void Load(bool hotReload)
 		{
@@ -44,9 +44,8 @@ namespace EntWatchSharp
 					}
 				});
 				EW.g_TimerRetryDB = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerRetry, TimerFlags.REPEAT);
+				EW.g_TimerUnban = new CounterStrikeSharp.API.Modules.Timers.Timer(60.0f, TimerUnban, TimerFlags.REPEAT);
 			}
-
-			EW.g_TimerUnban = new CounterStrikeSharp.API.Modules.Timers.Timer(60.0f, TimerUnban, TimerFlags.REPEAT);
 
 			RegEvents();
 			VirtualFunctionsInitialize();
@@ -61,6 +60,7 @@ namespace EntWatchSharp
 			VirtualFunctionsUninitialize();
 			UnRegEvents();
 			UnRegCommands();
+			UnRegMapCommands();
 			if (EW.g_Timer != null)
 			{
 				EW.g_Timer.Kill();

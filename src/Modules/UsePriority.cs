@@ -27,10 +27,23 @@ namespace EntWatchSharp.Modules
             {
                 LockSpam = true;
                 var Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(0.5f, UsePriorityTimer);
-                if (OneItem.CheckDelay() && OneItem.AbilityList[0].Mode != 1 && OneItem.AbilityList[0].Mode != 6 && OneItem.AbilityList[0].Mode != 7 && OneItem.AbilityList[0].fLastUse < EW.fGameTime && OneItem.AbilityList[0].Entity.IsValid)
+                
+                int iNum = 0;
+				foreach(Ability AbilityTest in OneItem.AbilityList.ToList())
+                {
+                    if(AbilityTest.Ignore)
+                    {
+                        iNum++;
+                        continue;
+                    }
+                    break;
+                }
+                if (iNum + 1 > OneItem.AbilityList.Count) return; //All Ignore
+
+				if (OneItem.CheckDelay() && OneItem.AbilityList[iNum].Mode != 1 && OneItem.AbilityList[iNum].Mode < 6 && OneItem.AbilityList[iNum].fLastUse < EW.fGameTime && OneItem.AbilityList[iNum].Entity.IsValid && !OneItem.AbilityList[iNum].LockItem)
                 {
                     //OneItem.AbilityList[0].Entity.AcceptInput("Press", UPlayer.PlayerPawn.Value, UPlayer.PlayerPawn.Value);
-                    OneItem.AbilityList[0].Entity.AcceptInput("Use", UPlayer.PlayerPawn.Value, UPlayer.PlayerPawn.Value);
+                    OneItem.AbilityList[iNum].Entity.AcceptInput("Use", UPlayer.PlayerPawn.Value, UPlayer.PlayerPawn.Value);
                     //Console.WriteLine($"Player: {UPlayer.PlayerName} pressed E ButtonID: {OneItem.AbilityList[0].Entity.Index}");
                 }
             }
@@ -47,7 +60,10 @@ namespace EntWatchSharp.Modules
             {
                 if (ItemTest.Owner == UPlayer)
                 {
-                    iCount += ItemTest.AbilityList.Count;
+                    int iCountWithoutIgnore = 0;
+                    foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+                        if (!AbilityTest.Ignore && AbilityTest.Mode != 8) iCountWithoutIgnore++;
+					iCount += iCountWithoutIgnore;
                     if (!ItemTest.UsePriority || iCount > 1)
                     {
                         OneButton = false;

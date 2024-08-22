@@ -2,7 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
-using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace EntWatchSharp
 {
@@ -26,11 +26,22 @@ namespace EntWatchSharp
 			CPlayer_WeaponServices_WeaponDropFunc.Unhook(OnWeaponDrop, HookMode.Post);
 			CEntityIdentity_AcceptInputFunc.Unhook(OnInput, HookMode.Pre);
 		}
+
+		public static float MathCounter_GetValue(CMathCounter cMath)
+		{
+			return new CEntityOutputTemplate_float(cMath.Handle + Schema.GetSchemaOffset("CMathCounter", "m_OutValue")).OutValue;
+		}
 	}
 
 	public class CUtlSymbolLarge : NativeObject
 	{
 		public CUtlSymbolLarge(IntPtr pointer) : base(pointer) { }
 		public string KeyValue => Utilities.ReadStringUtf8(Handle + 0);
+	}
+
+	public class CEntityOutputTemplate_float : NativeObject
+	{
+		public CEntityOutputTemplate_float(IntPtr pointer) : base(pointer) { }
+		public unsafe float OutValue => Unsafe.Add(ref *(float*)Handle, 6);
 	}
 }

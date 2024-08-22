@@ -1,6 +1,6 @@
 ﻿namespace EntWatchSharp.Items
 {
-    internal class ItemConfig
+    public class ItemConfig
     {
         public string Name { get; set; }
         public string ShortName { get; set; }

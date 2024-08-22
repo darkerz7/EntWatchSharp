@@ -109,7 +109,7 @@ namespace EntWatchSharp.Helpers
             Console.Write("] ");
             Console.ForegroundColor = (ConsoleColor)iColor;
             Console.WriteLine(ReplaceColorTags(sMessage, false));
-            Console.ForegroundColor = (ConsoleColor)1;
+            Console.ResetColor();
             /* Colors:
 				* 0 - No color		1 - White		2 - Red-Orange		3 - Orange
 				* 4 - Yellow		5 - Dark Green	6 - Green			7 - Light Green

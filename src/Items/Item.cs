@@ -5,7 +5,7 @@ using EntWatchSharp.Helpers;
 
 namespace EntWatchSharp.Items
 {
-    internal class Item : ItemConfig
+    public class Item : ItemConfig
     {
         public CCSWeaponBase WeaponHandle;
         public CCSPlayerController Owner;

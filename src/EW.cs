@@ -124,7 +124,7 @@ namespace EntWatchSharp
 			return false;
 		}
 
-		public static CEntityInstance EntityParentRecursive(CEntityInstance entity)
+		public static CEntityInstance? EntityParentRecursive(CEntityInstance entity)
 		{
 			if (entity == null || !entity.IsValid) return null;
 
@@ -132,16 +132,14 @@ namespace EntWatchSharp
 
 			var baseentity = new CBaseEntity(entity.Handle);
 			if (baseentity == null || !baseentity.IsValid) return null;
-			try
+			CEntityInstance? Owner = baseentity.CBodyComponent?.SceneNode?.PParent?.Owner;
+			if (Owner == null || !Owner.IsValid) return null;
+			if (Owner.Entity != null && Owner.Entity.Name != null && Owner.Entity.Name.CompareTo("") != 0)
 			{
-				if (baseentity.CBodyComponent.SceneNode.PParent.Owner.Entity.Name.CompareTo("") != 0)
-				{
-					var ownerentity = baseentity.CBodyComponent.SceneNode.PParent.Owner;
-					if (ownerentity == null || !ownerentity.IsValid) return null;
-					return EntityParentRecursive(ownerentity);
-				}
+				var ownerentity = baseentity.CBodyComponent.SceneNode.PParent.Owner;
+				if (ownerentity == null || !ownerentity.IsValid) return null;
+				return EntityParentRecursive(ownerentity);
 			}
-			catch (Exception){	}
 			return null;
 		}
 
@@ -159,10 +157,10 @@ namespace EntWatchSharp
 		{
 			try
 			{
-				string sHUDType = await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Type");
-				string sHUDPos = await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos");
-				string sHUDRefresh = await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh");
-				string sHUDSheet = await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Sheet");
+				string sHUDType = g_bAPI ? await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Type") : "3";
+				string sHUDPos = g_bAPI ? await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos") : "50_50_50";
+				string sHUDRefresh = g_bAPI ? await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh") : "3";
+				string sHUDSheet = g_bAPI ? await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Sheet") : "5";
 				if (player.IsValid && CheckDictionary(player, g_HudPlayer))
 				{
 					if (!string.IsNullOrEmpty(sHUDPos))
@@ -196,7 +194,7 @@ namespace EntWatchSharp
 						if (Int32.TryParse(sHUDSheet, out number)) g_HudPlayer[player].iSheetMax = number;
 					}
 				}
-				string sUsePriority = await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_Use_Priority");
+				string sUsePriority = g_bAPI ? await _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_Use_Priority") : "1";
 				if (player.IsValid && CheckDictionary(player, g_UsePriorityPlayer))
 				{
 					if (!string.IsNullOrEmpty(sUsePriority)) g_UsePriorityPlayer[player].Activate = sUsePriority.CompareTo("0") != 0;

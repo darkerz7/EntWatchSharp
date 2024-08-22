@@ -54,7 +54,7 @@ namespace EntWatchSharp.Modules
 							foreach (Ability AbilityTest in ListShow[i].AbilityList.ToList())
 							{
 								if (++iAbilityCount > Cvar.DisplayAbility) break;
-								sItems += $"[{AbilityTest.GetMessage()}]";
+								if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
 							}
 
 						}

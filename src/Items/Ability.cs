@@ -1,18 +1,24 @@
 ﻿using CounterStrikeSharp.API.Core;
+using System.Diagnostics.Eventing.Reader;
 
 namespace EntWatchSharp.Items
 {
-    internal class Ability
+    public class Ability
     {
         public string Name { get; set; }
-        public string ButtonClass { get; set; } //func_button, func_door, game_ui
+        public string ButtonClass { get; set; } //func_button, func_door, game_ui, func_physbox
         public bool Chat_Uses { get; set; }
         public int Mode { get; set; }
         public int MaxUses { get; set; }
         public int CoolDown { get; set; }
         public int ButtonID { get; set; }
+        public bool Ignore { get; set; }
+        public bool LockItem { get; set; }
+		public int MathID { get; set; }
+        public bool MathNameFix { get; set; }
 
-        public CEntityInstance Entity;
+		public CEntityInstance Entity;
+        public CMathCounter MathCounter;
         public double fLastUse;
         public int iCurrentUses;
 
@@ -25,9 +31,14 @@ namespace EntWatchSharp.Items
             MaxUses = 0;
             CoolDown = 0;
             ButtonID = 0;
+            Ignore = false;
+            LockItem = false;
+			MathID = 0;
+			MathNameFix = false;
 
-            Entity = null;
-            fLastUse = 0.0;
+			Entity = null;
+			MathCounter = null;
+			fLastUse = 0.0;
             iCurrentUses = 0;
         }
         public Ability(string name, string buttonclass, bool chat_uses, int mode, int maxuses, int cooldown, int buttonid, CEntityInstance entity = null)
@@ -39,9 +50,15 @@ namespace EntWatchSharp.Items
             MaxUses = maxuses;
             CoolDown = cooldown;
             ButtonID = buttonid;
+            Ignore = false;
+            LockItem = false;
+			MathID = 0;
+			MathNameFix = false;
 
-            Entity = entity;
-            EW.UpdateTime();
+			Entity = entity;
+            MathCounter = null;
+
+			EW.UpdateTime();
             fLastUse = EW.fGameTime - CoolDown;
             iCurrentUses = 0;
         }
@@ -55,8 +72,13 @@ namespace EntWatchSharp.Items
 			MaxUses = cCopyAbility.MaxUses;
 			CoolDown = cCopyAbility.CoolDown;
 			ButtonID = cCopyAbility.ButtonID;
+            Ignore = cCopyAbility.Ignore;
+            LockItem = cCopyAbility.LockItem;
+            MathID = cCopyAbility.MathID;
+            MathNameFix = cCopyAbility. MathNameFix;
 
 			Entity = null;
+			MathCounter = null;
 			EW.UpdateTime();
 			fLastUse = EW.fGameTime - CoolDown;
 			iCurrentUses = 0;
@@ -70,7 +92,11 @@ namespace EntWatchSharp.Items
                     if (fLastUse < EW.fGameTime) fLastUse = EW.fGameTime + CoolDown;
                     break;
                 case 3:
-                    if (iCurrentUses < MaxUses) iCurrentUses++;
+                    if (iCurrentUses < MaxUses)
+                    {
+                        iCurrentUses++;
+                        fLastUse = EW.fGameTime + 1;
+					}
                     break;
                 case 4:
                     if (iCurrentUses < MaxUses)
@@ -81,7 +107,8 @@ namespace EntWatchSharp.Items
                     break;
                 case 5:
                     iCurrentUses++;
-                    if (iCurrentUses == MaxUses)
+					fLastUse = EW.fGameTime + 1;
+					if (iCurrentUses == MaxUses)
                     {
                         fLastUse = EW.fGameTime + CoolDown;
                         iCurrentUses = 0;
@@ -110,29 +137,74 @@ namespace EntWatchSharp.Items
                 case 5:
                     if (fLastUse < EW.fGameTime) return $"{iCurrentUses}/{MaxUses}";
                     else return $"{Math.Round(fLastUse - EW.fGameTime, 0)}";
+                case 6:
+                    {
+                        if (MathCounter != null && MathCounter.IsValid)
+                        {
+                            float fValue = EntWatchSharp.MathCounter_GetValue(MathCounter);
+                            if (fValue > MathCounter.Min) return $"{fValue.ToString("F1")}/{MathCounter.Max.ToString("F1")}";
+                            else return "E";
+                        }
+                        else return "+";
+                    }
+                case 7:
+                    {
+                        if (MathCounter != null && MathCounter.IsValid) 
+                        {
+                            float fValue = MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter);
+							if(fValue < MathCounter.Max) return $"{fValue.ToString("F1")}/{MathCounter.Max.ToString("F1")}";
+                            else return "E";
+						}
+                        else return "+";
+                    }
+                case 8:
+                    {
+                        if (Entity != null && Entity.IsValid)
+                        {
+                            CBaseEntity cBaseEntity = new CBaseEntity(Entity.Handle);
+                            return $"{cBaseEntity.Health} HP";
+                        }
+						else return "+";
+					}
+
                 default: return "+";
             }
         }
 		public bool Ready()
 		{
+            // Maybe not needed...
+            /*if (Entity.DesignerName.CompareTo("func_button") == 0 || Entity.DesignerName.CompareTo("func_rot_button") == 0)
+            {
+                if (new CBaseButton(Entity.Handle).Locked) return false;
+            }
+            else if (Entity.DesignerName.CompareTo("func_door") == 0 || Entity.DesignerName.CompareTo("func_door_rotating") == 0)
+            {
+                if (new CBaseDoor(Entity.Handle).Locked) return false;
+            }
+            else if (Entity.DesignerName.CompareTo("func_physbox") == 0)
+            {
+				if (!new CPhysBox(Entity.Handle).EnableUseOutput) return false;
+			}
+            else return false;*/
+            if (LockItem) return false;
+            if (fLastUse >= EW.fGameTime) return false;
 			switch (Mode)
 			{
-				case 2:
-					if (fLastUse < EW.fGameTime) return true;
-					else return false;
+				case 2: return true;
 				case 3:
                     if (iCurrentUses < MaxUses) return true;
                     else return false;
 				case 4:
-					if (fLastUse < EW.fGameTime)
-					{
-						if (iCurrentUses < MaxUses) return true;
-						else return false;
-					}
+					if (iCurrentUses < MaxUses) return true;
 					else return false;
-				case 5:
-					if (fLastUse < EW.fGameTime) return true;
+				case 5: return true;
+                case 6:
+                     if (MathCounter != null && MathCounter.IsValid && EntWatchSharp.MathCounter_GetValue(MathCounter) > MathCounter.Min) return true;
+                     else return false;
+                case 7:
+					if (MathCounter != null && MathCounter.IsValid && (MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter)) < MathCounter.Max) return true;
 					else return false;
+                case 8: return false;
 				default: return true;
 			}
 		}
