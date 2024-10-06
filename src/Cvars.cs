@@ -33,6 +33,7 @@ namespace EntWatchSharp
 		public FakeConVar<string> FakeCvar_banreason = new("ewc_banreason", "Default ban reason", "Trolling", flags: ConVarFlags.FCVAR_NONE);
 		public FakeConVar<string> FakeCvar_unbanreason = new("ewc_unbanreason", "Default unban reason", "Giving another chance", flags: ConVarFlags.FCVAR_NONE);
 		public FakeConVar<bool> FakeCvar_keepexpiredban = new("ewc_keep_expired_ban", "Enable/Disable keep expired bans", true, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
+		public FakeConVar<int> FakeCvar_offline_clear_time = new("ewc_offline_clear_time", "Time during which data is stored (1-240)", 30, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 240));
 
 		private void RegisterCVARS()
 		{
@@ -60,6 +61,7 @@ namespace EntWatchSharp
 			Cvar.BanReason = FakeCvar_banreason.Value;
 			Cvar.UnBanReason = FakeCvar_unbanreason.Value;
 			Cvar.KeepExpiredBan = FakeCvar_keepexpiredban.Value;
+			Cvar.OfflineClearTime = FakeCvar_offline_clear_time.Value;
 
 			FakeCvar_teamonly.ValueChanged += (sender, value) =>
 			{
@@ -180,6 +182,12 @@ namespace EntWatchSharp
 				Cvar.KeepExpiredBan = value;
 				UI.CvarChangeNotify(FakeCvar_keepexpiredban.Name, value.ToString(), FakeCvar_keepexpiredban.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
 			};
+			FakeCvar_offline_clear_time.ValueChanged += (sender, value) =>
+			{
+				if (value >= 1 && value <= 240) Cvar.OfflineClearTime = value;
+				else Cvar.OfflineClearTime = 30;
+				UI.CvarChangeNotify(FakeCvar_offline_clear_time.Name, value.ToString(), FakeCvar_offline_clear_time.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
+			};
 
 			RegisterFakeConVars(typeof(ConVar));
 		}
@@ -211,5 +219,6 @@ namespace EntWatchSharp
 		public static string BanReason;
 		public static string UnBanReason;
 		public static bool KeepExpiredBan;
+		public static int OfflineClearTime;
 	}
 }

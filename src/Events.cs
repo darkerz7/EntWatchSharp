@@ -9,7 +9,6 @@ using EntWatchSharp.Helpers;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
-using Microsoft.Extensions.Logging;
 
 namespace EntWatchSharp
 {
@@ -60,11 +59,12 @@ namespace EntWatchSharp
 				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
 				return HookResult.Continue;
 			});
-			HookEntityOutput("func_physbox", "OnPlayerUse", (_, _, activator, caller, _, _) =>
+			//Broken after update 10/03/2024. Alternative method in OnInput(func_physbox:use)
+			/*HookEntityOutput("func_physbox", "OnPlayerUse", (_, _, activator, caller, _, _) =>
 			{
 				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
 				return HookResult.Continue;
-			});
+			});*/
 		}
 
 		public void UnRegEvents()
@@ -149,6 +149,11 @@ namespace EntWatchSharp
 			Server.NextFrame(async () =>
 			{
 				await EbanDB.OfflineUnban(sServerName, iTime);
+			});
+
+			Server.NextFrame(() =>
+			{
+				OfflineFunc.TimeToClear();
 			});
 
 			//Update (Un)Bans
@@ -290,7 +295,7 @@ namespace EntWatchSharp
 							if (AbilityTest.Entity == entity)
 							{
 								ItemTest.AbilityList.Remove(AbilityTest);
-								if (EW.CheckDictionary(ItemTest.Owner, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[ItemTest.Owner].UpdateCountButton();
+								if (ItemTest.Owner != null && EW.CheckDictionary(ItemTest.Owner, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[ItemTest.Owner].UpdateCountButton();
 							}
 						}
 					}
@@ -367,6 +372,14 @@ namespace EntWatchSharp
 						EW.g_ItemList[indexItem].SetDelay();
 						if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
 						UI.EWChatActivity("Chat.Pickup", EW.g_Scheme.color_pickup, EW.g_ItemList[indexItem], EW.g_ItemList[indexItem].Owner);
+						foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
+						{
+							if (pl.UserId == OfflineTest.UserID)
+							{
+								OfflineTest.LastItem = EW.g_ItemList[indexItem].Name;
+								break;
+							}
+						}
 						return HookResult.Continue;
 					}
 				}
@@ -382,6 +395,12 @@ namespace EntWatchSharp
 			{
 				var client = new CCSPlayerController(hook.GetParam<CCSPlayer_WeaponServices>(0).Pawn.Value.Controller.Value.Handle);
 				var weapon = hook.GetParam<CBasePlayerWeapon>(1);
+
+				if (EW.CheckDictionary(client, EW.g_BannedPlayer) && EW.g_BannedPlayer[client].bFixSpawnItem)
+				{
+					hook.SetReturn(false);
+					return HookResult.Handled;
+				}	
 
 				foreach(Item ItemTest in EW.g_ItemList.ToList())
 				{
@@ -462,6 +481,8 @@ namespace EntWatchSharp
 		[GameEventHandler]
 		private HookResult OnEventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
 		{
+			OfflineFunc.PlayerConnectFull(@event.Userid);
+
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
 			CCSPlayerController pl = new CCSPlayerController(@event.Userid.Handle);
@@ -493,6 +514,8 @@ namespace EntWatchSharp
 		[GameEventHandler]
 		private HookResult OnEventPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
 		{
+			OfflineFunc.PlayerDisconnect(@event.Userid);
+
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
 			if (EW.g_HudPlayer.ContainsKey(@event.Userid))
@@ -560,6 +583,7 @@ namespace EntWatchSharp
 						{
 							if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == activator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
 							{
+								AbilityTest.SetFilter(activator);
 								AbilityTest.Used();
 								UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
 								return true;
@@ -577,11 +601,24 @@ namespace EntWatchSharp
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
-			//var cEntity = hook.GetParam<CEntityIdentity>(0);
+			var cEntity = hook.GetParam<CEntityIdentity>(0);
 			var cInput = hook.GetParam<CUtlSymbolLarge>(1);
 			var cActivator = hook.GetParam<CEntityInstance>(2);
 			var cCaller = hook.GetParam<CEntityInstance>(3);
-			if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || cInput.KeyValue.ToLower().CompareTo("invalue") != 0) return HookResult.Continue;
+			//Fix func_physbox:OnPlayerUse begin
+			//if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || cInput.KeyValue.ToLower().CompareTo("invalue") != 0) return HookResult.Continue;
+			if (cActivator == null || !cActivator.IsValid) return HookResult.Continue;
+			if (cEntity != null && cEntity.DesignerName.CompareTo("func_physbox") == 0)
+			{
+				if(cInput.KeyValue.ToLower().CompareTo("use") == 0)
+				{
+					if (!OnButtonPressed(cActivator, cEntity.EntityInstance)) return HookResult.Handled;
+					return HookResult.Continue;
+				}
+				return HookResult.Continue;
+			}
+			if (!EW.IsGameUI(cCaller) || cInput.KeyValue.ToLower().CompareTo("invalue") != 0) return HookResult.Continue;
+			//Fix func_physbox:OnPlayerUse end
 			var cValue = new CUtlSymbolLarge(hook.GetParam<CVariant>(4).Handle);
 
 			EW.UpdateTime();
@@ -595,6 +632,7 @@ namespace EntWatchSharp
 						{
 							if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == cActivator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
 							{
+								AbilityTest.SetFilter(cActivator);
 								AbilityTest.Used();
 								UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
 								return HookResult.Continue;

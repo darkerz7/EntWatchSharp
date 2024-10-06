@@ -7,6 +7,11 @@ using EntWatchSharp.Items;
 using static EntWatchSharp.Helpers.FindTarget;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules;
+using EntWatchSharp.Modules.Eban;
+using CounterStrikeSharp.API.Modules.Entities;
+using System;
+using System.Numerics;
+using CounterStrikeSharp.API.Modules.Commands.Targeting;
 
 namespace EntWatchSharp
 {
@@ -27,6 +32,8 @@ namespace EntWatchSharp
 			RemoveCommand("ew_status", OnEWStatus);
 			RemoveCommand("ew_banlist", OnEWBanList);
 			RemoveCommand("ew_transfer", OnEWTransfer);
+			RemoveCommand("ew_spawn", OnEWSpawn);
+			RemoveCommand("ew_list", OnEWList);
 		}
 
 		[ConsoleCommand("ew_reload", "Reloads config and Scheme")]
@@ -253,29 +260,50 @@ namespace EntWatchSharp
 		public void OnEWBan(CCSPlayerController? admin, CommandInfo command)
 		{
 			if (admin != null && !admin.IsValid) return;
-			(List<CCSPlayerController> players, string targetname) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL);
-			
-			if (players.Count == 0) return;
-
 			bool bConsole = command.CallingContext == CommandCallingContext.Console;
 
-			CCSPlayerController target = players.Single();
+			(List<CCSPlayerController> players, string targetname) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
 
-			if (!AdminManager.CanPlayerTarget(admin, target))
+			OfflineBan target = null;
+
+			if (players.Count > 0)
 			{
-				UI.EWReplyInfo(admin, "Reply.You_cannot_target", bConsole);
-				return;
+				CCSPlayerController targetOnline = players.Single();
+
+				if (!AdminManager.CanPlayerTarget(admin, targetOnline))
+				{
+					UI.EWReplyInfo(admin, "Reply.You_cannot_target", bConsole);
+					return;
+				}
+
+				if (!EW.CheckDictionary(targetOnline, EW.g_BannedPlayer))
+				{
+					UI.EWReplyInfo(admin, "Info.Error", bConsole, "Player not found in dictionary");
+					return;
+				}
+
+				if (EW.g_BannedPlayer[targetOnline].bBanned)
+				{
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(targetOnline)} {Strlocalizer["Reply.Eban.Has_a_Restrict"]}", bConsole);
+					return;
+				}
+
+				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
+				{
+					if (OfflineTest.UserID == targetOnline.UserId)
+					{
+						target = OfflineTest;
+						break;
+					}
+				}
+			} else
+			{
+				target = OfflineFunc.FindTarget(admin, command.GetArg(1), bConsole);
 			}
 
-			if (!EW.CheckDictionary(target, EW.g_BannedPlayer))
+			if (target == null)
 			{
-				UI.EWReplyInfo(admin, "Info.Error", bConsole, "Player not found in dictionary");
-				return;
-			}
-
-			if (EW.g_BannedPlayer[target].bBanned)
-			{
-				UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target)} {Strlocalizer["Reply.Eban.Has_a_Restrict"]}", bConsole);
+				UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
 				return;
 			}
 
@@ -305,12 +333,12 @@ namespace EntWatchSharp
 			string reason = command.GetArg(3);
 			if (string.IsNullOrEmpty(reason)) reason = Cvar.BanReason;
 
-			UI.EWChatAdmin("Chat.Admin.Restricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_disabled, UI.PlayerInfo(target));
+			UI.EWChatAdmin("Chat.Admin.Restricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_disabled, target.Online ? UI.PlayerInfo(target.Player) : UI.PlayerInfo(target.Name,target.SteamID));
 			UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
-
 			Server.NextFrame(async () =>
 			{
-				if (await EW.g_BannedPlayer[target].SetBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.PlayerName, EW.ConvertSteamID64ToSteamID(target.SteamID.ToString()), time, reason))
+				EbanPlayer ebanPlayer = target.Online ? EW.g_BannedPlayer[target.Player] : new EbanPlayer();
+				if (await ebanPlayer.SetBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.Name, target.SteamID, time, reason))
 				{
 					Server.NextFrame(() =>
 					{
@@ -335,68 +363,97 @@ namespace EntWatchSharp
 		public void OnEWUnBan(CCSPlayerController? admin, CommandInfo command)
 		{
 			if (admin != null && !admin.IsValid) return;
-			(List<CCSPlayerController> players, string targetname) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL);
-
-			if (players.Count == 0) return;
-
 			bool bConsole = command.CallingContext == CommandCallingContext.Console;
 
-			CCSPlayerController target = players.Single();
+			(List<CCSPlayerController> players, string targetname) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
 
-			if (!AdminManager.CanPlayerTarget(admin, target))
-			{
-				UI.EWReplyInfo(admin, "Reply.You_cannot_target", bConsole);
-				return;
-			}
+			EbanPlayer target = new EbanPlayer();
+			string sTarget = command.GetArg(1);
 
-			if (!EW.CheckDictionary(target, EW.g_BannedPlayer))
-			{
-				UI.EWReplyInfo(admin, "Info.Error", bConsole, "Player not found in dictionary");
-				return;
-			}
+			bool bOnline = players.Count > 0;
 
-			if (!EW.g_BannedPlayer[target].bBanned)
+			if (bOnline)
 			{
-				UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target)} {Strlocalizer["Reply.Eban.Can_pickup"]}", bConsole);
-				return;
-			}
-
-			if (EW.g_BannedPlayer[target].iDuration == 0 && !AdminManager.PlayerHasPermissions(admin, "@css/ew_unban_perm"))
-			{
-				UI.EWReplyInfo(admin, "Reply.Eban.Access.UnPermanent", bConsole);
-				return;
-			}
-
-			if (admin != null && EW.g_BannedPlayer[target].sAdminSteamID.CompareTo(EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString())) != 0 && !AdminManager.PlayerHasPermissions(admin, "@css/ew_unban_other"))
-			{
-				UI.EWReplyInfo(admin, "Reply.Eban.Access.Other", bConsole);
-				return;
+				CCSPlayerController targetController = players.Single();
+				if (!AdminManager.CanPlayerTarget(admin, targetController))
+				{
+					UI.EWReplyInfo(admin, "Reply.You_cannot_target", bConsole);
+					return;
+				}
+				if (!EW.CheckDictionary(targetController, EW.g_BannedPlayer))
+				{
+					UI.EWReplyInfo(admin, "Info.Error", bConsole, "Player not found in dictionary");
+					return;
+				}
+				target.bBanned = EW.g_BannedPlayer[targetController].bBanned;
+				target.sAdminName = EW.g_BannedPlayer[targetController].sAdminSteamID;
+				target.sAdminSteamID = EW.g_BannedPlayer[targetController].sAdminSteamID;
+				target.iDuration = EW.g_BannedPlayer[targetController].iDuration;
+				target.iTimeStamp_Issued = EW.g_BannedPlayer[targetController].iTimeStamp_Issued;
+				target.sReason = EW.g_BannedPlayer[targetController].sReason;
+				target.sClientName = targetController.PlayerName;
+				target.sClientSteamID = EW.ConvertSteamID64ToSteamID(targetController.SteamID.ToString());
 			}
 
 			string reason = command.GetArg(2);
 			if (string.IsNullOrEmpty(reason)) reason = Cvar.UnBanReason;
 
-			UI.EWChatAdmin("Chat.Admin.Unrestricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_enabled, UI.PlayerInfo(target));
-			UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
-
 			Server.NextFrame(async () =>
 			{
-				if (await EW.g_BannedPlayer[target].UnBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", EW.ConvertSteamID64ToSteamID(target.SteamID.ToString()), reason))
+				if (!bOnline && sTarget.ToLower().StartsWith("steam_"))
 				{
-					Server.NextFrame(() =>
-					{
-						if (admin != null && admin.IsValid) UI.EWReplyInfo(admin, "Reply.Eban.UnBan.Success", bConsole); //admin.PrintToChat("Success");
-						UI.EWSysInfo("Reply.Eban.UnBan.Success", 6);
-					});
+					target = await EbanDB.GetBan(sTarget, EW.g_Scheme.server_name);
 				}
-				else
+
+				if (target == null)
 				{
-					Server.NextFrame(() =>
-					{
-						if (admin != null && admin.IsValid) UI.EWReplyInfo(admin, "Reply.Eban.UnBan.Failed", bConsole); //admin.PrintToChat("Failed");
-						UI.EWSysInfo("Reply.Eban.UnBan.Failed", 15);
-					});
+					UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
+					return;
 				}
+
+				if (!target.bBanned)
+				{
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target.sClientName,target.sClientSteamID)} {Strlocalizer["Reply.Eban.Can_pickup"]}", bConsole);
+					return;
+				}
+
+				if (target.iDuration == 0 && !AdminManager.PlayerHasPermissions(admin, "@css/ew_unban_perm"))
+				{
+					UI.EWReplyInfo(admin, "Reply.Eban.Access.UnPermanent", bConsole);
+					return;
+				}
+
+				if (admin != null && target.sAdminSteamID.CompareTo(EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString())) != 0 && !AdminManager.PlayerHasPermissions(admin, "@css/ew_unban_other"))
+				{
+					UI.EWReplyInfo(admin, "Reply.Eban.Access.Other", bConsole);
+					return;
+				}
+
+				Server.NextFrame(() =>
+				{
+					UI.EWChatAdmin("Chat.Admin.Unrestricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_enabled, UI.PlayerInfo(target.sClientName, target.sClientSteamID));
+					UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
+				});
+
+				Server.NextFrame(async () =>
+				{
+					if (await target.UnBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.sClientSteamID, reason))
+					{
+						Server.NextFrame(() =>
+						{
+							if (admin != null && admin.IsValid) UI.EWReplyInfo(admin, "Reply.Eban.UnBan.Success", bConsole); //admin.PrintToChat("Success");
+							UI.EWSysInfo("Reply.Eban.UnBan.Success", 6);
+						});
+					}
+					else
+					{
+						Server.NextFrame(() =>
+						{
+							if (admin != null && admin.IsValid) UI.EWReplyInfo(admin, "Reply.Eban.UnBan.Failed", bConsole); //admin.PrintToChat("Failed");
+							UI.EWSysInfo("Reply.Eban.UnBan.Failed", 15);
+						});
+					}
+				});
 			});
 		}
 
@@ -555,6 +612,70 @@ namespace EntWatchSharp
 			else
 			{
 				Transfer.ItemName(admin, item, receiver, bConsole);
+			}
+		}
+
+		[ConsoleCommand("ew_spawn", "Allows the admin to spawn items")]
+		[RequiresPermissions("@css/ew_spawn")]
+		[CommandHelper(minArgs: 2, usage: "<itemname> <receiver> [<strip>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+		public void OnEWSpawn(CCSPlayerController? admin, CommandInfo command)
+		{
+			if (admin != null && !admin.IsValid) return;
+			bool bConsole = command.CallingContext == CommandCallingContext.Console;
+
+			string sItemName = command.GetArg(1);
+
+			if(string.IsNullOrEmpty(sItemName))
+			{
+				UI.EWReplyInfo(admin, "Reply.Spawn.BadItemName", bConsole);
+				return;
+			}
+
+			(List<CCSPlayerController> players, string targetname1) = Find(admin, command, 2, true, false, MultipleFlags.IGNORE_DEAD_PLAYERS);
+			if (players.Count == 0) return;
+			CCSPlayerController receiver = players.Single();
+
+			if (!EW.CheckDictionary(receiver, EW.g_BannedPlayer))
+			{
+				UI.EWReplyInfo(admin, "Info.Error", bConsole, "Player not found in dictionary");
+				return;
+			}
+
+			if (EW.g_BannedPlayer[receiver].bBanned)
+			{
+				UI.EWReplyInfo(admin, "Reply.Spawn.ReceiverHasBan", bConsole);
+				return;
+			}
+
+			bool bStrip = false;
+			string sStrip = command.GetArg(3);
+			if (!string.IsNullOrEmpty(sStrip)) bStrip = sStrip.ToLower().Contains("true") || sStrip.CompareTo("1") == 0;
+
+			SpawnItem.Spawn(admin, receiver, sItemName, bStrip, bConsole);
+		}
+
+		[ConsoleCommand("ew_list", "Shows a list of players including those who have disconnected")]
+		[RequiresPermissions("@css/ew_ban")]
+		[CommandHelper(minArgs: 0, usage: "", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+		public void OnEWList(CCSPlayerController? admin, CommandInfo command)
+		{
+			if (admin != null && !admin.IsValid) return;
+			bool bConsole = command.CallingContext == CommandCallingContext.Console;
+			
+			UI.EWReplyInfo(admin, "Reply.Offline.Info", bConsole);
+
+			int iCount = 0;
+			double CurrentTime = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+			foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
+			{
+				iCount++;
+				if (OfflineTest.Online)
+				{
+					UI.EWReplyInfo(admin, "Reply.Offline.OnServer", bConsole, iCount, OfflineTest.Name, OfflineTest.UserID, OfflineTest.SteamID, !string.IsNullOrEmpty(OfflineTest.LastItem) ? OfflineTest.LastItem : "-");
+				} else
+				{
+					UI.EWReplyInfo(admin, "Reply.Offline.Leave", bConsole, iCount, OfflineTest.Name, OfflineTest.UserID, OfflineTest.SteamID, !string.IsNullOrEmpty(OfflineTest.LastItem) ? OfflineTest.LastItem : "-", (int)((CurrentTime - OfflineTest.TimeStamp_Start) / 60));
+				}
 			}
 		}
 

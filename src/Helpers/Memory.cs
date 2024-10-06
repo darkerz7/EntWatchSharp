@@ -29,7 +29,9 @@ namespace EntWatchSharp
 
 		public static float MathCounter_GetValue(CMathCounter cMath)
 		{
-			return new CEntityOutputTemplate_float(cMath.Handle + Schema.GetSchemaOffset("CMathCounter", "m_OutValue")).OutValue;
+			//Broken after update 10/03/2024
+			//return new CEntityOutputTemplate_float(cMath.Handle + Schema.GetSchemaOffset("CMathCounter", "m_OutValue")).OutValue;
+			return new CEntityOutputTemplate_float(cMath.Handle + 1264).OutValue;
 		}
 	}
 

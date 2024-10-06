@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities;
 using EntWatchSharp.Helpers;
 using MySqlConnector;
 using System.Data;
@@ -280,7 +281,74 @@ namespace EntWatchSharp.Modules.Eban
             return false;
         }
 
-        public static async Task<bool> OfflineUnban(string sServer, int iTime)
+		public static async Task<EbanPlayer> GetBan(string SteamID, string sServer)
+		{
+			try
+			{
+				if (!string.IsNullOrEmpty(sServer) && db.bDBReady)
+				{
+					if (db.TypeDB == "sqlite")
+					{
+						using (SQLiteCommand cmd = new SQLiteCommand())
+						{
+							cmd.CommandText = "SELECT admin_name, admin_steamid, duration, timestamp_issued, reason, client_name FROM EntWatch_Current_Eban " +
+												"WHERE client_steamid=@steam and server=@server;";
+							cmd.Parameters.Add(new SQLiteParameter("@steam", SteamID));
+							cmd.Parameters.Add(new SQLiteParameter("@server", sServer));
+							using (DataTableReader reader = await ((DB_SQLite)db).Query(cmd))
+							{
+								if (reader != null && reader.HasRows)
+								{
+									await reader.ReadAsync();
+									EbanPlayer player = new EbanPlayer();
+									player.bBanned = true;
+									player.sAdminName = await reader.GetFieldValueAsync<string>(0);
+									player.sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
+									player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
+									player.iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
+									player.sReason = await reader.GetFieldValueAsync<string>(4);
+									player.sClientName = await reader.GetFieldValueAsync<string>(5);
+                                    player.sClientSteamID = SteamID;
+									return player;
+								}
+							}
+						}
+					}
+					else if (db.TypeDB == "mysql")
+					{
+						using (MySqlCommand cmd = new MySqlCommand())
+						{
+							cmd.CommandText = "SELECT admin_name, admin_steamid, duration, timestamp_issued, reason, client_name FROM EntWatch_Current_Eban " +
+												"WHERE client_steamid=@steam and server=@server;";
+							cmd.Parameters.Add(new MySqlParameter("@steam", SteamID));
+							cmd.Parameters.Add(new MySqlParameter("@server", sServer));
+							using (DataTableReader reader = await ((DB_Mysql)db).Query(cmd))
+							{
+								if (reader != null && reader.HasRows)
+								{
+									await reader.ReadAsync();
+									EbanPlayer player = new EbanPlayer();
+									player.bBanned = true;
+									player.sAdminName = await reader.GetFieldValueAsync<string>(0);
+									player.sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
+									player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
+									player.iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
+									player.sReason = await reader.GetFieldValueAsync<string>(4);
+									player.sClientName = await reader.GetFieldValueAsync<string>(5);
+									player.sClientSteamID = SteamID;
+									return player;
+								}
+							}
+						}
+					}
+					return null;
+				}
+			}
+			catch (Exception ex) { Console.WriteLine(ex); }
+			return null;
+		}
+
+		public static async Task<bool> OfflineUnban(string sServer, int iTime)
         {
             if (db.bDBReady)
             {

@@ -23,6 +23,7 @@ namespace EntWatchSharp
 		public static Dictionary<CCSPlayerController, EbanPlayer> g_BannedPlayer = new Dictionary<CCSPlayerController, EbanPlayer>();
 		public static Dictionary<CCSPlayerController, UHud> g_HudPlayer = new Dictionary<CCSPlayerController, UHud>();
 		public static Dictionary<CCSPlayerController, UsePriority> g_UsePriorityPlayer = new Dictionary<CCSPlayerController, UsePriority>();
+		public static List<OfflineBan> g_OfflinePlayer = new List<OfflineBan>();
 
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_Timer = null;
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerRetryDB = null;

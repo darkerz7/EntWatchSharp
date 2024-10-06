@@ -12,6 +12,11 @@ namespace EntWatchSharp.Modules.Eban
         public int iTimeStamp_Issued;
         public string sReason;
 
+        public string sClientName;
+		public string sClientSteamID;
+
+		public bool bFixSpawnItem;
+
         public async Task<bool> SetBan(string sBanAdminName, string sBanAdminSteamID, string sBanClientName, string sBanClientSteamID, int iBanDuration, string sBanReason)
         {
             if (!string.IsNullOrEmpty(sBanClientSteamID))
@@ -67,6 +72,7 @@ namespace EntWatchSharp.Modules.Eban
         public EbanPlayer()
         {
             bBanned = false;
-        }
+            bFixSpawnItem = false;
+		}
     }
 }

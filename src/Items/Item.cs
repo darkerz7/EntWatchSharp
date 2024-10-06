@@ -28,8 +28,6 @@ namespace EntWatchSharp.Items
             HammerID = cNewItem.HammerID;
 			if (cNewItem.GlowColor.Length == 4) GlowColor = cNewItem.GlowColor;
             else GlowColor = [255, 255, 255, 255];
-            FilterID = cNewItem.FilterID;
-			FilterValue = cNewItem.FilterValue;
 			BlockPickup = cNewItem.BlockPickup;
             if(BlockPickup || Cvar.GlobalBlock) WeaponHandle.CanBePickedUp = false;
             else WeaponHandle.CanBePickedUp = true;

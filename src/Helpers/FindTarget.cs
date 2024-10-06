@@ -21,7 +21,8 @@ public static class FindTarget
             int numArg,
             bool singletarget,
             bool immunitycheck,
-            MultipleFlags flags
+            MultipleFlags flags,
+            bool shownomatching = true
         )
     {
         if (command.ArgCount < numArg)
@@ -34,7 +35,7 @@ public static class FindTarget
 		TargetResult targetresult = command.GetArgTargetResult(numArg);
         if (targetresult.Players.Count == 0)
         {
-            UI.EWReplyInfo(player, "Reply.No_matching_client", bConsole);
+            if (shownomatching) UI.EWReplyInfo(player, "Reply.No_matching_client", bConsole);
 
             return ([], string.Empty);
         }

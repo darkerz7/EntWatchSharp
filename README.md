@@ -20,6 +20,9 @@ Alpha version of the plugin, needs many improvements
 15. The database is compatible with the old [EntWatch_DZ](https://github.com/darkerz7/EntWatch_DZ)
 16. Work with math_counter (Mode: 6, 7) and HP (Mode: 8) is available
 17. In-game config change
+18. Offline ew_ban/ew_unban
+19. Applying filters for the activator
+20. Items spawn
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/)
@@ -45,27 +48,26 @@ Alpha version of the plugin, needs many improvements
 ```
 [
 	{
-		"Name": "",						//String, FullName of Item (Chat)
+		"Name": "",					//String, FullName of Item (Chat)
 		"ShortName": "",				//String, ShortName of Item (Hud)
 		"Color": "",					//String, One of the colors. (Chat)
 		"HammerID": 0,					//Integer, weapon_* HammerID
-		"GlowColor": [0,0,0,0],			//Array[4], One of the colors. (Glow)
-		"FilterID": 0,					//Integer, not in use yet
-		"FilterValue": "",				//String, not in use yet
-		"BlockPickup": false,			//Bool, The item cannot be picked up
-		"AllowTransfer": false,			//Bool, Allow admins to transfer an item
+		"GlowColor": [0,0,0,0],				//Array[4], One of the colors. (Glow)
+		"BlockPickup": false,				//Bool, The item cannot be picked up
+		"AllowTransfer": false,				//Bool, Allow admins to transfer an item
 		"ForceDrop": false,				//Bool, The item will be dropped if player dies or disconnects
 		"Chat": false,					//Bool, Display chat items
 		"Hud": false,					//Bool, Display Hud items
 		"TriggerID": 0,					//Integer, Sets a trigger that an ebanned player cant activate, mostly to prevent picking up weapon_knife items
-		"UsePriority": false,			//Bool, Enabled by default. You can disable the forced pressing of the button on a specific item
+		"UsePriority": false,				//Bool, Enabled by default. You can disable the forced pressing of the button on a specific item
 		"AbilityList": [				//Array of abilities
 			{
-				"Name": "",				//String, Custom ability name, can be omitted
+				"Name": "",			//String, Custom ability name, can be omitted
 				"ButtonID": 0,			//Integer, Allows you to sort buttons
 				"ButtonClass": "",		//String, Button Class, Can use "game_ui" for anoter activation method
+				"Filter": "",		//String, Filter value for activator. |$attribute| for filter_activator_attribute_int (starts with $); |context:value| for filter_activator_context (contains :); other for filter_activator_name
 				"Chat_Uses": false,		//Bool, Display chat someone is using an item(if disabled chat)
-				"Mode": 0,				//Integer, Mode for item. 0 = Can hold E, 1 = Spam protection only, 2 = Cooldowns, 3 = Limited uses, 4 = Limited uses with cooldowns, 5 = Cooldowns after multiple uses, 6 = Counter - stops when minimum is reached, 7 = Counter - stops when maximum is reached, 8 = Health button
+				"Mode": 0,			//Integer, Mode for item. 0 = Can hold E, 1 = Spam protection only, 2 = Cooldowns, 3 = Limited uses, 4 = Limited uses with cooldowns, 5 = Cooldowns after multiple uses, 6 = Counter - stops when minimum is reached, 7 = Counter - stops when maximum is reached, 8 = Health button
 				"MaxUses": 0,			//Integer, Maximum uses for modes 3, 4, 5
 				"CoolDown": 0,			//Integer, Cooldown of item for modes 2, 4, 5
 				"Ignore": false,		//Bool, Ignore item display
@@ -77,6 +79,7 @@ Alpha version of the plugin, needs many improvements
 				"Name": "",
 				"ButtonID": 0,
 				"ButtonClass": "game_ui::PressedAttack",	//Example for Game_UI
+				"Filter": "",
 				"Chat_Uses": false,
 				"Mode": 0,
 				"MaxUses": 0,
@@ -108,6 +111,7 @@ Privilege | Description
 `@css/ew_unban_other` | Allows access to unbans from other admins
 `@css/ew_transfer` | Allows transfer of items
 `@css/ew_map` | Allows you to change configs in the game
+`@css/ew_spawn` | Allows items to spawn
 
 ## CVARs
 Cvar | Parameters | Description
@@ -132,6 +136,7 @@ Cvar | Parameters | Description
 `ewc_banreason` | `<string>` | Default ban reason. (Default Trolling)
 `ewc_unbanreason` | `<string>` | Default unban reason. (Default Giving another chance)
 `ewc_keep_expired_ban` | `<false-true>` | Enable/Disable keep expired bans. (Default true)
+`ewc_offline_clear_time` | `<1-240>` | Time during which data is stored. (Default 30)
 
 ## Commands
 Client Command | Description
@@ -153,6 +158,8 @@ Admin Command | Privilege | Description
 `ew_unban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player `<#userid/name> [<reason>]`
 `ew_banlist` | `@css/ew_ban` | Displays a list of restrictions
 `ew_transfer` | `@css/ew_transfer` | Allows the admin to transfer items `<owner>/$<itemname> <receiver>`
+`ew_spawn` | `@css/ew_spawn` | Allows the admin to spawn items `<itemname> <receiver> [<strip>]`
+`ew_list` | `@css/ew_ban` | Shows a list of players including those who have disconnected
 
 ## Mapper's Commands
 Map Command | Variables | Description
@@ -175,7 +182,4 @@ PS: .The values ​​of the int must be greater than or equal to 0
 
 ## Future plans
 1. Fixes Errors
-2. Add filter processing
 3. Add display to clan tag
-4. Add ban offline players
-5. Add item spawn

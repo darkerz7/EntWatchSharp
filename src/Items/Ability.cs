@@ -1,5 +1,4 @@
 ﻿using CounterStrikeSharp.API.Core;
-using System.Diagnostics.Eventing.Reader;
 
 namespace EntWatchSharp.Items
 {
@@ -16,6 +15,7 @@ namespace EntWatchSharp.Items
         public bool LockItem { get; set; }
 		public int MathID { get; set; }
         public bool MathNameFix { get; set; }
+		public string Filter { get; set; } // <activatorname> or <Context:1> or <$attribute>
 
 		public CEntityInstance Entity;
         public CMathCounter MathCounter;
@@ -35,6 +35,7 @@ namespace EntWatchSharp.Items
             LockItem = false;
 			MathID = 0;
 			MathNameFix = false;
+            Filter = "";
 
 			Entity = null;
 			MathCounter = null;
@@ -54,6 +55,7 @@ namespace EntWatchSharp.Items
             LockItem = false;
 			MathID = 0;
 			MathNameFix = false;
+			Filter = "";
 
 			Entity = entity;
             MathCounter = null;
@@ -75,13 +77,33 @@ namespace EntWatchSharp.Items
             Ignore = cCopyAbility.Ignore;
             LockItem = cCopyAbility.LockItem;
             MathID = cCopyAbility.MathID;
-            MathNameFix = cCopyAbility. MathNameFix;
+            MathNameFix = cCopyAbility.MathNameFix;
+            Filter = cCopyAbility.Filter;
 
 			Entity = null;
 			MathCounter = null;
 			EW.UpdateTime();
 			fLastUse = EW.fGameTime - CoolDown;
 			iCurrentUses = 0;
+		}
+
+        public void SetFilter(CEntityInstance activator)
+        {
+            if (!string.IsNullOrEmpty(Filter))
+            {
+                if (Filter[0] == '$')
+                {
+                    if (Filter.Length > 1) Entity.AcceptInput("AddAttribute", activator, null, Filter.Substring(1));
+                }
+                else if (Filter.Contains(":"))
+                {
+					Entity.AcceptInput("AddContext", activator, null, Filter);
+				}
+                else
+                {
+					activator.Entity.Name = Filter;
+				}
+			}
 		}
 
 		public void Used()
