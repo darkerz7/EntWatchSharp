@@ -60,12 +60,13 @@ Alpha version of the plugin, needs many improvements
 		"Hud": false,					//Bool, Display Hud items
 		"TriggerID": 0,					//Integer, Sets a trigger that an ebanned player cant activate, mostly to prevent picking up weapon_knife items
 		"UsePriority": false,				//Bool, Enabled by default. You can disable the forced pressing of the button on a specific item
+		"SpawnerID": 0,					//Integer, Allows admins to spawn items. Not recommended to use because it can break the items. Type point_template's HammerID which spawns the item
 		"AbilityList": [				//Array of abilities
 			{
 				"Name": "",			//String, Custom ability name, can be omitted
 				"ButtonID": 0,			//Integer, Allows you to sort buttons
 				"ButtonClass": "",		//String, Button Class, Can use "game_ui" for anoter activation method
-				"Filter": "",		//String, Filter value for activator. |$attribute| for filter_activator_attribute_int (starts with $); |context:value| for filter_activator_context (contains :); other for filter_activator_name
+				"Filter": "",			//String, Filter value for activator. |$attribute| for filter_activator_attribute_int (starts with $); |context:value| for filter_activator_context (contains :); other for filter_activator_name
 				"Chat_Uses": false,		//Bool, Display chat someone is using an item(if disabled chat)
 				"Mode": 0,			//Integer, Mode for item. 0 = Can hold E, 1 = Spam protection only, 2 = Cooldowns, 3 = Limited uses, 4 = Limited uses with cooldowns, 5 = Cooldowns after multiple uses, 6 = Counter - stops when minimum is reached, 7 = Counter - stops when maximum is reached, 8 = Health button
 				"MaxUses": 0,			//Integer, Maximum uses for modes 3, 4, 5
@@ -73,7 +74,7 @@ Alpha version of the plugin, needs many improvements
 				"Ignore": false,		//Bool, Ignore item display
 				"LockItem": false,		//Bool, Lock button/door/game_ui_IO
 				"MathID": 0,			//Integer, math_counter HammerID for modes 6, 7
-				"MathNameFix": false	//Bool, Fix the name of the math_counter (Work with flag: Preserve entity names (Don't do name fixup) ->point_template/env_entity_maker)
+				"MathNameFix": false		//Bool, Fix the name of the math_counter (Work with flag: Preserve entity names (Don't do name fixup) ->point_template/env_entity_maker)
 			},
 			{
 				"Name": "",
@@ -182,4 +183,7 @@ PS: .The values ​​of the int must be greater than or equal to 0
 
 ## Future plans
 1. Fixes Errors
-3. Add display to clan tag
+2. Add display to clan tag
+3. Fix item highlighting
+4. Add API to communicate with other plugins
+5. Add transmit for HUD. Waiting for the transmit function to be added to CS# [Pull request](https://github.com/roflmuffin/CounterStrikeSharp/pull/608)

@@ -14,7 +14,7 @@
 		public bool Hud { get; set; }
 		public int TriggerID { get; set; }
 		public bool UsePriority { get; set; }
-		public int Spawner { get; set; }
+		public int SpawnerID { get; set; }
 
 		public List<Ability> AbilityList { get; set; }
 
@@ -39,7 +39,7 @@
             TriggerID = 0;
 			UsePriority = false;
 			AbilityList = new List<Ability>();
-            Spawner = 0;
+            SpawnerID = 0;
         }
 	}
 }

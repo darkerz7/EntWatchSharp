@@ -8,10 +8,6 @@ using static EntWatchSharp.Helpers.FindTarget;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
-using CounterStrikeSharp.API.Modules.Entities;
-using System;
-using System.Numerics;
-using CounterStrikeSharp.API.Modules.Commands.Targeting;
 
 namespace EntWatchSharp
 {

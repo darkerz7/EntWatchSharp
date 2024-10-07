@@ -1,9 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
-using CounterStrikeSharp.API.Modules.Commands.Targeting;
-using CounterStrikeSharp.API.Modules.Entities;
 using EntWatchSharp.Helpers;
-using System;
 
 namespace EntWatchSharp.Modules.Eban
 {

@@ -283,5 +283,14 @@ namespace EntWatchSharp
 			if (controller.LifeState == (byte)LifeState_t.LIFE_ALIVE || controller.PawnIsAlive) return true;
 			else return false;
 		}
+
+		public static float Distance(CounterStrikeSharp.API.Modules.Utils.Vector point1, CounterStrikeSharp.API.Modules.Utils.Vector point2)
+		{
+			float dx = point2.X - point1.X;
+			float dy = point2.Y - point1.Y;
+			float dz = point2.Z - point1.Z;
+
+			return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+		}
 	}
 }

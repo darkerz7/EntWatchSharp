@@ -37,6 +37,7 @@ namespace EntWatchSharp.Items
 			Hud = cNewItem.Hud;
 			UsePriority = cNewItem.UsePriority;
             TriggerID = cNewItem.TriggerID;
+            SpawnerID = cNewItem.SpawnerID;
 			AbilityList = new List<Ability>();
             foreach(Ability ability in cNewItem.AbilityList.ToList())
             {
