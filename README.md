@@ -1,6 +1,6 @@
 # [Core]EntWatchSharp for CounterStrikeSharp
 Notify players about entity interactions
-Alpha version of the plugin, needs many improvements
+Beta version of the plugin, needs many improvements
 
 ## Features:
 1. JSON Configs
@@ -150,20 +150,20 @@ Client Command | Description
 `ehud_refresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
 `ehud_sheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
 `eup` | Allows the player to use UsePriority {bool}
-`ew_status`,`css_estatus` | Allows the player to view the restrictions {null/target}
+`ew_status`<br>`css_estatus` | Allows the player to view the restrictions {null/target}
 
 ## Admin's commands
 Admin Command | Privilege | Description
 --- | --- | ---
-`ew_reload`,`css_ereload` | `@css/ew_reload` | Reloads config and Scheme
-`ew_showitems`,`css_eshowitems` | `@css/ew_reload` | Shows a list of spawned items
-`ew_showscheme`,`css_eshowscheme` | `@css/ew_reload` | Shows the scheme
-`ew_ban`,`css_eban` | `@css/ew_ban`+`@css/ew_ban_perm`+`@css/ew_ban_long` | Allows the admin to restrict items for the player `<#userid/name> [<time>] [<reason>]`
-`ew_unban`,`css_eunban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player `<#userid/name> [<reason>]`
-`ew_banlist`,`css_ebanlist` | `@css/ew_ban` | Displays a list of restrictions
-`ew_transfer`,`css_etransfer` | `@css/ew_transfer` | Allows the admin to transfer items `<owner>/$<itemname> <receiver>`
-`ew_spawn`,`css_espawn` | `@css/ew_spawn` | Allows the admin to spawn items `<itemname> <receiver> [<strip>]`
-`ew_list`,`css_elist` | `@css/ew_ban` | Shows a list of players including those who have disconnected
+`ew_reload`<br>`css_ereload` | `@css/ew_reload` | Reloads config and Scheme
+`ew_showitems`<br>`css_eshowitems` | `@css/ew_reload` | Shows a list of spawned items
+`ew_showscheme`<br>`css_eshowscheme` | `@css/ew_reload` | Shows the scheme
+`ew_ban`<br>`css_eban` | `@css/ew_ban`+`@css/ew_ban_perm`+`@css/ew_ban_long` | Allows the admin to restrict items for the player `<#userid/name> [<time>] [<reason>]`
+`ew_unban`<br>`css_eunban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player `<#userid/name> [<reason>]`
+`ew_banlist`<br>`css_ebanlist` | `@css/ew_ban` | Displays a list of restrictions
+`ew_transfer`<br>`css_etransfer` | `@css/ew_transfer` | Allows the admin to transfer items `<owner>/$<itemname> <receiver>`
+`ew_spawn`<br>`css_espawn` | `@css/ew_spawn` | Allows the admin to spawn items `<itemname> <receiver> [<strip>]`
+`ew_list`<br>`css_elist` | `@css/ew_ban` | Shows a list of players including those who have disconnected
 
 ## Mapper's Commands
 Map Command | Variables | Description
