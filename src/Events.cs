@@ -9,6 +9,7 @@ using EntWatchSharp.Helpers;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
+using EntWatchSharpAPI;
 
 namespace EntWatchSharp
 {
@@ -22,6 +23,7 @@ namespace EntWatchSharp
 			RegisterListener<OnEntitySpawned>(OnEntitySpawned_Listener);
 			RegisterListener<OnEntityDeleted>(OnEntityDeleted_Listener);
 			RegisterListener<OnTick>(OnOnTick_Listener);
+			RegisterListener<CheckTransmit>(OnCheckTransmit_Listener);
 			RegisterEventHandler<EventRoundStart>(OnEventRoundStart);
 			RegisterEventHandler<EventRoundEnd>(OnEventRoundEnd);
 			RegisterEventHandler<EventItemPickup>(OnEventItemPickupPost);
@@ -75,6 +77,7 @@ namespace EntWatchSharp
 			RemoveListener<OnEntitySpawned>(OnEntitySpawned_Listener);
 			RemoveListener<OnEntityDeleted>(OnEntityDeleted_Listener);
 			RemoveListener<OnTick>(OnOnTick_Listener);
+			RemoveListener<CheckTransmit>(OnCheckTransmit_Listener);
 			DeregisterEventHandler<EventRoundStart>(OnEventRoundStart);
 			DeregisterEventHandler<EventRoundEnd>(OnEventRoundEnd);
 			DeregisterEventHandler<EventItemPickup>(OnEventItemPickupPost);
@@ -331,6 +334,22 @@ namespace EntWatchSharp
 			});
 		}
 
+		private void OnCheckTransmit_Listener(CCheckTransmitInfoList infoList)
+		{
+			if (!EW.g_CfgLoaded) return;
+			foreach ((CCheckTransmitInfo info, CCSPlayerController? player) in infoList)
+			{
+				if (player == null || !player.IsValid) continue;
+				foreach (KeyValuePair<CCSPlayerController,UHud> hud in EW.g_HudPlayer)
+				{
+					if (hud.Value is HudWorldText && ((HudWorldText)hud.Value).Entity != null && ((HudWorldText)hud.Value).Entity.IsValid && player != hud.Key)
+					{
+						info.TransmitEntities.Remove(((HudWorldText)hud.Value).Entity);
+					}
+				}
+			}
+		}
+
 		[GameEventHandler]
 		private HookResult OnEventRoundStart(EventRoundStart @event, GameEventInfo info)
 		{
@@ -364,23 +383,27 @@ namespace EntWatchSharp
 						continue;
 					if (ownerWeapon.Value.AttributeManager.Item.ItemDefinitionIndex != @event.Defindex)
 						continue;
-					int indexItem = EW.IndexItem(ownerWeapon.Index);
-					if (indexItem > -1)
+
+					foreach (Item ItemTest in EW.g_ItemList.ToList())
 					{
-						EW.g_ItemList[indexItem].Owner = pl;
-						EW.g_ItemList[indexItem].Team = pl.TeamNum;
-						EW.g_ItemList[indexItem].SetDelay();
-						if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
-						UI.EWChatActivity("Chat.Pickup", EW.g_Scheme.color_pickup, EW.g_ItemList[indexItem], EW.g_ItemList[indexItem].Owner);
-						foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
+						if (ItemTest.thisItem(ownerWeapon.Index))
 						{
-							if (pl.UserId == OfflineTest.UserID)
+							ItemTest.Owner = pl;
+							ItemTest.Team = pl.TeamNum;
+							ItemTest.SetDelay();
+							if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
+							UI.EWChatActivity("Chat.Pickup", EW.g_Scheme.color_pickup, ItemTest, ItemTest.Owner);
+							EW.g_cAPI?.OnPickUpItem(ItemTest.Name, pl);
+							foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 							{
-								OfflineTest.LastItem = EW.g_ItemList[indexItem].Name;
-								break;
+								if (pl.UserId == OfflineTest.UserID)
+								{
+									OfflineTest.LastItem = ItemTest.Name;
+									break;
+								}
 							}
+							return HookResult.Continue;
 						}
-						return HookResult.Continue;
 					}
 				}
 			}
@@ -438,6 +461,7 @@ namespace EntWatchSharp
 								ItemTest.Owner = null;
 								if (EW.CheckDictionary(client, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[client].UpdateCountButton();
 								UI.EWChatActivity("Chat.Drop", EW.g_Scheme.color_drop, ItemTest, client);
+								EW.g_cAPI?.OnDropItem(ItemTest.Name, client);
 							}
 							return;
 						}
@@ -468,6 +492,7 @@ namespace EntWatchSharp
 						ItemTest.Owner = null;
 						if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
 						UI.EWChatActivity("Chat.Death", EW.g_Scheme.color_death, ItemTest, pl);
+						EW.g_cAPI?.OnPlayerDeathWithItem(ItemTest.Name, pl);
 						if (!ItemTest.ForceDrop)
 						{
 							ItemTest.WeaponHandle.Remove();
@@ -533,6 +558,7 @@ namespace EntWatchSharp
 				{
 					ItemTest.Owner = null;
 					UI.EWChatActivity("Chat.Disconnect", EW.g_Scheme.color_disconnect, ItemTest, @event.Userid);
+					EW.g_cAPI?.OnPlayerDisconnectWithItem(ItemTest.Name, @event.Userid);
 					if (!ItemTest.ForceDrop)
 					{
 						ItemTest.WeaponHandle.Remove();
@@ -586,6 +612,7 @@ namespace EntWatchSharp
 								AbilityTest.SetFilter(activator);
 								AbilityTest.Used();
 								UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
+								EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
 								return true;
 							}
 							else return false;

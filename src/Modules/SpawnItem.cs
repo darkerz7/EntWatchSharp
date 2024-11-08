@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API.Core;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Items;
+using Microsoft.Extensions.Logging;
 
 namespace EntWatchSharp.Modules
 {
@@ -77,6 +78,7 @@ namespace EntWatchSharp.Modules
 					});
 				});
 				UI.EWChatAdmin("Reply.Spawn.Notify", $"{UI.PlayerInfo(admin)}{EW.g_Scheme.color_warning}", $"{Item.Color}{Item.Name}({Item.ShortName}){EW.g_Scheme.color_warning}", $"{UI.PlayerInfo(receiver)}");
+				EW.g_cAPI?.OnAdminSpawnItem(admin, Item.Name, receiver);
 			} else
 			{
 				UI.EWReplyInfo(admin, "Reply.Spawn.NoSpawner", bConsole);

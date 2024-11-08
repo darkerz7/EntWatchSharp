@@ -83,6 +83,7 @@ namespace EntWatchSharp.Modules
 			ItemTest.WeaponHandle.Teleport(receiver.Pawn.Value.AbsOrigin, null, null);
 
 			UI.EWChatAdmin("Reply.Transfer.Notify", $"{UI.PlayerInfo(admin)}{EW.g_Scheme.color_warning}", $"{ItemTest.Color}{ItemTest.Name}{EW.g_Scheme.color_warning}", $"{(target != null ? UI.PlayerInfo(target) : $"{EW.g_Scheme.color_name}Server{EW.g_Scheme.color_warning}")}{EW.g_Scheme.color_warning}", $"{UI.PlayerInfo(receiver)}");
+			EW.g_cAPI?.OnAdminTransferedItem(admin, ItemTest.Name, receiver);
 		}
 	}
 }

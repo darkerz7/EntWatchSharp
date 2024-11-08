@@ -23,9 +23,11 @@ Alpha version of the plugin, needs many improvements
 18. Offline ew_ban/ew_unban
 19. Applying filters for the activator
 20. Items spawn
+21. API for interaction with other plugins
+22. Transmit HUD for other players
 
 ## Required packages:
-1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/)
+1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
 2. [MySqlConnector](https://www.nuget.org/packages/MySqlConnector/2.3.7?_src=template) (2.3.7)
 3. [System.Data.SQLite.Core](https://www.nuget.org/packages/System.Data.SQLite.Core/1.0.117?_src=template) (1.0.117 only; 1.0.118 don't work)
 4. [CS2-HammerIDFix](https://github.com/darkerz7/CS2-HammerIDFix)
@@ -34,15 +36,16 @@ Alpha version of the plugin, needs many improvements
 7. Recomended [CS2-CustomIO](https://github.com/darkerz7/CS2-CustomIO)
 
 ## Installation:
-1. Install `CS2-HammerIDFix`, `ClientPrefs_CS2` and `CS2-EntityFix`
+1. Install `CS2-HammerIDFix`, `ClientPrefs_CS2`, `CS2-CustomIO` and `CS2-EntityFix`
 2. Compile or copy EntWatchSharp to `counterstrikesharp/plugins/EntWatchSharp` folger
 3. Copy and configure the configuration file `db_config.json` and `log_config.json` to `counterstrikesharp/plugins/EntWatchSharp` folger
 4. Install or copy DLL from `Required packages` (`MySqlConnector.dll`, `SQLite.Interop.dll`, `System.Data.SQLite.dll`) to counterstrikesharp/plugins/EntWatchSharp folger
 5. Copy `lang` folger to `counterstrikesharp/plugins/EntWatchSharp/lang` folger
 6. Copy `gamedata` to `counterstrikesharp/plugins/EntWatchSharp/gamedata` folger 
 7. Copy and configure `mapsconfig` and `schemes` to `addons/entwatch` folger
-8. Add CVARs to server.cfg
-9. Restart server
+8. Compile or copy EntWatchSharpAPI to `counterstrikesharp/shared/EntWatchSharpAPI` folger
+9. Add CVARs to server.cfg
+10. Restart server
 
 ## Example MapConfig
 ```
@@ -147,20 +150,20 @@ Client Command | Description
 `ehud_refresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
 `ehud_sheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
 `eup` | Allows the player to use UsePriority {bool}
-`ew_status` | Allows the player to view the restrictions {null/target}
+`ew_status`,`css_estatus` | Allows the player to view the restrictions {null/target}
 
 ## Admin's commands
 Admin Command | Privilege | Description
 --- | --- | ---
-`ew_reload` | `@css/ew_reload` | Reloads config and Scheme
-`ew_showitems` | `@css/ew_reload` | Shows a list of spawned items
-`ew_showscheme` | `@css/ew_reload` | Shows the scheme
-`ew_ban` | `@css/ew_ban`+`@css/ew_ban_perm`+`@css/ew_ban_long` | Allows the admin to restrict items for the player `<#userid/name> [<time>] [<reason>]`
-`ew_unban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player `<#userid/name> [<reason>]`
-`ew_banlist` | `@css/ew_ban` | Displays a list of restrictions
-`ew_transfer` | `@css/ew_transfer` | Allows the admin to transfer items `<owner>/$<itemname> <receiver>`
-`ew_spawn` | `@css/ew_spawn` | Allows the admin to spawn items `<itemname> <receiver> [<strip>]`
-`ew_list` | `@css/ew_ban` | Shows a list of players including those who have disconnected
+`ew_reload`,`css_ereload` | `@css/ew_reload` | Reloads config and Scheme
+`ew_showitems`,`css_eshowitems` | `@css/ew_reload` | Shows a list of spawned items
+`ew_showscheme`,`css_eshowscheme` | `@css/ew_reload` | Shows the scheme
+`ew_ban`,`css_eban` | `@css/ew_ban`+`@css/ew_ban_perm`+`@css/ew_ban_long` | Allows the admin to restrict items for the player `<#userid/name> [<time>] [<reason>]`
+`ew_unban`,`css_eunban` | `@css/ew_unban`+`@css/ew_unban_perm`+`@css/ew_unban_other` | Allows the admin to remove the item restriction for a player `<#userid/name> [<reason>]`
+`ew_banlist`,`css_ebanlist` | `@css/ew_ban` | Displays a list of restrictions
+`ew_transfer`,`css_etransfer` | `@css/ew_transfer` | Allows the admin to transfer items `<owner>/$<itemname> <receiver>`
+`ew_spawn`,`css_espawn` | `@css/ew_spawn` | Allows the admin to spawn items `<itemname> <receiver> [<strip>]`
+`ew_list`,`css_elist` | `@css/ew_ban` | Shows a list of players including those who have disconnected
 
 ## Mapper's Commands
 Map Command | Variables | Description
@@ -185,5 +188,3 @@ PS: .The values ​​of the int must be greater than or equal to 0
 1. Fixes Errors
 2. Add display to clan tag
 3. Fix item highlighting
-4. Add API to communicate with other plugins
-5. Add transmit for HUD. Waiting for the transmit function to be added to CS# [Pull request](https://github.com/roflmuffin/CounterStrikeSharp/pull/608)

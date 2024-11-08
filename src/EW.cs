@@ -6,6 +6,7 @@ using EntWatchSharp.Items;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
+using EntWatchSharpAPI;
 
 namespace EntWatchSharp
 {
@@ -19,6 +20,10 @@ namespace EntWatchSharp
 		
 		public static bool g_bAPI = false;
 		public static IClientPrefsApi? _CP_api;
+
+		public static bool g_bEWAPI = false;
+		public static IEntWatchSharpApi? _EW_api;
+		public static EWAPI g_cAPI = null;
 
 		public static Dictionary<CCSPlayerController, EbanPlayer> g_BannedPlayer = new Dictionary<CCSPlayerController, EbanPlayer>();
 		public static Dictionary<CCSPlayerController, UHud> g_HudPlayer = new Dictionary<CCSPlayerController, UHud>();
@@ -142,16 +147,6 @@ namespace EntWatchSharp
 				return EntityParentRecursive(ownerentity);
 			}
 			return null;
-		}
-
-		public static int IndexItem(uint weaponindex)
-		{
-			for(int i = 0; i < g_ItemList.Count; i++)
-			{
-				Item ItemTest = g_ItemList[i];
-				if (ItemTest.thisItem(weaponindex)) return i;
-			}
-			return -1;
 		}
 
 		public static async void LoadClientPrefs(CCSPlayerController? player)

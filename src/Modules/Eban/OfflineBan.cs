@@ -43,14 +43,16 @@ namespace EntWatchSharp.Modules.Eban
 			offlineplayer.Immutity = AdminManager.GetPlayerImmunity(UserID);
 			return offlineplayer;
 		}
-		public static void PlayerConnectFull(CCSPlayerController UserID)
+		public static void PlayerConnectFull(CCSPlayerController? UserID)
 		{
+			if (UserID == null || !UserID.IsValid ||UserID.IsBot) return;
 			OfflineBan OfflinePlayer = CreateOrFind(UserID);
 			OfflinePlayer.Player = UserID;
 			OfflinePlayer.Online = true;
 		}
-		public static void PlayerDisconnect(CCSPlayerController UserID)
+		public static void PlayerDisconnect(CCSPlayerController? UserID)
 		{
+			if (UserID == null || !UserID.IsValid || UserID.IsBot) return;
 			OfflineBan OfflinePlayer = CreateOrFind(UserID);
 			OfflinePlayer.TimeStamp_Start = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 			OfflinePlayer.TimeStamp = OfflinePlayer.TimeStamp_Start + Cvar.OfflineClearTime * 60;

@@ -16,23 +16,34 @@ namespace EntWatchSharp
 		void UnRegCommands()
 		{
 			RemoveCommand("ew_reload", OnEWReload);
+			RemoveCommand("css_ereload", OnEWReload);
 			RemoveCommand("ew_showitems", OnEWShow);
+			RemoveCommand("css_eshowitems", OnEWShow);
 			RemoveCommand("ew_showscheme", OnEWScheme);
+			RemoveCommand("css_eshowscheme", OnEWScheme);
 			RemoveCommand("ehud", OnEWChangeHud);
 			RemoveCommand("ehud_pos", OnEWChangeHudPos);
 			RemoveCommand("ehud_refresh", OnEWChangeHudRefresh);
 			RemoveCommand("ehud_sheet", OnEWChangeHudSheet);
 			RemoveCommand("eup", OnEWChangeUsePriority);
 			RemoveCommand("ew_ban", OnEWBan);
+			RemoveCommand("css_eban", OnEWBan);
 			RemoveCommand("ew_unban", OnEWUnBan);
+			RemoveCommand("css_eunban", OnEWUnBan);
 			RemoveCommand("ew_status", OnEWStatus);
+			RemoveCommand("css_estatus", OnEWStatus);
 			RemoveCommand("ew_banlist", OnEWBanList);
+			RemoveCommand("css_ebanlist", OnEWBanList);
 			RemoveCommand("ew_transfer", OnEWTransfer);
+			RemoveCommand("css_etransfer", OnEWTransfer);
 			RemoveCommand("ew_spawn", OnEWSpawn);
+			RemoveCommand("css_espawn", OnEWSpawn);
 			RemoveCommand("ew_list", OnEWList);
+			RemoveCommand("css_elist", OnEWList);
 		}
 
 		[ConsoleCommand("ew_reload", "Reloads config and Scheme")]
+		[ConsoleCommand("css_ereload", "Reloads config and Scheme")]
 		[RequiresPermissions("@css/ew_reload")]
 		public void OnEWReload(CCSPlayerController? player, CommandInfo command)
 		{
@@ -45,6 +56,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ew_showitems", "Shows a list of spawned items")]
+		[ConsoleCommand("css_eshowitems", "Shows a list of spawned items")]
 		[RequiresPermissions("@css/ew_reload")]
 		public void OnEWShow(CCSPlayerController? player, CommandInfo command)
 		{
@@ -71,6 +83,7 @@ namespace EntWatchSharp
 			}
 		}
 		[ConsoleCommand("ew_showscheme", "Shows the scheme")]
+		[ConsoleCommand("css_eshowscheme", "Shows the scheme")]
 		[RequiresPermissions("@css/ew_reload")]
 		public void OnEWScheme(CCSPlayerController? player, CommandInfo command)
 		{
@@ -251,6 +264,7 @@ namespace EntWatchSharp
 
 		//Eban Start
 		[ConsoleCommand("ew_ban", "Allows the admin to restrict items for the player")]
+		[ConsoleCommand("css_eban", "Allows the admin to restrict items for the player")]
 		[RequiresPermissions("@css/ew_ban")]
 		[CommandHelper(minArgs: 1, usage: "<#userid|name> [<time>] [<reason>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 		public void OnEWBan(CCSPlayerController? admin, CommandInfo command)
@@ -354,6 +368,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ew_unban", "Allows the admin to remove the item restriction for a player")]
+		[ConsoleCommand("css_eunban", "Allows the admin to remove the item restriction for a player")]
 		[RequiresPermissions("@css/ew_unban")]
 		[CommandHelper(minArgs: 1, usage: "<#userid|name> [<reason>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 		public void OnEWUnBan(CCSPlayerController? admin, CommandInfo command)
@@ -454,6 +469,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ew_status", "Allows the player to view the restrictions")]
+		[ConsoleCommand("css_estatus", "Allows the player to view the restrictions")]
 		[CommandHelper(minArgs: 0, usage: "", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 		public void OnEWStatus(CCSPlayerController? player, CommandInfo command)
 		{
@@ -496,6 +512,7 @@ namespace EntWatchSharp
 			}
 		}
 		[ConsoleCommand("ew_banlist", "Displays a list of restrictions")]
+		[ConsoleCommand("css_ebanlist", "Displays a list of restrictions")]
 		[RequiresPermissions("@css/ew_ban")]
 		[CommandHelper(minArgs: 0, usage: "", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 		public void OnEWBanList(CCSPlayerController? admin, CommandInfo command)
@@ -530,6 +547,7 @@ namespace EntWatchSharp
 		//Eban End
 
 		[ConsoleCommand("ew_transfer", "Allows the admin to transfer items")]
+		[ConsoleCommand("css_etransfer", "Allows the admin to transfer items")]
 		[RequiresPermissions("@css/ew_transfer")]
 		[CommandHelper(minArgs: 2, usage: "<owner>/$<itemname> <receiver>", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 		public void OnEWTransfer(CCSPlayerController? admin, CommandInfo command)
@@ -612,6 +630,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ew_spawn", "Allows the admin to spawn items")]
+		[ConsoleCommand("css_espawn", "Allows the admin to spawn items")]
 		[RequiresPermissions("@css/ew_spawn")]
 		[CommandHelper(minArgs: 2, usage: "<itemname> <receiver> [<strip>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 		public void OnEWSpawn(CCSPlayerController? admin, CommandInfo command)
@@ -651,6 +670,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ew_list", "Shows a list of players including those who have disconnected")]
+		[ConsoleCommand("css_elist", "Shows a list of players including those who have disconnected")]
 		[RequiresPermissions("@css/ew_ban")]
 		[CommandHelper(minArgs: 0, usage: "", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 		public void OnEWList(CCSPlayerController? admin, CommandInfo command)

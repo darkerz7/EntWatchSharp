@@ -1,20 +1,24 @@
 ﻿using ClientPrefsAPI;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes;
+using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Timers;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
+using EntWatchSharpAPI;
 using Microsoft.Extensions.Localization;
 
 namespace EntWatchSharp
 {
-    public partial class EntWatchSharp : BasePlugin
+	[MinimumApiVersion(285)]
+	public partial class EntWatchSharp : BasePlugin
 	{
 		public static IStringLocalizer? Strlocalizer;
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.4.alpha";
+		public override string ModuleVersion => "0.DZ.5.beta";
 
 		public override void Load(bool hotReload)
 		{
@@ -24,6 +28,11 @@ namespace EntWatchSharp
 
 			EW._CP_api = IClientPrefsApi.Capability.Get();
 			if (EW._CP_api != null) EW.g_bAPI = true;
+
+			EW.g_cAPI = new EWAPI();
+			Capabilities.RegisterPluginCapability(IEntWatchSharpApi.Capability, () => EW.g_cAPI);
+			EW._EW_api = IEntWatchSharpApi.Capability.Get();
+			if (EW._EW_api != null) EW.g_bEWAPI = true;
 
 			if (hotReload)
 			{

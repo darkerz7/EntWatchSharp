@@ -1,4 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
+using EntWatchSharpAPI;
 
 namespace EntWatchSharp.Modules.Eban
 {
@@ -41,6 +42,19 @@ namespace EntWatchSharp.Modules.Eban
                     iDuration = iBanDuration;
                     iTimeStamp_Issued = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds()) + iDuration * 60;
                 }
+                if(EW.g_cAPI != null)
+                {
+					SEWAPI_Ban apiBan = new SEWAPI_Ban();
+					apiBan.bBanned = bBanned;
+                    apiBan.sAdminName = sAdminName;
+                    apiBan.sAdminSteamID = sAdminSteamID;
+                    apiBan.iDuration = iDuration;
+                    apiBan.iTimeStamp_Issued= iTimeStamp_Issued;
+                    apiBan.sReason = sReason;
+                    apiBan.sClientName = sClientName;
+                    apiBan.sClientSteamID = sClientSteamID;
+					EW.g_cAPI.OnClientBanned(apiBan);
+				}
                 return await EbanDB.BanClient(sBanClientName, sBanClientSteamID, sAdminName, sAdminSteamID, EW.g_Scheme.server_name, iDuration, iTimeStamp_Issued, sReason);
             }
             return false;
@@ -52,7 +66,20 @@ namespace EntWatchSharp.Modules.Eban
             {
                 bBanned = false;
                 if (string.IsNullOrEmpty(sUnbanReason)) sUnbanReason = "Amnesty";
-                return await EbanDB.UnBanClient(sUnBanClientSteamID, sUnBanAdminName, sUnBanAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sUnbanReason);
+				if (EW.g_cAPI != null)
+				{
+					SEWAPI_Ban apiBan = new SEWAPI_Ban();
+					apiBan.bBanned = bBanned;
+					apiBan.sAdminName = sUnBanAdminName;
+					apiBan.sAdminSteamID = sUnBanAdminSteamID;
+					apiBan.iDuration = 0;
+					apiBan.iTimeStamp_Issued = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+					apiBan.sReason = sUnbanReason;
+					apiBan.sClientName = "";
+					apiBan.sClientSteamID = sUnBanClientSteamID;
+					EW.g_cAPI.OnClientUnbanned(apiBan);
+				}
+				return await EbanDB.UnBanClient(sUnBanClientSteamID, sUnBanAdminName, sUnBanAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sUnbanReason);
             }
             return false;
         }
