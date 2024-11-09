@@ -152,7 +152,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setcooldown", "Allows you to change the item’s cooldown during the game")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 3, usage: "<hammerid> <buttonid> <new cooldown> [<force apply>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetCooldown(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
 			MCS_ValueIntBool Value = new MCS_ValueIntBool();
@@ -171,7 +173,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setmaxuses", "Allows you to change the maximum use of the item during the game, depending on whether the item was used to the end")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 3, usage: "<hammerid> <buttonid> <maxuses> [<even if over>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetMaxUses(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
 			MCS_ValueIntBool Value = new MCS_ValueIntBool();
@@ -190,7 +194,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setuses", "Allows you to change the current use of the item during the game, depending on whether the item was used to the end")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 3, usage: "<hammerid> <buttonid> <value> [<even if over>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetUses(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
 			MCS_ValueIntBool Value = new MCS_ValueIntBool();
@@ -209,7 +215,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_addmaxuses", "Allows you to add 1 charge to the item, depending on whether the item was used to the end")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 2, usage: "<hammerid> <buttonid> [<even if over>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_AddMaxUses(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 3) return;
 
@@ -226,7 +234,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setmode", "Allows you to completely change the item")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 5, usage: "<hammerid> <buttonid> <newmode> <cooldown> <maxuses> [<even if over>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetMode(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 6) return;
 			MCS_ValueMode Value = new MCS_ValueMode();
@@ -247,7 +257,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_lockbutton", "Allows to lock item")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 3, usage: "<hammerid> <buttonid> <value>", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_LockButton(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
 
@@ -261,7 +273,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setabilityname", "Allows you to change the ability’s name")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 3, usage: "<hammerid> <buttonid> <newname>", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetAbilityName(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
 			
@@ -274,7 +288,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setname", "Allows you to change the item’s name(Chat)")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 2, usage: "<hammerid> <newname>", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetFullName(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 3) return;
 			
@@ -287,7 +303,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_setshortname", "Allows you to change the item’s shortname(HUD)")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 2, usage: "<hammerid> <newshortname>", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_SetShortName(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 3) return;
 			
@@ -300,7 +318,9 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_block", "Allows you to block an item during the game. Similar to the 'blockpickup' property")]
 		[RequiresPermissions("@css/ew_map")]
 		[CommandHelper(minArgs: 2, usage: "<hammerid> <value>", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+#nullable enable
 		public void OnEWMC_Block(CCSPlayerController? player, CommandInfo command)
+#nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 3) return;
 			

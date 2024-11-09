@@ -55,6 +55,7 @@ namespace EntWatchSharp.Helpers
 			{
 				sData = File.ReadAllText(sConfig);
 				List<LogCfg> CFGBuffer = JsonSerializer.Deserialize<List<LogCfg>>(sData);
+				if (CFGBuffer == null) return;
 				foreach (LogCfg cfg in CFGBuffer.ToList())
 				{
 					ValidateCFG(cfg, ModuleDirectory);

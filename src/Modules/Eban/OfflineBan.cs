@@ -37,20 +37,24 @@ namespace EntWatchSharp.Modules.Eban
 				offlineplayer = new OfflineBan();
 				EW.g_OfflinePlayer.Add(offlineplayer);
 			}
-			offlineplayer.UserID = (int)UserID.UserId;
+			offlineplayer.UserID = UserID.UserId ?? 0;
 			offlineplayer.Name = UserID.PlayerName;
 			offlineplayer.SteamID = EW.ConvertSteamID64ToSteamID(UserID.SteamID.ToString());
 			offlineplayer.Immutity = AdminManager.GetPlayerImmunity(UserID);
 			return offlineplayer;
 		}
+#nullable enable
 		public static void PlayerConnectFull(CCSPlayerController? UserID)
+#nullable disable
 		{
 			if (UserID == null || !UserID.IsValid ||UserID.IsBot) return;
 			OfflineBan OfflinePlayer = CreateOrFind(UserID);
 			OfflinePlayer.Player = UserID;
 			OfflinePlayer.Online = true;
 		}
+#nullable enable
 		public static void PlayerDisconnect(CCSPlayerController? UserID)
+#nullable disable
 		{
 			if (UserID == null || !UserID.IsValid || UserID.IsBot) return;
 			OfflineBan OfflinePlayer = CreateOrFind(UserID);
@@ -119,7 +123,7 @@ namespace EntWatchSharp.Modules.Eban
 					return null;
 				}
 			}
-			if (admin == null || iAdminImmunity > target.Immutity)
+			if (admin == null || target != null && iAdminImmunity > target.Immutity)
 			{
 				return target;
 			}

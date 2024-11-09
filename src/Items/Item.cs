@@ -54,7 +54,7 @@ namespace EntWatchSharp.Items
                     Particle.TintCP = 1;
                     Particle.Tint = System.Drawing.Color.FromArgb(GlowColor[3], GlowColor[0], GlowColor[1], GlowColor[2]);
                     Particle.StartActive = true;
-                    Particle.Teleport(WeaponHandle.CBodyComponent.SceneNode.AbsOrigin, WeaponHandle.CBodyComponent.SceneNode.AbsRotation, new Vector(0, 0, 0));
+                    Particle.Teleport(WeaponHandle.CBodyComponent?.SceneNode?.AbsOrigin, WeaponHandle.CBodyComponent?.SceneNode?.AbsRotation, new Vector(0, 0, 0));
                     Particle.DispatchSpawn();
                     Particle.AcceptInput("SetParent", WeaponHandle, null, "!activator");
                 }

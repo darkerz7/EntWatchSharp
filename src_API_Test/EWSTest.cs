@@ -1,6 +1,7 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using EntWatchSharpAPI;
@@ -14,10 +15,20 @@ namespace EWSTestAPI
 		public override string ModuleName => "EntWatchSharp Test API";
 		public override string ModuleDescription => "";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "API.0.DZ.1";
-		public override void Load(bool hotReload)
+		public override string ModuleVersion => "API.0.DZ.2";
+		public override void OnAllPluginsLoaded(bool hotReload)
 		{
-			_EW_api = IEntWatchSharpApi.Capability.Get();
+			try
+			{
+				PluginCapability<IEntWatchSharpApi> Capability = new("entwatch:api");
+				_EW_api = IEntWatchSharpApi.Capability.Get();
+			}
+			catch (Exception)
+			{
+				_EW_api = null;
+				PrintToConsole("EntWatch API Failed!");
+			}
+
 			if (_EW_api != null)
 			{
 				_EW_api.Forward_EntWatch_OnClientBanned += DisplayBan;

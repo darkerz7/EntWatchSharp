@@ -104,18 +104,18 @@ namespace EntWatchSharp.Modules
                 var entity = Utilities.CreateEntityByName<CPointWorldText>("point_worldtext");
                 if (entity == null || !entity.IsValid) return;
 
-                QAngle vAngle = new QAngle(HudPlayer.PlayerPawn.Value.AbsRotation.X, HudPlayer.PlayerPawn.Value.AbsRotation.Y, HudPlayer.PlayerPawn.Value.AbsRotation.Z);
+                QAngle vAngle = new QAngle(HudPlayer.PlayerPawn.Value?.AbsRotation?.X, HudPlayer.PlayerPawn.Value?.AbsRotation?.Y, HudPlayer.PlayerPawn.Value?.AbsRotation?.Z);
 
-                HudPlayer.Pawn.Value.Teleport(HudPlayer.PlayerPawn.Value.AbsOrigin, new QAngle(0, 0, 0), HudPlayer.PlayerPawn.Value.AbsVelocity);
+                HudPlayer.Pawn.Value?.Teleport(HudPlayer.PlayerPawn.Value?.AbsOrigin, new QAngle(0, 0, 0), HudPlayer.PlayerPawn.Value?.AbsVelocity);
 
                 entity.Teleport(
                     new Vector(
-                HudPlayer.PlayerPawn.Value.AbsOrigin.X + vecEntity.X,
-                HudPlayer.PlayerPawn.Value.AbsOrigin.Y + vecEntity.Y,
-                HudPlayer.PlayerPawn.Value.AbsOrigin.Z + vecEntity.Z
+                HudPlayer.PlayerPawn.Value?.AbsOrigin?.X + vecEntity.X,
+                HudPlayer.PlayerPawn.Value?.AbsOrigin?.Y + vecEntity.Y,
+                HudPlayer.PlayerPawn.Value?.AbsOrigin?.Z + vecEntity.Z
                 ),
                 new QAngle(0, 270, 75),
-                HudPlayer.PlayerPawn.Value.AbsVelocity);
+                HudPlayer.PlayerPawn.Value?.AbsVelocity);
                 entity.FontSize = 18;
                 entity.FontName = "Consolas";
                 entity.Enabled = true;
@@ -127,7 +127,7 @@ namespace EntWatchSharp.Modules
                 entity.AcceptInput("SetParent", HudPlayer.PlayerPawn.Value, null, "!activator");
                 Entity = entity;
 
-                HudPlayer.Pawn.Value.Teleport(HudPlayer.PlayerPawn.Value.AbsOrigin, vAngle, HudPlayer.PlayerPawn.Value.AbsVelocity);
+                HudPlayer.Pawn.Value?.Teleport(HudPlayer.PlayerPawn.Value?.AbsOrigin, vAngle, HudPlayer.PlayerPawn.Value?.AbsVelocity);
             }
         }
         public override void UpdateText(string sItems)

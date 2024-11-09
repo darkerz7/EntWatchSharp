@@ -14,11 +14,44 @@ namespace EntWatchSharp
 	[MinimumApiVersion(285)]
 	public partial class EntWatchSharp : BasePlugin
 	{
-		public static IStringLocalizer? Strlocalizer;
+		public static IStringLocalizer Strlocalizer;
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.5.beta";
+		public override string ModuleVersion => "0.DZ.6.beta";
+
+		public override void OnAllPluginsLoaded(bool hotReload)
+		{
+			try
+			{
+				PluginCapability<IClientPrefsApi> CapabilityCP = new("clientprefs:api");
+				EW._CP_api = IClientPrefsApi.Capability.Get();
+			}
+			catch (Exception)
+			{
+				EW._CP_api = null;
+				UI.EWSysInfo("Info.Error", 15, "ClientPrefs API Failed!");
+			}
+
+			try
+			{
+				PluginCapability<IEntWatchSharpApi> CapabilityEW = new("entwatch:api");
+				EW._EW_api = IEntWatchSharpApi.Capability.Get();
+			}
+			catch (Exception)
+			{
+				EW._EW_api = null;
+				UI.EWSysInfo("Info.Error", 15, "EntWatch API Failed!");
+			}
+
+			if (hotReload)
+			{
+				Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(player =>
+				{
+					EW.LoadClientPrefs(player);
+				});
+			}
+		}
 
 		public override void Load(bool hotReload)
 		{
@@ -26,33 +59,33 @@ namespace EntWatchSharp
 
 			RegisterCVARS();
 
-			EW._CP_api = IClientPrefsApi.Capability.Get();
-			if (EW._CP_api != null) EW.g_bAPI = true;
-
-			EW.g_cAPI = new EWAPI();
-			Capabilities.RegisterPluginCapability(IEntWatchSharpApi.Capability, () => EW.g_cAPI);
-			EW._EW_api = IEntWatchSharpApi.Capability.Get();
-			if (EW._EW_api != null) EW.g_bEWAPI = true;
+			try
+			{
+				EW.g_cAPI = new EWAPI();
+				Capabilities.RegisterPluginCapability(IEntWatchSharpApi.Capability, () => EW.g_cAPI);
+			}
+			catch (Exception)
+			{
+				EW.g_cAPI = null;
+				UI.EWSysInfo("Info.Error", 15, "EntWatch API Register Failed!");
+			}
 
 			if (hotReload)
 			{
 				EW.LoadScheme();
 				EW.LoadConfig();
 				EW.g_Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerUpdate, TimerFlags.REPEAT);
-				Utilities.GetPlayers().ForEach(player =>
+				Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(player =>
 				{
-					if (player.IsValid)
-					{
-						EW.CheckDictionary(player, EW.g_HudPlayer);
+					EW.CheckDictionary(player, EW.g_HudPlayer);
 
-						EW.CheckDictionary(player, EW.g_UsePriorityPlayer);
+					EW.CheckDictionary(player, EW.g_UsePriorityPlayer);
 
-						EW.LoadClientPrefs(player);
+					//EW.LoadClientPrefs(player);
 
-						EW.CheckDictionary(player, EW.g_BannedPlayer);
+					EW.CheckDictionary(player, EW.g_BannedPlayer);
 
-						OfflineFunc.PlayerConnectFull(player);
-					}
+					OfflineFunc.PlayerConnectFull(player);
 				});
 				EW.g_TimerRetryDB = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerRetry, TimerFlags.REPEAT);
 			}

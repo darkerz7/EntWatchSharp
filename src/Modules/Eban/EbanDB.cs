@@ -20,7 +20,8 @@ namespace EntWatchSharp.Modules.Eban
             {
                 sData = File.ReadAllText(sConfig);
                 dbConfig = JsonSerializer.Deserialize<DBConfig>(sData);
-            }
+                if (dbConfig == null) dbConfig = new DBConfig();
+			}
             else dbConfig = new DBConfig();
             if (dbConfig.TypeDB == "mysql") db = new DB_Mysql($"server={dbConfig.Mysql_Server};port={dbConfig.Mysql_Port};user={dbConfig.Mysql_User};database={dbConfig.Mysql_NameDatabase};password={dbConfig.Mysql_Password};");
             else

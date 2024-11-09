@@ -179,10 +179,11 @@ Map Command | Variables | Description
 `ew_setshortname` | `<int hammerid> <string newshortname>` | Allows you to change the item’s shortname(HUD)
 `ew_block` | `<int hammerid> <bool value>` | Allows you to block an item during the game. Similar to the 'blockpickup' property
 
-PS: .The values ​​of the int must be greater than or equal to 0
-.....Mode values ​​must be between 0 and 8
-.....String values ​​must not be empty/null
-.....To work with these commands there must be a flag: `@css/ew_map`
+PS:<br>
+...The values ​​of the int must be greater than or equal to 0<br>
+...Mode values ​​must be between 0 and 8<br>
+...String values ​​must not be empty/null<br>
+...To work with these commands there must be a flag: `@css/ew_map`
 
 ## Future plans
 1. Fixes Errors

@@ -1,4 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities;
+using System;
 
 namespace EntWatchSharp.Items
 {
@@ -89,21 +91,40 @@ namespace EntWatchSharp.Items
 
         public void SetFilter(CEntityInstance activator)
         {
-            if (!string.IsNullOrEmpty(Filter))
-            {
-                if (Filter[0] == '$')
+			if (!string.IsNullOrEmpty(Filter))
+			{
+                if (activator.DesignerName.CompareTo("player") != 0) return;
+                CCSPlayerPawn pawn = new CCSPlayerController(activator.Handle).PlayerPawn.Value;
+                if (pawn == null || !pawn.IsValid) return;
+
+				if (Filter[0] == '$')
                 {
-                    if (Filter.Length > 1) Entity.AcceptInput("AddAttribute", activator, null, Filter.Substring(1));
+                    if (Filter.Length > 1) pawn.AcceptInput("AddAttribute", null, null, Filter.Substring(1));
                 }
                 else if (Filter.Contains(":"))
                 {
-					Entity.AcceptInput("AddContext", activator, null, Filter);
-				}
+					pawn.AcceptInput("AddContext", null, null, Filter);
+                }
                 else
                 {
-					activator.Entity.Name = Filter;
+					if (pawn.Entity != null) pawn.Entity.Name = Filter;
+                }
+			}
+		}
+#nullable enable
+		private CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
+#nullable disable
+		{
+			if (entity != null && entity.IsValid && entity.DesignerName.CompareTo("player") == 0)
+			{
+				var pawn = new CCSPlayerPawn(entity.Handle);
+				if (pawn.Controller.Value != null && pawn.Controller.Value.IsValid)
+				{
+					var player = new CCSPlayerController(pawn.Controller.Value.Handle);
+					if (player != null && player.IsValid) return player;
 				}
 			}
+			return null;
 		}
 
 		public void Used()
