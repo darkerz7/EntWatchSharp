@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core.Translations;
 using System.Globalization;
 using CounterStrikeSharp.API.Modules.Admin;
 using EntWatchSharp.Items;
+using CounterStrikeSharp.API.Modules.Entities;
 
 namespace EntWatchSharp.Helpers
 {
@@ -167,8 +168,8 @@ namespace EntWatchSharp.Helpers
         }
         public static string PlayerInfo(CCSPlayerController player)
         {
-            return player != null ? $"{EW.g_Scheme.color_name}{player.PlayerName}{EW.g_Scheme.color_warning}[{EW.g_Scheme.color_steamid}#{player.Index}{EW.g_Scheme.color_warning}|{EW.g_Scheme.color_steamid}{EW.ConvertSteamID64ToSteamID(player.SteamID.ToString())}{EW.g_Scheme.color_warning}]" : PlayerInfo("Console", "Server");
-        }
+			return player != null ? $"{EW.g_Scheme.color_name}{player.PlayerName}{EW.g_Scheme.color_warning}[{EW.g_Scheme.color_steamid}#{player.UserId}{EW.g_Scheme.color_warning}|{EW.g_Scheme.color_steamid}#{EW.ConvertSteamID64ToSteamID(player.SteamID.ToString())}{EW.g_Scheme.color_warning}]" : PlayerInfo("Console", "Server");
+		}
         public static string PlayerInfo(string sName, string sSteamID)
         {
             return $"{EW.g_Scheme.color_name}{sName} {EW.g_Scheme.color_warning}[{EW.g_Scheme.color_steamid}{sSteamID}{EW.g_Scheme.color_warning}]";

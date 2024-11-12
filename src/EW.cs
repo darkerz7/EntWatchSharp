@@ -268,7 +268,7 @@ namespace EntWatchSharp
 			{
 				var authServer = (communityId - 76561197960265728) % 2;
 				var authId = (communityId - 76561197960265728 - authServer) / 2;
-				return $"STEAM_1:{authServer}:{authId}";
+				return $"STEAM_0:{authServer}:{authId}";
 			}
 			return null;
 		}

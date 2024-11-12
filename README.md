@@ -185,6 +185,33 @@ PS:<br>
 ...String values ​​must not be empty/null<br>
 ...To work with these commands there must be a flag: `@css/ew_map`
 
+## Example of SQL-request for correct use of STEAMID after CS:GO/EntWatchSharp below version 0.DZ.7.beta
+```
+UPDATE entwatch_current_eban
+SET client_steamid = REPLACE(client_steamid, 'STEAM_1:', 'STEAM_0:')
+WHERE client_steamid LIKE '%STEAM_1:%';
+
+UPDATE entwatch_current_eban
+SET admin_steamid = REPLACE(admin_steamid, 'STEAM_1:', 'STEAM_0:')
+WHERE admin_steamid LIKE '%STEAM_1:%';
+
+UPDATE entwatch_current_eban
+SET admin_steamid_unban = REPLACE(admin_steamid_unban, 'STEAM_1:', 'STEAM_0:')
+WHERE admin_steamid_unban LIKE '%STEAM_1:%';
+
+UPDATE entwatch_old_eban
+SET client_steamid = REPLACE(client_steamid, 'STEAM_1:', 'STEAM_0:')
+WHERE client_steamid LIKE '%STEAM_1:%';
+
+UPDATE entwatch_old_eban
+SET admin_steamid = REPLACE(admin_steamid, 'STEAM_1:', 'STEAM_0:')
+WHERE admin_steamid LIKE '%STEAM_1:%';
+
+UPDATE entwatch_old_eban
+SET admin_steamid_unban = REPLACE(admin_steamid_unban, 'STEAM_1:', 'STEAM_0:')
+WHERE admin_steamid_unban LIKE '%STEAM_1:%';
+```
+
 ## Future plans
 1. Fixes Errors
 2. Add display to clan tag
