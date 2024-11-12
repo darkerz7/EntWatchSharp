@@ -76,7 +76,20 @@ namespace EntWatchSharp.Modules.Eban
 		{
 			uint iAdminImmunity = AdminManager.GetPlayerImmunity(admin);
 			OfflineBan target = null;
-			if (sTarget[0] == '#')
+			if (sTarget.ToLower().StartsWith("#steam_"))
+			{
+				string sTargetSteamID = sTarget.Substring(1).ToLower();
+				//steamid
+				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
+				{
+					if (!OfflineTest.Online && OfflineTest.SteamID.ToLower().CompareTo(sTargetSteamID) == 0)
+					{
+						target = OfflineTest;
+						break;
+					}
+				}
+			}
+			else if (sTarget[0] == '#')
 			{
 				//userid
 				if (!int.TryParse(sTarget.Substring(1), out int iUID))
@@ -87,18 +100,6 @@ namespace EntWatchSharp.Modules.Eban
 				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 				{
 					if (!OfflineTest.Online && OfflineTest.UserID == iUID)
-					{
-						target = OfflineTest;
-						break;
-					}
-				}
-			}
-			else if (sTarget.ToLower().StartsWith("steam_"))
-			{
-				//steamid
-				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
-				{
-					if (!OfflineTest.Online && OfflineTest.SteamID.ToLower().CompareTo(sTarget.ToLower()) == 0)
 					{
 						target = OfflineTest;
 						break;

@@ -282,7 +282,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_ban", "Allows the admin to restrict items for the player")]
 		[ConsoleCommand("css_eban", "Allows the admin to restrict items for the player")]
 		[RequiresPermissions("@css/ew_ban")]
-		[CommandHelper(minArgs: 1, usage: "<#userid|name> [<time>] [<reason>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+		[CommandHelper(minArgs: 1, usage: "<#userid|name|#steamid> [<time>] [<reason>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 #nullable enable
 		public void OnEWBan(CCSPlayerController? admin, CommandInfo command)
 #nullable disable
@@ -388,7 +388,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("ew_unban", "Allows the admin to remove the item restriction for a player")]
 		[ConsoleCommand("css_eunban", "Allows the admin to remove the item restriction for a player")]
 		[RequiresPermissions("@css/ew_unban")]
-		[CommandHelper(minArgs: 1, usage: "<#userid|name> [<reason>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+		[CommandHelper(minArgs: 1, usage: "<#userid|name|#steamid> [<reason>]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
 #nullable enable
 		public void OnEWUnBan(CCSPlayerController? admin, CommandInfo command)
 #nullable disable
@@ -431,9 +431,9 @@ namespace EntWatchSharp
 
 			Server.NextFrame(async () =>
 			{
-				if (!bOnline && sTarget.ToLower().StartsWith("steam_"))
+				if (!bOnline && sTarget.ToLower().StartsWith("#steam_"))
 				{
-					target = await EbanDB.GetBan(sTarget, EW.g_Scheme.server_name);
+					target = await EbanDB.GetBan(sTarget.Substring(1), EW.g_Scheme.server_name);
 				}
 
 				if (target == null)
