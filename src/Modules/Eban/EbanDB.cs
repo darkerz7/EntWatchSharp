@@ -228,8 +228,8 @@ namespace EntWatchSharp.Modules.Eban
                                         EW.g_BannedPlayer[player].bBanned = true;
                                         EW.g_BannedPlayer[player].sAdminName = await reader.GetFieldValueAsync<string>(0);
                                         EW.g_BannedPlayer[player].sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
-                                        EW.g_BannedPlayer[player].iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
-                                        EW.g_BannedPlayer[player].iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
+                                        EW.g_BannedPlayer[player].iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<long>(2));
+                                        EW.g_BannedPlayer[player].iTimeStamp_Issued = Convert.ToInt32(await reader.GetFieldValueAsync<long>(3));
                                         EW.g_BannedPlayer[player].sReason = await reader.GetFieldValueAsync<string>(4);
 
                                         return true;
@@ -304,8 +304,10 @@ namespace EntWatchSharp.Modules.Eban
 									player.bBanned = true;
 									player.sAdminName = await reader.GetFieldValueAsync<string>(0);
 									player.sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
-									player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
-									player.iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
+									//player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
+									//player.iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
+									player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<long>(2));
+									player.iTimeStamp_Issued = Convert.ToInt32(await reader.GetFieldValueAsync<long>(3));
 									player.sReason = await reader.GetFieldValueAsync<string>(4);
 									player.sClientName = await reader.GetFieldValueAsync<string>(5);
                                     player.sClientSteamID = SteamID;
@@ -366,7 +368,7 @@ namespace EntWatchSharp.Modules.Eban
                             {
                                 while (await reader.ReadAsync())
                                 {
-                                    int iID = await reader.GetFieldValueAsync<int>(0);
+									long iID = await reader.GetFieldValueAsync<long>(0);
 
                                     SQLiteCommand cmd1 = new SQLiteCommand();
                                     if (Cvar.KeepExpiredBan)
