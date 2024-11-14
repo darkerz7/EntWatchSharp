@@ -28,15 +28,16 @@ Beta version of the plugin, needs many improvements
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
-2. [MySqlConnector](https://www.nuget.org/packages/MySqlConnector/2.3.7?_src=template) (2.3.7)
-3. [System.Data.SQLite.Core](https://www.nuget.org/packages/System.Data.SQLite.Core/1.0.117?_src=template) (1.0.117 only; 1.0.118 don't work)
+2. [MySqlConnector](https://www.nuget.org/packages/MySqlConnector/2.4.0?_src=template) (2.4.0)
+3. [System.Data.SQLite.Core](https://www.nuget.org/packages/System.Data.SQLite.Core/1.0.119?_src=template) (1.0.119)
 4. [CS2-HammerIDFix](https://github.com/darkerz7/CS2-HammerIDFix)
 5. [ClientPrefs_CS2](https://github.com/darkerz7/ClientPrefs_CS2)
 6. Recomended [CS2-EntityFix](https://github.com/darkerz7/CS2-EntityFix)
 7. Recomended [CS2-CustomIO](https://github.com/darkerz7/CS2-CustomIO)
+8. Recomended [CSSharp-Fixes](https://github.com/darkerz7/CSSharp-Fixes)
 
 ## Installation:
-1. Install `CS2-HammerIDFix`, `ClientPrefs_CS2`, `CS2-CustomIO` and `CS2-EntityFix`
+1. Install `CS2-HammerIDFix`, `ClientPrefs_CS2`, `CS2-CustomIO`, `CS2-EntityFix` and `CSSharp-Fixes`
 2. Compile or copy EntWatchSharp to `counterstrikesharp/plugins/EntWatchSharp` folger
 3. Copy and configure the configuration file `db_config.json` and `log_config.json` to `counterstrikesharp/plugins/EntWatchSharp` folger
 4. Install or copy DLL from `Required packages` (`MySqlConnector.dll`, `SQLite.Interop.dll`, `System.Data.SQLite.dll`) to counterstrikesharp/plugins/EntWatchSharp folger
