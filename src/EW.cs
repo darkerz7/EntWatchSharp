@@ -18,9 +18,9 @@ namespace EntWatchSharp
 		public static Scheme g_Scheme = new Scheme();
 		public static bool g_CfgLoaded = false;
 		
-		public static IClientPrefsApi _CP_api;
+		public static IClientPrefsAPI _CP_api;
 
-		public static IEntWatchSharpApi _EW_api;
+		public static IEntWatchSharpAPI _EW_api;
 		public static EWAPI g_cAPI = null;
 
 		public static Dictionary<CCSPlayerController, EbanPlayer> g_BannedPlayer = new Dictionary<CCSPlayerController, EbanPlayer>();

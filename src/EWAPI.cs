@@ -5,7 +5,7 @@ using EntWatchSharpAPI;
 
 namespace EntWatchSharp
 {
-	internal class EWAPI : IEntWatchSharpApi
+	internal class EWAPI : IEntWatchSharpAPI
 	{
 		public async Task<SEWAPI_Ban> Native_EntWatch_IsClientBanned(string sSteamID)
 		{
@@ -71,31 +71,31 @@ namespace EntWatchSharp
 			return false;
 		}
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnClientBanned Forward_EntWatch_OnClientBanned;
+		public event IEntWatchSharpAPI.Forward_OnClientBanned Forward_EntWatch_OnClientBanned;
 		public void OnClientBanned(SEWAPI_Ban sewPlayer) => Forward_EntWatch_OnClientBanned?.Invoke(sewPlayer);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnClientUnbanned Forward_EntWatch_OnClientUnbanned;
+		public event IEntWatchSharpAPI.Forward_OnClientUnbanned Forward_EntWatch_OnClientUnbanned;
 		public void OnClientUnbanned(SEWAPI_Ban sewPlayer) => Forward_EntWatch_OnClientUnbanned?.Invoke(sewPlayer);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnUseItem Forward_EntWatch_OnUseItem;
+		public event IEntWatchSharpAPI.Forward_OnUseItem Forward_EntWatch_OnUseItem;
 		public void OnUseItem(string sItemName, CCSPlayerController Player, string sAbility) => Forward_EntWatch_OnUseItem?.Invoke(sItemName, Player, sAbility);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnPickUpItem Forward_EntWatch_OnPickUpItem;
+		public event IEntWatchSharpAPI.Forward_OnPickUpItem Forward_EntWatch_OnPickUpItem;
 		public void OnPickUpItem(string sItemName, CCSPlayerController Player) => Forward_EntWatch_OnPickUpItem?.Invoke(sItemName, Player);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnDropItem Forward_EntWatch_OnDropItem;
+		public event IEntWatchSharpAPI.Forward_OnDropItem Forward_EntWatch_OnDropItem;
 		public void OnDropItem(string sItemName, CCSPlayerController Player) => Forward_EntWatch_OnDropItem?.Invoke(sItemName, Player);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnPlayerDisconnectWithItem Forward_EntWatch_OnPlayerDisconnectWithItem;
+		public event IEntWatchSharpAPI.Forward_OnPlayerDisconnectWithItem Forward_EntWatch_OnPlayerDisconnectWithItem;
 		public void OnPlayerDisconnectWithItem(string sItemName, CCSPlayerController Player) => Forward_EntWatch_OnPlayerDisconnectWithItem?.Invoke(sItemName, Player);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnPlayerDeathWithItem Forward_EntWatch_OnPlayerDeathWithItem;
+		public event IEntWatchSharpAPI.Forward_OnPlayerDeathWithItem Forward_EntWatch_OnPlayerDeathWithItem;
 		public void OnPlayerDeathWithItem(string sItemName, CCSPlayerController Player) => Forward_EntWatch_OnPlayerDeathWithItem?.Invoke(sItemName, Player);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnAdminSpawnItem Forward_EntWatch_OnAdminSpawnItem;
+		public event IEntWatchSharpAPI.Forward_OnAdminSpawnItem Forward_EntWatch_OnAdminSpawnItem;
 		public void OnAdminSpawnItem(CCSPlayerController Admin, string sItemName, CCSPlayerController Target) => Forward_EntWatch_OnAdminSpawnItem?.Invoke(Admin, sItemName, Target);
 		//===================================================================================================
-		public event IEntWatchSharpApi.Forward_OnAdminTransferedItem Forward_EntWatch_OnAdminTransferedItem;
+		public event IEntWatchSharpAPI.Forward_OnAdminTransferedItem Forward_EntWatch_OnAdminTransferedItem;
 		public void OnAdminTransferedItem(CCSPlayerController Admin, string sItemName, CCSPlayerController Receiver) => Forward_EntWatch_OnAdminTransferedItem?.Invoke(Admin, sItemName, Receiver);
 		//===================================================================================================
 	}

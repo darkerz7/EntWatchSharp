@@ -18,14 +18,14 @@ namespace EntWatchSharp
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.8.beta";
+		public override string ModuleVersion => "0.DZ.9.beta";
 
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
 			try
 			{
-				PluginCapability<IClientPrefsApi> CapabilityCP = new("clientprefs:api");
-				EW._CP_api = IClientPrefsApi.Capability.Get();
+				PluginCapability<IClientPrefsAPI> CapabilityCP = new("clientprefs:api");
+				EW._CP_api = IClientPrefsAPI.Capability.Get();
 			}
 			catch (Exception)
 			{
@@ -35,8 +35,8 @@ namespace EntWatchSharp
 
 			try
 			{
-				PluginCapability<IEntWatchSharpApi> CapabilityEW = new("entwatch:api");
-				EW._EW_api = IEntWatchSharpApi.Capability.Get();
+				PluginCapability<IEntWatchSharpAPI> CapabilityEW = new("entwatch:api");
+				EW._EW_api = IEntWatchSharpAPI.Capability.Get();
 			}
 			catch (Exception)
 			{
@@ -62,7 +62,7 @@ namespace EntWatchSharp
 			try
 			{
 				EW.g_cAPI = new EWAPI();
-				Capabilities.RegisterPluginCapability(IEntWatchSharpApi.Capability, () => EW.g_cAPI);
+				Capabilities.RegisterPluginCapability(IEntWatchSharpAPI.Capability, () => EW.g_cAPI);
 			}
 			catch (Exception)
 			{

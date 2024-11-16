@@ -5,13 +5,12 @@ using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using EntWatchSharpAPI;
-using System;
 
 namespace EWSTestAPI
 {
 	public class EWSTest : BasePlugin
 	{
-		public static IEntWatchSharpApi? _EW_api;
+		public static IEntWatchSharpAPI? _EW_api;
 		public override string ModuleName => "EntWatchSharp Test API";
 		public override string ModuleDescription => "";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
@@ -20,8 +19,8 @@ namespace EWSTestAPI
 		{
 			try
 			{
-				PluginCapability<IEntWatchSharpApi> Capability = new("entwatch:api");
-				_EW_api = IEntWatchSharpApi.Capability.Get();
+				PluginCapability<IEntWatchSharpAPI> Capability = new("entwatch:api");
+				_EW_api = IEntWatchSharpAPI.Capability.Get();
 			}
 			catch (Exception)
 			{

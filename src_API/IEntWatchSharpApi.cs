@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 
-//VersionAPI: 0.DZ.1
+//VersionAPI: 0.DZ.2
 
 namespace EntWatchSharpAPI
 {
@@ -30,9 +30,9 @@ namespace EntWatchSharpAPI
 			sClientSteamID = "";
 		}
 	}
-	public interface IEntWatchSharpApi
+	public interface IEntWatchSharpAPI
 	{
-		public static PluginCapability<IEntWatchSharpApi> Capability { get; } = new("entwatch:api");
+		public static PluginCapability<IEntWatchSharpAPI> Capability { get; } = new("entwatch:api");
 
 		/**
 		 * Checks if a player is currently banned, if an integer variable is referenced the time of unban will be assigned to it.
