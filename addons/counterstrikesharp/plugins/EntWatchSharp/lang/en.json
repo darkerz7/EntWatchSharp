@@ -37,7 +37,7 @@
   "Reply.Must_be_an_integer": "The entered value must be a number",
   "Reply.Reload_configs": "Configs has been reloaded..",
   "Reply.NotValid": "The value you entered is not valid. Please use help",
-  "Reply.Using_number": "To change the hud, use the number 0-3 [0-отключен, 1-Center, 2-Alert, 3-WorldText]",
+  "Reply.Using_number": "To change the hud, use the number 0-3 [0-Disabled, 1-Center, 2-Alert, 3-WorldText]",
   "Reply.Admin": "Admin",
   "Reply.Player": "Player",
   "Reply.Hud.Type": "The HUD is now",
