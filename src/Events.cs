@@ -676,7 +676,7 @@ namespace EntWatchSharp
 								UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
 								EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
 								return HookResult.Continue;
-							} else return HookResult.Handled;
+							}
 						}
 					}
 				}
