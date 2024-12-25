@@ -1,8 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
 using EntWatchSharp.Helpers;
-using MySqlConnector;
-using System.Data;
-using System.Data.SQLite;
 using System.Text.Json;
 
 namespace EntWatchSharp.Modules.Eban
@@ -23,325 +20,213 @@ namespace EntWatchSharp.Modules.Eban
                 if (dbConfig == null) dbConfig = new DBConfig();
 			}
             else dbConfig = new DBConfig();
-            if (dbConfig.TypeDB == "mysql") db = new DB_Mysql($"server={dbConfig.Mysql_Server};port={dbConfig.Mysql_Port};user={dbConfig.Mysql_User};database={dbConfig.Mysql_NameDatabase};password={dbConfig.Mysql_Password};");
-            else
+            if (dbConfig.TypeDB == "mysql") db = new DB_Mysql(dbConfig.SQL_NameDatabase, $"{dbConfig.SQL_Server}:{dbConfig.SQL_Port}", dbConfig.SQL_User, dbConfig.SQL_Password);
+            else if (dbConfig.TypeDB == "postgre") db = new DB_PosgreSQL(dbConfig.SQL_NameDatabase, $"{dbConfig.SQL_Server}:{dbConfig.SQL_Port}", dbConfig.SQL_User, dbConfig.SQL_Password);
+			else
             {
-                string sDBFile = Path.Join(ModuleDirectory, dbConfig.SQLite_File);
-                if (!File.Exists(sDBFile)) File.WriteAllBytes(sDBFile, Array.Empty<byte>());
-                db = new DB_SQLite($"Data Source={sDBFile}");
+				dbConfig.TypeDB = "sqlite";
+				string sDBFile = Path.Join(ModuleDirectory, dbConfig.SQLite_File);
+				db = new DB_SQLite(sDBFile);
             }
-            Task.Run(async () =>
+            if (db.bSuccess)
             {
-                string sExceptionMessage = await db.TestConnection();
-                if (db.bSuccess)
+                UI.EWSysInfo("Info.DB.Success", 6, dbConfig.TypeDB);
+				#pragma warning disable CS8625
+				if (dbConfig.TypeDB == "sqlite")
                 {
-                    UI.EWSysInfo("Info.DB.Success", 6, db.TypeDB);
-
-                    if (db.TypeDB == "sqlite")
-                    {
-                        using (SQLiteCommand cmd = new SQLiteCommand())
-                        {
-                            cmd.CommandText = "CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                                                                                                "client_name varchar(32) NOT NULL, " +
-                                                                                                "client_steamid varchar(64) NOT NULL, " +
-                                                                                                "admin_name varchar(32) NOT NULL, " +
-                                                                                                "admin_steamid varchar(64) NOT NULL, " +
-                                                                                                "server varchar(64), " +
-                                                                                                "duration INTEGER NOT NULL, " +
-                                                                                                "timestamp_issued INTEGER NOT NULL, " +
-                                                                                                "reason varchar(64), " +
-                                                                                                "reason_unban varchar(64), " +
-                                                                                                "admin_name_unban varchar(32), " +
-                                                                                                "admin_steamid_unban varchar(64), " +
-                                                                                                "timestamp_unban INTEGER);" +
-                        "CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                                                                                                "client_name varchar(32) NOT NULL, " +
-                                                                                                "client_steamid varchar(64) NOT NULL, " +
-                                                                                                "admin_name varchar(32) NOT NULL, " +
-                                                                                                "admin_steamid varchar(64) NOT NULL, " +
-                                                                                                "server varchar(64), " +
-                                                                                                "duration INTEGER NOT NULL, " +
-                                                                                                "timestamp_issued INTEGER NOT NULL, " +
-                                                                                                "reason varchar(64), " +
-                                                                                                "reason_unban varchar(64), " +
-                                                                                                "admin_name_unban varchar(32), " +
-                                                                                                "admin_steamid_unban varchar(64), " +
-                                                                                                "timestamp_unban INTEGER);";
-                            if (await ((DB_SQLite)db).Execute(cmd) > -1) db.bDBReady = true;
-                        }
-                    }
-                    else if (db.TypeDB == "mysql")
-                    {
-                        using (MySqlCommand cmd = new MySqlCommand())
-                        {
-                            cmd.CommandText = "CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
-                                                                                                "client_name varchar(32) NOT NULL, " +
-                                                                                                "client_steamid varchar(64) NOT NULL, " +
-                                                                                                "admin_name varchar(32) NOT NULL, " +
-                                                                                                "admin_steamid varchar(64) NOT NULL, " +
-                                                                                                "server varchar(64), " +
-                                                                                                "duration int unsigned NOT NULL, " +
-                                                                                                "timestamp_issued int NOT NULL, " +
-                                                                                                "reason varchar(64), " +
-                                                                                                "reason_unban varchar(64), " +
-                                                                                                "admin_name_unban varchar(32), " +
-                                                                                                "admin_steamid_unban varchar(64), " +
-                                                                                                "timestamp_unban int, " +
-                                                                                                "PRIMARY KEY(id));" +
-                            "CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
-                                                                                                "client_name varchar(32) NOT NULL, " +
-                                                                                                "client_steamid varchar(64) NOT NULL, " +
-                                                                                                "admin_name varchar(32) NOT NULL, " +
-                                                                                                "admin_steamid varchar(64) NOT NULL, " +
-                                                                                                "server varchar(64), " +
-                                                                                                "duration int unsigned NOT NULL, " +
-                                                                                                "timestamp_issued int NOT NULL, " +
-                                                                                                "reason varchar(64), " +
-                                                                                                "reason_unban varchar(64), " +
-                                                                                                "admin_name_unban varchar(32), " +
-                                                                                                "admin_steamid_unban varchar(64), " +
-                                                                                                "timestamp_unban int, " +
-                                                                                                "PRIMARY KEY(id));";
-                            if (await ((DB_Mysql)db).Execute(cmd) > -1) db.bDBReady = true;
-                        }
-                    }
+					db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+																							"client_name varchar(32) NOT NULL, " +
+																							"client_steamid varchar(64) NOT NULL, " +
+																							"admin_name varchar(32) NOT NULL, " +
+																							"admin_steamid varchar(64) NOT NULL, " +
+																							"server varchar(64), " +
+																							"duration INTEGER NOT NULL, " +
+																							"timestamp_issued INTEGER NOT NULL, " +
+																							"reason varchar(64), " +
+																							"reason_unban varchar(64), " +
+																							"admin_name_unban varchar(32), " +
+																							"admin_steamid_unban varchar(64), " +
+																							"timestamp_unban INTEGER);" +
+					"CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+																							"client_name varchar(32) NOT NULL, " +
+																							"client_steamid varchar(64) NOT NULL, " +
+																							"admin_name varchar(32) NOT NULL, " +
+																							"admin_steamid varchar(64) NOT NULL, " +
+																							"server varchar(64), " +
+																							"duration INTEGER NOT NULL, " +
+																							"timestamp_issued INTEGER NOT NULL, " +
+																							"reason varchar(64), " +
+																							"reason_unban varchar(64), " +
+																							"admin_name_unban varchar(32), " +
+																							"admin_steamid_unban varchar(64), " +
+																							"timestamp_unban INTEGER);", null, (_) =>
+					{
+						db.bDBReady = true;
+					}, true);
                 }
-                else UI.EWSysInfo("Info.DB.Failed", 15, db.TypeDB, sExceptionMessage);
-            });
+                else if (dbConfig.TypeDB == "mysql")
+                {
+					db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
+																							"client_name varchar(32) NOT NULL, " +
+																							"client_steamid varchar(64) NOT NULL, " +
+																							"admin_name varchar(32) NOT NULL, " +
+																							"admin_steamid varchar(64) NOT NULL, " +
+																							"server varchar(64), " +
+																							"duration int unsigned NOT NULL, " +
+																							"timestamp_issued int NOT NULL, " +
+																							"reason varchar(64), " +
+																							"reason_unban varchar(64), " +
+																							"admin_name_unban varchar(32), " +
+																							"admin_steamid_unban varchar(64), " +
+																							"timestamp_unban int, " +
+																							"PRIMARY KEY(id));" +
+						"CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
+																							"client_name varchar(32) NOT NULL, " +
+																							"client_steamid varchar(64) NOT NULL, " +
+																							"admin_name varchar(32) NOT NULL, " +
+																							"admin_steamid varchar(64) NOT NULL, " +
+																							"server varchar(64), " +
+																							"duration int unsigned NOT NULL, " +
+																							"timestamp_issued int NOT NULL, " +
+																							"reason varchar(64), " +
+																							"reason_unban varchar(64), " +
+																							"admin_name_unban varchar(32), " +
+																							"admin_steamid_unban varchar(64), " +
+																							"timestamp_unban int, " +
+																							"PRIMARY KEY(id));", null, (_) =>
+					{
+						db.bDBReady = true;
+					}, true);
+                }
+				else if (dbConfig.TypeDB == "postgre")
+				{
+					db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id serial, " +
+																							"client_name varchar(32) NOT NULL, " +
+																							"client_steamid varchar(64) NOT NULL, " +
+																							"admin_name varchar(32) NOT NULL, " +
+																							"admin_steamid varchar(64) NOT NULL, " +
+																							"server varchar(64), " +
+																							"duration integer NOT NULL, " +
+																							"timestamp_issued integer NOT NULL, " +
+																							"reason varchar(64), " +
+																							"reason_unban varchar(64), " +
+																							"admin_name_unban varchar(32), " +
+																							"admin_steamid_unban varchar(64), " +
+																							"timestamp_unban integer, " +
+																							"PRIMARY KEY(id));" +
+						"CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id serial, " +
+																							"client_name varchar(32) NOT NULL, " +
+																							"client_steamid varchar(64) NOT NULL, " +
+																							"admin_name varchar(32) NOT NULL, " +
+																							"admin_steamid varchar(64) NOT NULL, " +
+																							"server varchar(64), " +
+																							"duration integer NOT NULL, " +
+																							"timestamp_issued integer NOT NULL, " +
+																							"reason varchar(64), " +
+																							"reason_unban varchar(64), " +
+																							"admin_name_unban varchar(32), " +
+																							"admin_steamid_unban varchar(64), " +
+																							"timestamp_unban integer, " +
+																							"PRIMARY KEY(id));", null, (_) =>
+																							{
+																								db.bDBReady = true;
+																							}, true);
+				}
+				#pragma warning restore CS8625
+			}
+			else UI.EWSysInfo("Info.DB.Failed", 15, dbConfig.TypeDB);
         }
 
-        public static async Task<bool> BanClient(string sClientName, string sClientSteamID, string sAdminName, string sAdminSteamID, string sServer, long iDuration, long iTimeStamp, string sReason)
+        public static bool BanClient(string sClientName, string sClientSteamID, string sAdminName, string sAdminSteamID, string sServer, long iDuration, long iTimeStamp, string sReason)
         {
             if (!string.IsNullOrEmpty(sClientName) && !string.IsNullOrEmpty(sClientSteamID) && !string.IsNullOrEmpty(sAdminName) && !string.IsNullOrEmpty(sAdminSteamID) && db.bDBReady)
             {
-                if (db.TypeDB == "sqlite")
-                {
-                    using (SQLiteCommand cmd = new SQLiteCommand())
-                    {
-                        cmd.CommandText = "INSERT INTO EntWatch_Current_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason) VALUES (@clientname, @clientsteamid, @adminname, @adminsteamid, @server, @duration, @timeissued, @reason);";
-                        cmd.Parameters.Add(new SQLiteParameter("@clientname", sClientName));
-                        cmd.Parameters.Add(new SQLiteParameter("@clientsteamid", sClientSteamID));
-                        cmd.Parameters.Add(new SQLiteParameter("@adminname", sAdminName));
-                        cmd.Parameters.Add(new SQLiteParameter("@adminsteamid", sAdminSteamID));
-                        cmd.Parameters.Add(new SQLiteParameter("@server", sServer));
-                        cmd.Parameters.Add(new SQLiteParameter("@duration", iDuration));
-                        cmd.Parameters.Add(new SQLiteParameter("@timeissued", iTimeStamp));
-                        cmd.Parameters.Add(new SQLiteParameter("@reason", sReason));
-                        await ((DB_SQLite)db).Execute(cmd);
-                    }
-                }
-                else if (db.TypeDB == "mysql")
-                {
-                    using (MySqlCommand cmd = new MySqlCommand())
-                    {
-                        cmd.CommandText = "INSERT INTO EntWatch_Current_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason) VALUES (@clientname, @clientsteamid, @adminname, @adminsteamid, @server, @duration, @timeissued, @reason);";
-                        cmd.Parameters.Add(new MySqlParameter("@clientname", sClientName));
-                        cmd.Parameters.Add(new MySqlParameter("@clientsteamid", sClientSteamID));
-                        cmd.Parameters.Add(new MySqlParameter("@adminname", sAdminName));
-                        cmd.Parameters.Add(new MySqlParameter("@adminsteamid", sAdminSteamID));
-                        cmd.Parameters.Add(new MySqlParameter("@server", sServer));
-                        cmd.Parameters.Add(new MySqlParameter("@duration", iDuration));
-                        cmd.Parameters.Add(new MySqlParameter("@timeissued", iTimeStamp));
-                        cmd.Parameters.Add(new MySqlParameter("@reason", sReason));
-                        await ((DB_Mysql)db).Execute(cmd);
-                    }
-                }
-                return true;
+				#pragma warning disable CS8625
+				db.AnyDB.QueryAsync("INSERT INTO EntWatch_Current_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason) VALUES ('{ARG}', '{ARG}', '{ARG}', '{ARG}', '{ARG}', {ARG}, {ARG}, '{ARG}');", new List<string>([sClientName, sClientSteamID, sAdminName, sAdminSteamID, sServer, iDuration.ToString(), iTimeStamp.ToString(), sReason]), null, true);
+				#pragma warning restore CS8625
+				return true;
             }
             return false;
         }
 
-        public static async Task<bool> UnBanClient(string sClientSteamID, string sAdminName, string sAdminSteamID, string sServer, long iTimeStamp, string sReason)
+        public static bool UnBanClient(string sClientSteamID, string sAdminName, string sAdminSteamID, string sServer, long iTimeStamp, string sReason)
         {
             if (!string.IsNullOrEmpty(sClientSteamID) && !string.IsNullOrEmpty(sAdminSteamID) && db.bDBReady)
             {
-                if (db.TypeDB == "sqlite")
-                {
-                    SQLiteCommand cmd = new SQLiteCommand();
-                    if (Cvar.KeepExpiredBan)
-                        cmd.CommandText = "UPDATE EntWatch_Current_Eban SET reason_unban=@reason, admin_name_unban=@adminname, admin_steamid_unban=@adminsteamid, timestamp_unban=@timeunban " +
-                                            "WHERE client_steamid=@clientsteamid and server=@server and admin_steamid_unban IS NULL; " +
-
-                                        "INSERT INTO EntWatch_Old_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban) " +
-                                            "SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
-                                                "WHERE client_steamid=@clientsteamid and server=@server; ";
-
-                    cmd.CommandText += "DELETE FROM EntWatch_Current_Eban " +
-                                            "WHERE client_steamid=@clientsteamid and server=@server;";
-                    cmd.Parameters.Add(new SQLiteParameter("@clientsteamid", sClientSteamID));
-                    cmd.Parameters.Add(new SQLiteParameter("@adminname", sAdminName));
-                    cmd.Parameters.Add(new SQLiteParameter("@adminsteamid", sAdminSteamID));
-                    cmd.Parameters.Add(new SQLiteParameter("@server", sServer));
-                    cmd.Parameters.Add(new SQLiteParameter("@timeunban", iTimeStamp));
-                    cmd.Parameters.Add(new SQLiteParameter("@reason", sReason));
-                    await ((DB_SQLite)db).Execute(cmd);
-                }
-                else if (db.TypeDB == "mysql")
-                {
-                    using (MySqlCommand cmd = new MySqlCommand())
-                    {
-                        if (Cvar.KeepExpiredBan)
-                            cmd.CommandText = "UPDATE EntWatch_Current_Eban SET reason_unban=@reason, admin_name_unban=@adminname, admin_steamid_unban=@adminsteamid, timestamp_unban=@timeunban " +
-                                                "WHERE client_steamid=@clientsteamid and server=@server and admin_steamid_unban IS NULL; " +
-
-                                            "INSERT INTO EntWatch_Old_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban) " +
-                                                "SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
-                                                    "WHERE client_steamid=@clientsteamid and server=@server; ";
-
-                        cmd.CommandText += "DELETE FROM EntWatch_Current_Eban " +
-                                            "WHERE client_steamid=@clientsteamid and server=@server;";
-                        cmd.Parameters.Add(new MySqlParameter("@clientsteamid", sClientSteamID));
-                        cmd.Parameters.Add(new MySqlParameter("@adminname", sAdminName));
-                        cmd.Parameters.Add(new MySqlParameter("@adminsteamid", sAdminSteamID));
-                        cmd.Parameters.Add(new MySqlParameter("@server", sServer));
-                        cmd.Parameters.Add(new MySqlParameter("@timeunban", iTimeStamp));
-                        cmd.Parameters.Add(new MySqlParameter("@reason", sReason));
-                        await ((DB_Mysql)db).Execute(cmd);
-                    }
-                }
-                return true;
+				#pragma warning disable CS8625
+				if (Cvar.KeepExpiredBan)
+					db.AnyDB.QueryAsync("UPDATE EntWatch_Current_Eban SET reason_unban = '{ARG}', admin_name_unban = '{ARG}', admin_steamid_unban = '{ARG}', timestamp_unban = {ARG} " +
+											"WHERE client_steamid='{ARG}' and server='{ARG}' and admin_steamid_unban IS NULL;", new List<string>([sReason, sAdminName, sAdminSteamID, iTimeStamp.ToString(), sClientSteamID, sServer]), (_) =>
+					{
+						db.AnyDB.QueryAsync("INSERT INTO EntWatch_Old_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban) " +
+												"SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
+													"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sClientSteamID, sServer]), (_) =>
+						{
+							db.AnyDB.QueryAsync("DELETE FROM EntWatch_Current_Eban " +
+								"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sClientSteamID, sServer]), null, true);
+						}, true);
+					}, true);
+				else db.AnyDB.QueryAsync("DELETE FROM EntWatch_Current_Eban " +
+											"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sClientSteamID, sServer]), null, true);
+				#pragma warning restore CS8625
+				return true;
             }
             return false;
         }
 
-        public static async Task<bool> GetBan(CCSPlayerController player, string sServer)
+        public static bool GetBan(CCSPlayerController player, string sServer)
         {
             try
             {
                 if (player.IsValid && !string.IsNullOrEmpty(sServer) && db.bDBReady)
                 {
-                    if (db.TypeDB == "sqlite")
+					var res = db.AnyDB.Query("SELECT admin_name, admin_steamid, duration, timestamp_issued, reason FROM EntWatch_Current_Eban " +
+												"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([EW.ConvertSteamID64ToSteamID(player.SteamID.ToString()), sServer]));
+					if (res.Count > 0)
                     {
-                        using (SQLiteCommand cmd = new SQLiteCommand())
+						if (EW.g_BannedPlayer.ContainsKey(player))
                         {
-                            cmd.CommandText = "SELECT admin_name, admin_steamid, duration, timestamp_issued, reason FROM EntWatch_Current_Eban " +
-                                                "WHERE client_steamid=@steam and server=@server;";
-                            cmd.Parameters.Add(new SQLiteParameter("@steam", EW.ConvertSteamID64ToSteamID(player.SteamID.ToString())));
-                            cmd.Parameters.Add(new SQLiteParameter("@server", sServer));
-                            using (DataTableReader reader = await ((DB_SQLite)db).Query(cmd))
-                            {
-                                if (reader != null && reader.HasRows)
-                                {
-                                    await reader.ReadAsync();
-                                    if (EW.g_BannedPlayer.ContainsKey(player))
-                                    {
-                                        EW.g_BannedPlayer[player].bBanned = true;
-                                        EW.g_BannedPlayer[player].sAdminName = await reader.GetFieldValueAsync<string>(0);
-                                        EW.g_BannedPlayer[player].sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
-                                        EW.g_BannedPlayer[player].iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<long>(2));
-                                        EW.g_BannedPlayer[player].iTimeStamp_Issued = Convert.ToInt32(await reader.GetFieldValueAsync<long>(3));
-                                        EW.g_BannedPlayer[player].sReason = await reader.GetFieldValueAsync<string>(4);
+							EW.g_BannedPlayer[player].bBanned = true;
+                            EW.g_BannedPlayer[player].sAdminName = res[0][0];
+							EW.g_BannedPlayer[player].sAdminSteamID = res[0][1];
+							EW.g_BannedPlayer[player].iDuration = Convert.ToInt32(res[0][2]);
+							EW.g_BannedPlayer[player].iTimeStamp_Issued = Convert.ToInt32(res[0][3]);
+							EW.g_BannedPlayer[player].sReason = res[0][4];
 
-                                        return true;
-                                    }
-                                    else
-                                    {
-                                        EW.g_BannedPlayer.TryAdd(player, new EbanPlayer());
-                                        return await GetBan(player, sServer);
-                                    }
-                                }
-                            }
+							return true;
                         }
-                    }
-                    else if (db.TypeDB == "mysql")
-                    {
-                        using (MySqlCommand cmd = new MySqlCommand())
-                        {
-                            cmd.CommandText = "SELECT admin_name, admin_steamid, duration, timestamp_issued, reason FROM EntWatch_Current_Eban " +
-                                                "WHERE client_steamid=@steam and server=@server;";
-                            cmd.Parameters.Add(new MySqlParameter("@steam", EW.ConvertSteamID64ToSteamID(player.SteamID.ToString())));
-                            cmd.Parameters.Add(new MySqlParameter("@server", sServer));
-                            using (DataTableReader reader = await ((DB_Mysql)db).Query(cmd))
-                            {
-                                if (reader != null && reader.HasRows)
-                                {
-                                    if (EW.g_BannedPlayer.ContainsKey(player))
-                                    {
-                                        await reader.ReadAsync();
-                                        EW.g_BannedPlayer[player].bBanned = true;
-                                        EW.g_BannedPlayer[player].sAdminName = await reader.GetFieldValueAsync<string>(0);
-                                        EW.g_BannedPlayer[player].sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
-                                        EW.g_BannedPlayer[player].iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
-                                        EW.g_BannedPlayer[player].iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
-                                        EW.g_BannedPlayer[player].sReason = await reader.GetFieldValueAsync<string>(4);
-                                        return true;
-                                    }
-                                    else
-                                    {
-                                        EW.g_BannedPlayer.TryAdd(player, new EbanPlayer());
-                                        return await GetBan(player, sServer);
-                                    }
-                                }
-                            }
-                        }
-                    }
+						else
+						{
+							EW.g_BannedPlayer.TryAdd(player, new EbanPlayer());
+							return GetBan(player, sServer);
+						}
+					}
                     return false;
                 }
             } catch (Exception ex) { Console.WriteLine(ex); }
             return false;
         }
 
-		public static async Task<EbanPlayer> GetBan(string SteamID, string sServer)
+		public static EbanPlayer GetBan(string SteamID, string sServer)
 		{
 			try
 			{
 				if (!string.IsNullOrEmpty(sServer) && db.bDBReady)
 				{
-					if (db.TypeDB == "sqlite")
+					var res = db.AnyDB.Query("SELECT admin_name, admin_steamid, duration, timestamp_issued, reason FROM EntWatch_Current_Eban " +
+												"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([SteamID, sServer]));
+					if (res.Count > 0)
 					{
-						using (SQLiteCommand cmd = new SQLiteCommand())
-						{
-							cmd.CommandText = "SELECT admin_name, admin_steamid, duration, timestamp_issued, reason, client_name FROM EntWatch_Current_Eban " +
-												"WHERE client_steamid=@steam and server=@server;";
-							cmd.Parameters.Add(new SQLiteParameter("@steam", SteamID));
-							cmd.Parameters.Add(new SQLiteParameter("@server", sServer));
-							using (DataTableReader reader = await ((DB_SQLite)db).Query(cmd))
-							{
-								if (reader != null && reader.HasRows)
-								{
-									await reader.ReadAsync();
-									EbanPlayer player = new EbanPlayer();
-									player.bBanned = true;
-									player.sAdminName = await reader.GetFieldValueAsync<string>(0);
-									player.sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
-									//player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
-									//player.iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
-									player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<long>(2));
-									player.iTimeStamp_Issued = Convert.ToInt32(await reader.GetFieldValueAsync<long>(3));
-									player.sReason = await reader.GetFieldValueAsync<string>(4);
-									player.sClientName = await reader.GetFieldValueAsync<string>(5);
-                                    player.sClientSteamID = SteamID;
-									return player;
-								}
-							}
-						}
-					}
-					else if (db.TypeDB == "mysql")
-					{
-						using (MySqlCommand cmd = new MySqlCommand())
-						{
-							cmd.CommandText = "SELECT admin_name, admin_steamid, duration, timestamp_issued, reason, client_name FROM EntWatch_Current_Eban " +
-												"WHERE client_steamid=@steam and server=@server;";
-							cmd.Parameters.Add(new MySqlParameter("@steam", SteamID));
-							cmd.Parameters.Add(new MySqlParameter("@server", sServer));
-							using (DataTableReader reader = await ((DB_Mysql)db).Query(cmd))
-							{
-								if (reader != null && reader.HasRows)
-								{
-									await reader.ReadAsync();
-									EbanPlayer player = new EbanPlayer();
-									player.bBanned = true;
-									player.sAdminName = await reader.GetFieldValueAsync<string>(0);
-									player.sAdminSteamID = await reader.GetFieldValueAsync<string>(1);
-									player.iDuration = Convert.ToInt32(await reader.GetFieldValueAsync<uint>(2));
-									player.iTimeStamp_Issued = await reader.GetFieldValueAsync<int>(3);
-									player.sReason = await reader.GetFieldValueAsync<string>(4);
-									player.sClientName = await reader.GetFieldValueAsync<string>(5);
-									player.sClientSteamID = SteamID;
-									return player;
-								}
-							}
-						}
+						EbanPlayer player = new EbanPlayer();
+						player.bBanned = true;
+						player.sAdminName = res[0][0];
+						player.sAdminSteamID = res[0][1];
+						player.iDuration = Convert.ToInt32(res[0][2]);
+						player.iTimeStamp_Issued = Convert.ToInt32(res[0][3]);
+						player.sReason = res[0][4];
+						player.sClientName = res[0][5];
+						player.sClientSteamID = SteamID;
+						return player;
 					}
 					return null;
 				}
@@ -350,77 +235,34 @@ namespace EntWatchSharp.Modules.Eban
 			return null;
 		}
 
-		public static async Task<bool> OfflineUnban(string sServer, int iTime)
+		public static bool OfflineUnban(string sServer, int iTime)
         {
             if (db.bDBReady)
             {
-                if (db.TypeDB == "sqlite")
+				var res = db.AnyDB.Query("SELECT id FROM EntWatch_Current_Eban " +
+									"WHERE server='{ARG}' and duration>0 and timestamp_issued<{ARG};", new List<string>([sServer, iTime.ToString()]));
+
+				if(res.Count > 0)
                 {
-                    using (SQLiteCommand cmd = new SQLiteCommand())
+					#pragma warning disable CS8625
+					for (int i = 0; i < res.Count; i++) 
                     {
-                        cmd.CommandText = "SELECT id FROM EntWatch_Current_Eban " +
-                                            "WHERE server=@server and duration>0 and timestamp_issued<@time;";
-                        cmd.Parameters.Add(new SQLiteParameter("@server", sServer));
-                        cmd.Parameters.Add(new SQLiteParameter("@time", iTime));
-                        using (DataTableReader reader = await ((DB_SQLite)db).Query(cmd))
-                        {
-                            if (reader != null && reader.HasRows)
-                            {
-                                while (await reader.ReadAsync())
-                                {
-									long iID = await reader.GetFieldValueAsync<long>(0);
-
-                                    SQLiteCommand cmd1 = new SQLiteCommand();
-                                    if (Cvar.KeepExpiredBan)
-                                        cmd1.CommandText = "UPDATE EntWatch_Current_Eban SET reason_unban='Expired', admin_name_unban='Console', admin_steamid_unban='SERVER', timestamp_unban=@time WHERE id=@id; " +
-
-                                                        "INSERT INTO EntWatch_Old_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban) " +
-                                                            "SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
-                                                                "WHERE id=@id; ";
-
-                                    cmd1.CommandText += "DELETE FROM EntWatch_Current_Eban WHERE id=@id;";
-                                    cmd1.Parameters.Add(new SQLiteParameter("@time", iTime));
-                                    cmd1.Parameters.Add(new SQLiteParameter("@id", iID));
-                                    await ((DB_SQLite)db).Execute(cmd1);
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (db.TypeDB == "mysql")
-                {
-                    using (MySqlCommand cmd = new MySqlCommand())
-                    {
-                        cmd.CommandText = "SELECT id FROM EntWatch_Current_Eban " +
-                                            "WHERE server=@server and duration>0 and timestamp_issued<@time;";
-                        cmd.Parameters.Add(new MySqlParameter("@server", sServer));
-                        cmd.Parameters.Add(new MySqlParameter("@time", iTime));
-                        using (DataTableReader reader = await ((DB_Mysql)db).Query(cmd))
-                        {
-                            if (reader != null && reader.HasRows)
-                            {
-                                while (await reader.ReadAsync())
-                                {
-                                    int iID = await reader.GetFieldValueAsync<int>(0);
-
-                                    MySqlCommand cmd1 = new MySqlCommand();
-                                    if (Cvar.KeepExpiredBan)
-                                        cmd1.CommandText = "UPDATE EntWatch_Current_Eban SET reason_unban='Expired', admin_name_unban='Console', admin_steamid_unban='SERVER', timestamp_unban=@time WHERE id=@id; " +
-
-                                                            "INSERT INTO EntWatch_Old_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban) " +
-                                                                "SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
-                                                                    "WHERE id=@id; ";
-
-                                    cmd1.CommandText += "DELETE FROM EntWatch_Current_Eban WHERE id=@id;";
-                                    cmd1.Parameters.Add(new MySqlParameter("@time", iTime));
-                                    cmd1.Parameters.Add(new MySqlParameter("@id", iID));
-                                    await ((DB_Mysql)db).Execute(cmd1);
-                                }
-                            }
-                        }
-                    }
-                }
-                return true;
+						string sID = res[i][0];
+						if (Cvar.KeepExpiredBan)
+							db.AnyDB.QueryAsync("UPDATE EntWatch_Current_Eban SET reason_unban='Expired', admin_name_unban='Console', admin_steamid_unban='SERVER', timestamp_unban={ARG} WHERE id={ARG};", new List<string>([iTime.ToString(), sID]), (_) =>
+							{
+								db.AnyDB.QueryAsync("INSERT INTO EntWatch_Old_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban) " +
+														"SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
+															"WHERE id={ARG};", new List<string>([sID]), (_) =>
+									{
+										db.AnyDB.QueryAsync("DELETE FROM EntWatch_Current_Eban WHERE id={ARG};", new List<string>([sID]), null, true);
+									}, true);
+							}, true);	
+						else db.AnyDB.QueryAsync("DELETE FROM EntWatch_Current_Eban WHERE id={ARG};", new List<string>([sID]), null, true);
+					}
+					#pragma warning restore CS8625
+				}
+				return true;
             }
             return false;
         }

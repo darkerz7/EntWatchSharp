@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 
-//VersionAPI: 0.DZ.2
+//VersionAPI: 0.DZ.11
 
 namespace EntWatchSharpAPI
 {
@@ -41,7 +41,7 @@ namespace EntWatchSharpAPI
 		 * @return				SEWAPI_Ban struct
 		 *
 		 */
-		Task<SEWAPI_Ban> Native_EntWatch_IsClientBanned(string sSteamID);
+		SEWAPI_Ban Native_EntWatch_IsClientBanned(string sSteamID);
 
 		/**
 		 * Bans a player from using special items.
@@ -51,7 +51,7 @@ namespace EntWatchSharpAPI
 		 *
 		 * On error/errors:		Invalid player
 		 */
-		Task<bool> Native_EntWatch_BanClient(SEWAPI_Ban sewPlayer);
+		bool Native_EntWatch_BanClient(SEWAPI_Ban sewPlayer);
 
 		/**
 		 * Unbans a previously ebanned player.
@@ -61,7 +61,7 @@ namespace EntWatchSharpAPI
 		 *
 		 * On error/errors:		Invalid player
 		 */
-		Task<bool> Native_EntWatch_UnbanClient(SEWAPI_Ban sewPlayer);
+		bool Native_EntWatch_UnbanClient(SEWAPI_Ban sewPlayer);
 
 		/**
 		 * Forces a ban status update.
@@ -70,7 +70,7 @@ namespace EntWatchSharpAPI
 		 *
 		 * On error/errors:		Invalid player
 		 */
-		Task Native_EntWatch_UpdateStatusBanClient(CCSPlayerController Player);
+		void Native_EntWatch_UpdateStatusBanClient(CCSPlayerController Player);
 
 		/**
 		 * Checks if an entity is a special item.

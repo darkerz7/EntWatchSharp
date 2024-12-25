@@ -127,9 +127,9 @@ namespace EntWatchSharp
 				{
 					if (player.IsValid && EW.CheckDictionary(player, EW.g_BannedPlayer))
 					{
-						Server.NextFrame(async () =>
+						Server.NextFrame(() =>
 						{
-							await EW.g_BannedPlayer[player].GetBan(player);
+							EW.g_BannedPlayer[player].GetBan(player);
 						});
 					}
 				});
@@ -148,9 +148,9 @@ namespace EntWatchSharp
 
 			int iTime = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
-			Server.NextFrame(async () =>
+			Server.NextFrame(() =>
 			{
-				await EbanDB.OfflineUnban(sServerName, iTime);
+				EbanDB.OfflineUnban(sServerName, iTime);
 			});
 
 			Server.NextFrame(() =>
@@ -163,9 +163,9 @@ namespace EntWatchSharp
 			{
 				if (player.IsValid && EW.CheckDictionary(player, EW.g_BannedPlayer))
 				{
-					Server.NextFrame(async () =>
+					Server.NextFrame(() =>
 					{
-						if (!await EW.g_BannedPlayer[player].GetBan(player)) EW.g_BannedPlayer[player].bBanned = false;
+						if (!EW.g_BannedPlayer[player].GetBan(player)) EW.g_BannedPlayer[player].bBanned = false;
 					});
 				}
 			});
@@ -532,9 +532,9 @@ namespace EntWatchSharp
 
 				if(EW.CheckDictionary(pl, EW.g_BannedPlayer))  //Add Eban
 				{
-					Server.NextFrame(async () =>
+					Server.NextFrame(() =>
 					{
-						await EW.g_BannedPlayer[pl].GetBan(pl); //Set Eban
+						EW.g_BannedPlayer[pl].GetBan(pl); //Set Eban
 						Server.NextFrame(() =>
 						{
 							if (EW.g_BannedPlayer[pl].bBanned) UI.EWSysInfo("Info.Eban.PlayerConnect", 4, UI.PlayerInfo(pl), EW.g_BannedPlayer[pl].iDuration, EW.g_BannedPlayer[pl].iTimeStamp_Issued, UI.PlayerInfo(EW.g_BannedPlayer[pl].sAdminName, EW.g_BannedPlayer[pl].sAdminSteamID), EW.g_BannedPlayer[pl].sReason);

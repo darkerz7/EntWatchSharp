@@ -54,17 +54,17 @@ namespace EWSTestAPI
 
 		[ConsoleCommand("ewt_1", "")]
 		[RequiresPermissions("@css/ew_ban")]
-		public async void OnEWT1(CCSPlayerController? player, CommandInfo command)
+		public void OnEWT1(CCSPlayerController? player, CommandInfo command)
 		{
 			if (_EW_api == null || player == null || !player.IsValid) return;
-			SEWAPI_Ban ban = await _EW_api.Native_EntWatch_IsClientBanned(ConvertSteamID64ToSteamID(player.SteamID.ToString()));
+			SEWAPI_Ban ban = _EW_api.Native_EntWatch_IsClientBanned(ConvertSteamID64ToSteamID(player.SteamID.ToString()));
 			if (ban.bBanned) PrintToConsole($"You {ban.sClientName}({ban.sClientSteamID}) have a eban. Duration: {ban.iDuration}");
 			else PrintToConsole($"You have NOT a eban");
 		}
 
 		[ConsoleCommand("ewt_2", "")]
 		[RequiresPermissions("@css/ew_ban")]
-		public async void OnEWT2(CCSPlayerController? player, CommandInfo command)
+		public void OnEWT2(CCSPlayerController? player, CommandInfo command)
 		{
 			if (_EW_api == null || player == null || !player.IsValid) return;
 			SEWAPI_Ban ban = new SEWAPI_Ban();
@@ -75,13 +75,13 @@ namespace EWSTestAPI
 			ban.sReason = "Test Api Ban";
 			ban.sClientName = player.PlayerName;
 			ban.sClientSteamID = ConvertSteamID64ToSteamID(player.SteamID.ToString());
-			if (await _EW_api.Native_EntWatch_BanClient(ban)) PrintToConsole("Successfully banned");
+			if (_EW_api.Native_EntWatch_BanClient(ban)) PrintToConsole("Successfully banned");
 			else PrintToConsole("Failed to ban");
 		}
 
 		[ConsoleCommand("ewt_3", "")]
 		[RequiresPermissions("@css/ew_unban")]
-		public async void OnEWT3(CCSPlayerController? player, CommandInfo command)
+		public void OnEWT3(CCSPlayerController? player, CommandInfo command)
 		{
 			if (_EW_api == null || player == null || !player.IsValid) return;
 			SEWAPI_Ban ban = new SEWAPI_Ban();
@@ -91,16 +91,16 @@ namespace EWSTestAPI
 			ban.sReason = "Test Api UnBan";
 			ban.sClientName = player.PlayerName;
 			ban.sClientSteamID = ConvertSteamID64ToSteamID(player.SteamID.ToString());
-			if (await _EW_api.Native_EntWatch_UnbanClient(ban)) PrintToConsole("Successfully unbanned");
+			if (_EW_api.Native_EntWatch_UnbanClient(ban)) PrintToConsole("Successfully unbanned");
 			else PrintToConsole("Failed to unban");
 		}
 
 		[ConsoleCommand("ewt_4", "")]
 		[RequiresPermissions("@css/ew_unban")]
-		public async void OnEWT4(CCSPlayerController? player, CommandInfo command)
+		public void OnEWT4(CCSPlayerController? player, CommandInfo command)
 		{
 			if (_EW_api == null || player == null || !player.IsValid) return;
-			await _EW_api.Native_EntWatch_UpdateStatusBanClient(player);
+			_EW_api.Native_EntWatch_UpdateStatusBanClient(player);
 		}
 
 		[ConsoleCommand("ewt_5", "")]
@@ -170,7 +170,7 @@ namespace EWSTestAPI
 			{
 				var authServer = (communityId - 76561197960265728) % 2;
 				var authId = (communityId - 76561197960265728 - authServer) / 2;
-				return $"STEAM_1:{authServer}:{authId}";
+				return $"STEAM_0:{authServer}:{authId}";
 			}
 			return null;
 		}

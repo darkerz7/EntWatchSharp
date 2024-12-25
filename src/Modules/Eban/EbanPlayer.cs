@@ -18,7 +18,7 @@ namespace EntWatchSharp.Modules.Eban
 
 		public bool bFixSpawnItem;
 
-        public async Task<bool> SetBan(string sBanAdminName, string sBanAdminSteamID, string sBanClientName, string sBanClientSteamID, int iBanDuration, string sBanReason)
+        public bool SetBan(string sBanAdminName, string sBanAdminSteamID, string sBanClientName, string sBanClientSteamID, int iBanDuration, string sBanReason)
         {
             if (!string.IsNullOrEmpty(sBanClientSteamID))
             {
@@ -55,16 +55,16 @@ namespace EntWatchSharp.Modules.Eban
                     apiBan.sClientSteamID = sClientSteamID;
 					EW.g_cAPI.OnClientBanned(apiBan);
 				}
-                return await EbanDB.BanClient(sBanClientName, sBanClientSteamID, sAdminName, sAdminSteamID, EW.g_Scheme.server_name, iDuration, iTimeStamp_Issued, sReason);
+                return EbanDB.BanClient(sBanClientName, sBanClientSteamID, sAdminName, sAdminSteamID, EW.g_Scheme.server_name, iDuration, iTimeStamp_Issued, sReason);
             }
             return false;
         }
 
-        public async Task<bool> UnBan(string sUnBanAdminName, string sUnBanAdminSteamID, string sUnBanClientSteamID, string sUnbanReason)
+        public bool UnBan(string sUnBanAdminName, string sUnBanAdminSteamID, string sUnBanClientSteamID, string sUnbanReason)
         {
             if (!string.IsNullOrEmpty(sUnBanClientSteamID))
             {
-                bBanned = false;
+				bBanned = false;
                 if (string.IsNullOrEmpty(sUnbanReason)) sUnbanReason = "Amnesty";
 				if (EW.g_cAPI != null)
 				{
@@ -79,16 +79,16 @@ namespace EntWatchSharp.Modules.Eban
 					apiBan.sClientSteamID = sUnBanClientSteamID;
 					EW.g_cAPI.OnClientUnbanned(apiBan);
 				}
-				return await EbanDB.UnBanClient(sUnBanClientSteamID, sUnBanAdminName, sUnBanAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sUnbanReason);
+				return EbanDB.UnBanClient(sUnBanClientSteamID, sUnBanAdminName, sUnBanAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sUnbanReason);
             }
             return false;
         }
 
-        public async Task<bool> GetBan(CCSPlayerController player)
+        public bool GetBan(CCSPlayerController player)
         {
             if (player.IsValid)
             {
-                return await EbanDB.GetBan(player, EW.g_Scheme.server_name);
+                return EbanDB.GetBan(player, EW.g_Scheme.server_name);
             }
             else
             if (EW.g_BannedPlayer.ContainsKey(player))

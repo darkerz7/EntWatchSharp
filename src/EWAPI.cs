@@ -7,11 +7,11 @@ namespace EntWatchSharp
 {
 	internal class EWAPI : IEntWatchSharpAPI
 	{
-		public async Task<SEWAPI_Ban> Native_EntWatch_IsClientBanned(string sSteamID)
+		public SEWAPI_Ban Native_EntWatch_IsClientBanned(string sSteamID)
 		{
 			if (!string.IsNullOrEmpty(sSteamID))
 			{
-				EbanPlayer eban = await EbanDB.GetBan(sSteamID, EW.g_Scheme.server_name);
+				EbanPlayer eban = EbanDB.GetBan(sSteamID, EW.g_Scheme.server_name);
 				if (eban != null)
 				{
 					SEWAPI_Ban apieban = new SEWAPI_Ban();
@@ -28,17 +28,17 @@ namespace EntWatchSharp
 			}
 			return new SEWAPI_Ban();
 		}
-		public async Task<bool> Native_EntWatch_BanClient(SEWAPI_Ban sewPlayer)
+		public bool Native_EntWatch_BanClient(SEWAPI_Ban sewPlayer)
 		{
-			return await EbanDB.BanClient(sewPlayer.sClientName, sewPlayer.sClientSteamID, sewPlayer.sAdminName, sewPlayer.sAdminSteamID, EW.g_Scheme.server_name, sewPlayer.iDuration, sewPlayer.iTimeStamp_Issued, sewPlayer.sReason);
+			return EbanDB.BanClient(sewPlayer.sClientName, sewPlayer.sClientSteamID, sewPlayer.sAdminName, sewPlayer.sAdminSteamID, EW.g_Scheme.server_name, sewPlayer.iDuration, sewPlayer.iTimeStamp_Issued, sewPlayer.sReason);
 		}
-		public async Task<bool> Native_EntWatch_UnbanClient(SEWAPI_Ban sewPlayer)
+		public bool Native_EntWatch_UnbanClient(SEWAPI_Ban sewPlayer)
 		{
-			return await EbanDB.UnBanClient(sewPlayer.sClientSteamID, sewPlayer.sAdminName, sewPlayer.sAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sewPlayer.sReason);
+			return EbanDB.UnBanClient(sewPlayer.sClientSteamID, sewPlayer.sAdminName, sewPlayer.sAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sewPlayer.sReason);
 		}
-		public async Task Native_EntWatch_UpdateStatusBanClient(CCSPlayerController Player)
+		public void Native_EntWatch_UpdateStatusBanClient(CCSPlayerController Player)
 		{
-			if (!await EW.g_BannedPlayer[Player].GetBan(Player)) EW.g_BannedPlayer[Player].bBanned = false;
+			if (!EW.g_BannedPlayer[Player].GetBan(Player)) EW.g_BannedPlayer[Player].bBanned = false;
 		}
 		public bool Native_EntWatch_IsSpecialItem(CEntityInstance cEntity)
 		{

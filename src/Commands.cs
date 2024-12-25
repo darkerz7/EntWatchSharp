@@ -112,7 +112,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("ehud", "Allows the player to switch the HUD")]
 		[CommandHelper(minArgs: 1, usage: "[number]", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public async void OnEWChangeHud(CCSPlayerController? player, CommandInfo command)
+		public void OnEWChangeHud(CCSPlayerController? player, CommandInfo command)
 #nullable disable
 		{
 			if (EW._CP_api == null || player == null || !player.IsValid) return;
@@ -130,7 +130,7 @@ namespace EntWatchSharp
 				{
 					EW.SwitchHud(player, number);
 
-					await EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Type", number.ToString());
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Type", number.ToString());
 
 					string sMessage = "";
 					switch (number)
@@ -150,7 +150,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
 		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: 50 50 50; min -200.0; max 200.0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public async void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
+		public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
 #nullable disable
 		{
 			if (EW._CP_api == null || player == null || !player.IsValid) return;
@@ -175,7 +175,7 @@ namespace EntWatchSharp
 					if (EW.g_HudPlayer[player] is HudWorldText) EW.SwitchHud(player, 3);
 
 					string sCookie = $"{fX}_{fY}_{fZ}";
-					await EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos", sCookie);
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos", sCookie);
 
 					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Position"]} {EW.g_Scheme.color_enabled}X: {fX} Y: {fY} Z: {fZ}", bConsole);
 				}
@@ -187,7 +187,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("ehud_refresh", "Allows the player to change the time it takes to scroll through the list")]
 		[CommandHelper(minArgs: 1, usage: "[sec] (default: 3; min 1; max 10)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public async void OnEWChangeHudRefresh(CCSPlayerController? player, CommandInfo command)
+		public void OnEWChangeHudRefresh(CCSPlayerController? player, CommandInfo command)
 #nullable disable
 		{
 			if (EW._CP_api == null || player == null || !player.IsValid) return;
@@ -204,7 +204,7 @@ namespace EntWatchSharp
 				if (number >= 1 && number <= 10)
 				{
 					EW.g_HudPlayer[player].iRefresh = number;
-					await EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh", number.ToString());
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh", number.ToString());
 					UI.EWReplyInfo(player, "Reply.Hud.Refresh", bConsole, EW.g_Scheme.color_enabled, number, EW.g_Scheme.color_warning);
 				} else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
 			}
@@ -214,7 +214,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("ehud_sheet", "Allows the player to change the number of items on the sheet")]
 		[CommandHelper(minArgs: 1, usage: "[count] (default: 5; min 1; max 15)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public async void OnEWChangeHudSheet(CCSPlayerController? player, CommandInfo command)
+		public void OnEWChangeHudSheet(CCSPlayerController? player, CommandInfo command)
 #nullable disable
 		{
 			if (EW._CP_api == null || player == null || !player.IsValid) return;
@@ -231,7 +231,7 @@ namespace EntWatchSharp
 				if (number >= 1 && number <= 15)
 				{
 					EW.g_HudPlayer[player].iSheetMax = number;
-					await EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Sheet", number.ToString());
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Sheet", number.ToString());
 					UI.EWReplyInfo(player, "Reply.Hud.Sheet", bConsole, EW.g_Scheme.color_enabled, number, EW.g_Scheme.color_warning);
 				}
 				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
@@ -242,7 +242,7 @@ namespace EntWatchSharp
 		[ConsoleCommand("eup", "Allows the player to use UsePriority")]
 		[CommandHelper(minArgs: 0, usage: "[bool]", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public async void OnEWChangeUsePriority(CCSPlayerController? player, CommandInfo command)
+		public void OnEWChangeUsePriority(CCSPlayerController? player, CommandInfo command)
 #nullable disable
 		{
 			if (EW._CP_api == null || player == null || !player.IsValid) return;
@@ -267,12 +267,12 @@ namespace EntWatchSharp
 
 				if (bNewValue)
 				{
-					await EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_Use_Priority", "1");
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_Use_Priority", "1");
 					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Use_Priority"]} {EW.g_Scheme.color_enabled}{Strlocalizer["All.Enabled"]}", bConsole);
 				}
 				else
 				{
-					await EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_Use_Priority", "0");
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_Use_Priority", "0");
 					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Use_Priority"]} {EW.g_Scheme.color_disabled}{Strlocalizer["All.Disabled"]}", bConsole);
 				}
 			}catch (Exception ex) { Console.WriteLine(ex.ToString()); }
@@ -363,10 +363,10 @@ namespace EntWatchSharp
 
 			UI.EWChatAdmin("Chat.Admin.Restricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_disabled, target.Online ? UI.PlayerInfo(target.Player) : UI.PlayerInfo(target.Name,target.SteamID));
 			UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
-			Server.NextFrame(async () =>
+			Server.NextFrame(() =>
 			{
 				EbanPlayer ebanPlayer = target.Online ? EW.g_BannedPlayer[target.Player] : new EbanPlayer();
-				if (await ebanPlayer.SetBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.Name, target.SteamID, time, reason))
+				if (ebanPlayer.SetBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.Name, target.SteamID, time, reason))
 				{
 					Server.NextFrame(() =>
 					{
@@ -429,11 +429,11 @@ namespace EntWatchSharp
 			string reason = command.GetArg(2);
 			if (string.IsNullOrEmpty(reason)) reason = Cvar.UnBanReason;
 
-			Server.NextFrame(async () =>
+			Server.NextFrame(() =>
 			{
 				if (!bOnline && sTarget.ToLower().StartsWith("#steam_"))
 				{
-					target = await EbanDB.GetBan(sTarget.Substring(1), EW.g_Scheme.server_name);
+					target = EbanDB.GetBan(sTarget.Substring(1), EW.g_Scheme.server_name);
 				}
 
 				if (target == null)
@@ -466,10 +466,11 @@ namespace EntWatchSharp
 					UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
 				});
 
-				Server.NextFrame(async () =>
+				Server.NextFrame(() =>
 				{
-					if (await target.UnBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.sClientSteamID, reason))
+					if (target.UnBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.sClientSteamID, reason))
 					{
+						if (bOnline) EW.g_BannedPlayer[players.Single()].bBanned = false;
 						Server.NextFrame(() =>
 						{
 							if (admin != null && admin.IsValid) UI.EWReplyInfo(admin, "Reply.Eban.UnBan.Success", bConsole); //admin.PrintToChat("Success");

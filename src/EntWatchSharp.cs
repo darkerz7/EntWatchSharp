@@ -18,7 +18,7 @@ namespace EntWatchSharp
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.10.beta";
+		public override string ModuleVersion => "0.DZ.11.beta";
 
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
