@@ -13,7 +13,7 @@ Beta version of the plugin, needs many improvements
 8. Information output in HUD, which can be configured by each player separately
 9. Allows you to track {number} buttons
 10. Async functions
-11. SQLite and MySQL support
+11. SQLite/MySQL/PostgreSQL support
 12. Language setting for players
 13. Allows you to set up individual access for admins
 14. Keeps logs to a file and discord
