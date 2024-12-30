@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities;
 using System;
 
@@ -17,6 +18,8 @@ namespace EntWatchSharp.Items
         public bool LockItem { get; set; }
 		public int MathID { get; set; }
         public bool MathNameFix { get; set; }
+        public bool MathFindSpawned { get; set; }
+        public bool MathDontShowMax { get; set; }
 		public string Filter { get; set; } // <activatorname> or <Context:1> or <$attribute>
 
 		public CEntityInstance Entity;
@@ -37,7 +40,9 @@ namespace EntWatchSharp.Items
             LockItem = false;
 			MathID = 0;
 			MathNameFix = false;
-            Filter = "";
+			MathFindSpawned = false;
+            MathDontShowMax = false;
+			Filter = "";
 
 			Entity = null;
 			MathCounter = null;
@@ -57,6 +62,8 @@ namespace EntWatchSharp.Items
             LockItem = false;
 			MathID = 0;
 			MathNameFix = false;
+			MathFindSpawned = false;
+			MathDontShowMax = false;
 			Filter = "";
 
 			Entity = entity;
@@ -80,6 +87,8 @@ namespace EntWatchSharp.Items
             LockItem = cCopyAbility.LockItem;
             MathID = cCopyAbility.MathID;
             MathNameFix = cCopyAbility.MathNameFix;
+			MathFindSpawned = cCopyAbility.MathFindSpawned;
+            MathDontShowMax = cCopyAbility.MathDontShowMax;
             Filter = cCopyAbility.Filter;
 
 			Entity = null;
@@ -87,6 +96,7 @@ namespace EntWatchSharp.Items
 			EW.UpdateTime();
 			fLastUse = EW.fGameTime - CoolDown;
 			iCurrentUses = 0;
+            SetSpawnedMath();
 		}
 
         public void SetFilter(CEntityInstance activator)
@@ -111,21 +121,22 @@ namespace EntWatchSharp.Items
                 }
 			}
 		}
-#nullable enable
-		private CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
-#nullable disable
-		{
-			if (entity != null && entity.IsValid && entity.DesignerName.CompareTo("player") == 0)
-			{
-				var pawn = new CCSPlayerPawn(entity.Handle);
-				if (pawn.Controller.Value != null && pawn.Controller.Value.IsValid)
+
+        public void SetSpawnedMath()
+        {
+            if ((Mode == 6 || Mode == 7) && MathFindSpawned && MathID > 0)
+            {
+				var entMaths = Utilities.FindAllEntitiesByDesignerName<CMathCounter>("math_counter");
+				foreach (var entMath in entMaths)
 				{
-					var player = new CCSPlayerController(pawn.Controller.Value.Handle);
-					if (player != null && player.IsValid) return player;
+					if (entMath != null && entMath.IsValid && Int32.Parse(entMath.UniqueHammerID) == MathID)
+					{
+						MathCounter = entMath;
+						break;
+					}
 				}
 			}
-			return null;
-		}
+        }
 
 		public void Used()
         {
@@ -185,7 +196,7 @@ namespace EntWatchSharp.Items
                         if (MathCounter != null && MathCounter.IsValid)
                         {
                             float fValue = EntWatchSharp.MathCounter_GetValue(MathCounter);
-                            if (fValue > MathCounter.Min) return $"{fValue.ToString("F1")}/{MathCounter.Max.ToString("F1")}";
+                            if (fValue > MathCounter.Min) return $"{fValue.ToString("F1")}" + (!MathDontShowMax ? $"/{MathCounter.Max.ToString("F1")}" : "");
                             else return "E";
                         }
                         else return "+";
@@ -195,7 +206,7 @@ namespace EntWatchSharp.Items
                         if (MathCounter != null && MathCounter.IsValid) 
                         {
                             float fValue = MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter);
-							if(fValue < MathCounter.Max) return $"{fValue.ToString("F1")}/{MathCounter.Max.ToString("F1")}";
+							if(fValue < MathCounter.Max) return $"{fValue.ToString("F1")}" + (!MathDontShowMax ? $"/{MathCounter.Max.ToString("F1")}" : "");
                             else return "E";
 						}
                         else return "+";

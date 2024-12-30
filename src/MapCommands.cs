@@ -83,6 +83,7 @@ namespace EntWatchSharp
 				AbilityTest.Mode = Value.iMode;
 				AbilityTest.CoolDown = Value.iCooldown;
 				AbilityTest.MaxUses = Value.iMaxuses;
+				AbilityTest.SetSpawnedMath();
 				if (Cvar.DisplayMapCommands) UI.EWSysInfo("Info.MapCommands.SetMode", 4, AbilityTest.ButtonID, Value.iMode, Value.iCooldown, Value.iMaxuses, Value.bFlag);
 			}
 		};

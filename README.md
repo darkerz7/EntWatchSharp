@@ -76,7 +76,9 @@ Beta version of the plugin, needs many improvements
 				"Ignore": false,		//Bool, Ignore item display
 				"LockItem": false,		//Bool, Lock button/door/game_ui_IO
 				"MathID": 0,			//Integer, math_counter HammerID for modes 6, 7
-				"MathNameFix": false		//Bool, Fix the name of the math_counter (Work with flag: Preserve entity names (Don't do name fixup) ->point_template/env_entity_maker)
+				"MathNameFix": false,		//Bool, Fix the name of the math_counter (Work with flag: Preserve entity names (Don't do name fixup) ->point_template/env_entity_maker)
+				"MathFindSpawned": false,	//Bool, Search for math_counter on map after weapon spawn(e.x. The math_counter is not included in the point_template and spawns at the beginning of the round, and the weapon spawns much later than 2 seconds)
+				"MathDontShowMax": false	//Bool, Do not show maximum value
 			},
 			{
 				"Name": "",
@@ -90,7 +92,9 @@ Beta version of the plugin, needs many improvements
 				"Ignore": false,
 				"LockItem": false,
 				"MathID": 0,
-				"MathNameFix": false
+				"MathNameFix": false,
+				"MathFindSpawned": false,
+				"MathDontShowMax": false
 			}
 		]
 	},

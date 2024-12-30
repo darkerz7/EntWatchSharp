@@ -246,7 +246,7 @@ namespace EntWatchSharp
 							if (ItemTest.WeaponHandle == null || !ItemTest.WeaponHandle.IsValid || ItemTest.WeaponHandle.Entity == null) continue;
 							foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 							{
-								if (AbilityTest.MathID > 0 && AbilityTest.MathID == Int32.Parse(cMathCounter.UniqueHammerID))
+								if (!AbilityTest.MathFindSpawned && AbilityTest.MathID > 0 && AbilityTest.MathID == Int32.Parse(cMathCounter.UniqueHammerID))
 								{
 									if (AbilityTest.MathNameFix) // <objectname> + _ + <serial number from 1> example: weapon_fire_125
 									{
