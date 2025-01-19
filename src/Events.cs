@@ -116,6 +116,7 @@ namespace EntWatchSharp
 			if (!EW.g_CfgLoaded) return;
 
 			EW.ShowHud();
+			ClanTag.UpdateClanTag();
 		}
 
 		private void TimerRetry()
@@ -357,6 +358,7 @@ namespace EntWatchSharp
 			EW.g_ItemList.Clear();
 			Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false, PawnIsAlive: true }).ToList().ForEach(player =>
 			{
+				ClanTag.RemoveClanTag(player);
 				if (EW.CheckDictionary(player, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[player].UpdateCountButton();
 			});
 			return HookResult.Continue;
@@ -395,6 +397,7 @@ namespace EntWatchSharp
 							if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
 							UI.EWChatActivity("Chat.Pickup", EW.g_Scheme.color_pickup, ItemTest, ItemTest.Owner);
 							EW.g_cAPI?.OnPickUpItem(ItemTest.Name, pl);
+							ClanTag.UpdatePickUp(ItemTest);
 							foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 							{
 								if (pl.UserId == OfflineTest.UserID)
@@ -470,6 +473,7 @@ namespace EntWatchSharp
 									if (EW.CheckDictionary(client, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[client].UpdateCountButton();
 									UI.EWChatActivity("Chat.Drop", EW.g_Scheme.color_drop, ItemTest, client);
 									EW.g_cAPI?.OnDropItem(ItemTest.Name, client);
+									ClanTag.RemoveClanTag(client);
 								}
 								return;
 							}
@@ -502,6 +506,7 @@ namespace EntWatchSharp
 						if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
 						UI.EWChatActivity("Chat.Death", EW.g_Scheme.color_death, ItemTest, pl);
 						EW.g_cAPI?.OnPlayerDeathWithItem(ItemTest.Name, pl);
+						ClanTag.RemoveClanTag(pl);
 						if (!ItemTest.ForceDrop)
 						{
 							ItemTest.WeaponHandle.Remove();
@@ -570,6 +575,7 @@ namespace EntWatchSharp
 					ItemTest.Owner = null;
 					UI.EWChatActivity("Chat.Disconnect", EW.g_Scheme.color_disconnect, ItemTest, @event.Userid);
 					EW.g_cAPI?.OnPlayerDisconnectWithItem(ItemTest.Name, @event.Userid);
+					ClanTag.RemoveClanTag(@event.Userid);
 					if (!ItemTest.ForceDrop)
 					{
 						ItemTest.WeaponHandle.Remove();
@@ -585,14 +591,18 @@ namespace EntWatchSharp
 			if (!EW.g_CfgLoaded || @event.Userid == null) return HookResult.Continue;
 			try
 			{
-				if (@event.Userid.IsValid)
+				CCSPlayerController player = new CCSPlayerController(@event.Userid.Handle);
+				AddTimer(0.3f, () =>
 				{
-					if(EW.CheckDictionary(@event.Userid, EW.g_HudPlayer))
+					if (player.IsValid)
 					{
-						var plHud = EW.g_HudPlayer[@event.Userid];
-						if (plHud is HudWorldText) ((HudWorldText)plHud).CreateHud();
+						if (EW.CheckDictionary(player, EW.g_HudPlayer))
+						{
+							var plHud = EW.g_HudPlayer[player];
+							if (plHud is HudWorldText) ((HudWorldText)plHud).CreateHud();
+						}
 					}
-				}
+				});
 			}catch (Exception) { }
 
 			return HookResult.Continue;

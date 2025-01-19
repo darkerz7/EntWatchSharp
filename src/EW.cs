@@ -156,7 +156,7 @@ namespace EntWatchSharp
 			try
 			{
 				string sHUDType = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Type") : "3";
-				string sHUDPos = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos") : "50_50_50";
+				string sHUDPos = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos") : "-100_25_80";
 				string sHUDRefresh = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh") : "3";
 				string sHUDSheet = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Sheet") : "5";
 				if (player.IsValid && CheckDictionary(player, g_HudPlayer))

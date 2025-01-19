@@ -2,7 +2,6 @@
 using CounterStrikeSharp.API.Core;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Items;
-using Microsoft.Extensions.Logging;
 
 namespace EntWatchSharp.Modules
 {

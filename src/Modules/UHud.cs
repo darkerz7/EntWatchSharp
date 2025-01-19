@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Items;
 using CounterStrikeSharp.API.Modules.Admin;
+using CounterStrikeSharp.API.Modules.Memory;
 
 namespace EntWatchSharp.Modules
 {
@@ -10,7 +11,7 @@ namespace EntWatchSharp.Modules
     {
         public CCSPlayerController HudPlayer;
 
-        public Vector vecEntity = new Vector(50, 50, 50);
+        public Vector vecEntity = new Vector(-100, 25, 80);
         public int iSheetMax = 5;
         public int iRefresh = 3;
         int iCurrentNumList = 0;
@@ -96,8 +97,8 @@ namespace EntWatchSharp.Modules
     class HudWorldText : UHud
     {
         public CPointWorldText Entity = null;
-        public HudWorldText(CCSPlayerController player) { HudPlayer = player; }
-        public void CreateHud()
+		public HudWorldText(CCSPlayerController player) { HudPlayer = player; }
+		/*public void CreateHud()
         {
             if (HudPlayer.IsValid && EW.IsPlayerAlive(HudPlayer))
             {
@@ -129,8 +130,55 @@ namespace EntWatchSharp.Modules
 
                 HudPlayer.Pawn.Value?.Teleport(HudPlayer.PlayerPawn.Value?.AbsOrigin, vAngle, HudPlayer.PlayerPawn.Value?.AbsVelocity);
             }
-        }
-        public override void UpdateText(string sItems)
+        }*/
+		public void CreateHud()
+		{
+			if (HudPlayer.IsValid && EW.IsPlayerAlive(HudPlayer))
+			{
+				CCSPlayerPawn pawn = HudPlayer.PlayerPawn.Value!;
+				var handle = new CHandle<CCSGOViewModel>((IntPtr)(pawn.ViewModelServices!.Handle + Schema.GetSchemaOffset("CCSPlayer_ViewModelServices", "m_hViewModel") + 4));
+				if (!handle.IsValid)
+				{
+					CCSGOViewModel viewmodel = Utilities.CreateEntityByName<CCSGOViewModel>("predicted_viewmodel")!;
+					viewmodel.DispatchSpawn();
+					handle.Raw = viewmodel.EntityHandle.Raw;
+					Utilities.SetStateChanged(pawn, "CCSPlayerPawnBase", "m_pViewModelServices");
+				}
+				CPointWorldText entity = Utilities.CreateEntityByName<CPointWorldText>("point_worldtext")!;
+				entity.FontSize = 18;
+				entity.FontName = "Consolas";
+				entity.Enabled = true;
+				entity.Fullbright = true;
+				entity.WorldUnitsPerPx = 0.25f;
+				entity.Color = System.Drawing.Color.White;
+				entity.MessageText = "";
+				entity.JustifyHorizontal = PointWorldTextJustifyHorizontal_t.POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_LEFT;
+				entity.JustifyVertical = PointWorldTextJustifyVertical_t.POINT_WORLD_TEXT_JUSTIFY_VERTICAL_TOP;
+				entity.ReorientMode = PointWorldTextReorientMode_t.POINT_WORLD_TEXT_REORIENT_NONE;
+
+				QAngle eyeAngles = pawn.EyeAngles;
+				Vector forward = new(), right = new(), up = new();
+				NativeAPI.AngleVectors(eyeAngles.Handle, forward.Handle, right.Handle, up.Handle);
+
+				Vector eyePosition = new();
+				eyePosition += forward * vecEntity.Z;
+				eyePosition += right * vecEntity.X;
+				eyePosition += up * vecEntity.Y;
+				QAngle angles = new()
+				{
+					Y = eyeAngles.Y + 270,
+					Z = 90 - eyeAngles.X,
+					X = 0
+				};
+
+				entity.DispatchSpawn();
+				entity.Teleport(pawn.AbsOrigin! + eyePosition + new Vector(0, 0, pawn.ViewOffset.Z), angles, null);
+				entity.AcceptInput("SetParent", handle.Value, null, "!activator");
+
+				Entity = entity;
+			}
+		}
+		public override void UpdateText(string sItems)
         {
             if (Entity != null && Entity.IsValid)
             {
@@ -138,5 +186,5 @@ namespace EntWatchSharp.Modules
                 else Entity.AcceptInput("SetMessage", null, null, "");
             }
         }
-    }
+	}
 }

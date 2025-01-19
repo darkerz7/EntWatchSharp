@@ -25,6 +25,8 @@ Beta version of the plugin, needs many improvements
 20. Items spawn
 21. API for interaction with other plugins
 22. Transmit HUD for other players
+23. Static HUD (WorldText)
+24. Display in clantag
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
@@ -144,6 +146,8 @@ Cvar | Parameters | Description
 `ewc_unbanreason` | `<string>` | Default unban reason. (Default Giving another chance)
 `ewc_keep_expired_ban` | `<false-true>` | Enable/Disable keep expired bans. (Default true)
 `ewc_offline_clear_time` | `<1-240>` | Time during which data is stored. (Default 30)
+`ewc_clantag` | `<false-true>` | Enable/Disable to display in the ClanTag. (Default true)
+`ewc_clantag_info` | `<false-true>` | Enable/Disable to display cooldown and other in the ClanTag. (Default true)
 
 ## Commands
 Client Command | Description
@@ -217,5 +221,4 @@ WHERE admin_steamid_unban LIKE '%STEAM_1:%';
 
 ## Future plans
 1. Fixes Errors
-2. Add display to clan tag
-3. Fix item highlighting
+2. Fix item highlighting

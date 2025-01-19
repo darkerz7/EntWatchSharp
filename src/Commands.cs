@@ -148,7 +148,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
-		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: 50 50 50; min -200.0; max 200.0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -100 25 80; min -200.0; max 200.0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
 #nullable disable
@@ -163,9 +163,9 @@ namespace EntWatchSharp
 			try
 			{
 				float fX, fY, fZ;
-				if (!float.TryParse(command.GetArg(1), out fX)) fX = 50;
-				if (!float.TryParse(command.GetArg(2), out fY)) fY = 50;
-				if (!float.TryParse(command.GetArg(3), out fZ)) fZ = 50;
+				if (!float.TryParse(command.GetArg(1), out fX)) fX = -100;
+				if (!float.TryParse(command.GetArg(2), out fY)) fY = 25;
+				if (!float.TryParse(command.GetArg(3), out fZ)) fZ = 80;
 				fX = (float)Math.Round(fX, 1);
 				fY = (float)Math.Round(fY, 1);
 				fZ = (float)Math.Round(fZ, 1);
