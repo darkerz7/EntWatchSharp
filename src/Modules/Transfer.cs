@@ -1,5 +1,4 @@
 ﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Items;
 
@@ -24,7 +23,7 @@ namespace EntWatchSharp.Modules
 			}
 		}
 
-		public static void ItemName(CCSPlayerController admin, Item ItemTest, CCSPlayerController receiver, bool bConsole, bool recurse = true)
+		public static void ItemName(CCSPlayerController admin, Item ItemTest, CCSPlayerController receiver, bool bConsole)
 		{
 			if (receiver.Pawn.Value == null || !receiver.Pawn.Value.IsValid || receiver.Pawn.Value.AbsOrigin == null)
 			{
@@ -43,7 +42,7 @@ namespace EntWatchSharp.Modules
 
 				if (new CCSWeaponBaseVData(weapon.Value!.VData!.Handle)!.GearSlot == ItemTest.WeaponHandle.VData!.GearSlot)
 				{
-					CCSWeaponBase CheckWeapon = new CCSWeaponBase(weapon.Value.Handle);
+					CCSWeaponBase CheckWeapon = new(weapon.Value.Handle);
 					if (CheckWeapon.IsValid)
 					{
 						foreach (Item ItemCheck in EW.g_ItemList.ToList())
@@ -77,13 +76,14 @@ namespace EntWatchSharp.Modules
 				}
 				ItemTest.Owner = null;
 				//fix bug drop
-				CounterStrikeSharp.API.Modules.Utils.Vector vec = new CounterStrikeSharp.API.Modules.Utils.Vector(receiver.Pawn.Value.AbsOrigin.Handle);
-				new CounterStrikeSharp.API.Modules.Timers.Timer(0.2f, () =>
+				CounterStrikeSharp.API.Modules.Utils.Vector vec = new(receiver.Pawn.Value.AbsOrigin.Handle);
+				_ = new CounterStrikeSharp.API.Modules.Timers.Timer(0.2f, () =>
 				{
 					try
 					{
 						if (ItemTest != null && ItemTest.WeaponHandle.IsValid) ItemTest.WeaponHandle.Teleport(vec, null, null);
-					}catch (Exception) { }
+					}
+					catch (Exception) { }
 				});
 			}
 			ItemTest.WeaponHandle.Teleport(receiver.Pawn.Value.AbsOrigin, null, null);

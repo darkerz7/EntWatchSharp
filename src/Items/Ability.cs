@@ -1,7 +1,5 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities;
-using System;
 
 namespace EntWatchSharp.Items
 {
@@ -109,9 +107,9 @@ namespace EntWatchSharp.Items
 
 				if (Filter[0] == '$')
                 {
-                    if (Filter.Length > 1) pawn.AcceptInput("AddAttribute", null, null, Filter.Substring(1));
+                    if (Filter.Length > 1) pawn.AcceptInput("AddAttribute", null, null, Filter[1..]);
                 }
-                else if (Filter.Contains(":"))
+                else if (Filter.Contains(':'))
                 {
 					pawn.AcceptInput("AddContext", null, null, Filter);
                 }
@@ -196,7 +194,7 @@ namespace EntWatchSharp.Items
                         if (MathCounter != null && MathCounter.IsValid)
                         {
                             float fValue = EntWatchSharp.MathCounter_GetValue(MathCounter);
-                            if (fValue > MathCounter.Min) return $"{fValue.ToString("F1")}" + (!MathDontShowMax ? $"/{MathCounter.Max.ToString("F1")}" : "");
+                            if (fValue > MathCounter.Min) return $"{fValue:F1}" + (!MathDontShowMax ? $"/{MathCounter.Max:F1}" : "");
                             else return "E";
                         }
                         else return "+";
@@ -206,7 +204,7 @@ namespace EntWatchSharp.Items
                         if (MathCounter != null && MathCounter.IsValid) 
                         {
                             float fValue = MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter);
-							if(fValue < MathCounter.Max) return $"{fValue.ToString("F1")}" + (!MathDontShowMax ? $"/{MathCounter.Max.ToString("F1")}" : "");
+							if(fValue < MathCounter.Max) return $"{fValue:F1}" + (!MathDontShowMax ? $"/{MathCounter.Max:F1}" : "");
                             else return "E";
 						}
                         else return "+";
@@ -215,7 +213,7 @@ namespace EntWatchSharp.Items
                     {
                         if (Entity != null && Entity.IsValid)
                         {
-                            CBaseEntity cBaseEntity = new CBaseEntity(Entity.Handle);
+                            CBaseEntity cBaseEntity = new(Entity.Handle);
                             return $"{cBaseEntity.Health} HP";
                         }
 						else return "+";

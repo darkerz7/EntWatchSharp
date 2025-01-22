@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 
-//VersionAPI: 0.DZ.11
+//VersionAPI: 0.DZ.14
 
 namespace EntWatchSharpAPI
 {
@@ -95,6 +95,24 @@ namespace EntWatchSharpAPI
 		 * @return				True if player has a special item, false otherwsie
 		 */
 		bool Native_EntWatch_HasSpecialItem(CCSPlayerController Player);
+
+		/**
+		 * Allows special items to glow for the player.
+		 *
+		 * @param Player		CCSPlayerController for forced update
+		 *
+		 * On error/errors:		Invalid player
+		 */
+		void Native_EntWatch_EnableWeaponGlow(CCSPlayerController Player);
+
+		/**
+		 * Prevents special items to glow for the player.
+		 *
+		 * @param Player		CCSPlayerController for forced update
+		 *
+		 * On error/errors:		Invalid player
+		 */
+		void Native_EntWatch_DisableWeaponGlow(CCSPlayerController Player);
 
 		/**
 		 * Called when a player is e-banned by any means

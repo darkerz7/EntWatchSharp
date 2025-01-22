@@ -14,15 +14,17 @@ namespace EntWatchSharp
 				EbanPlayer eban = EbanDB.GetBan(sSteamID, EW.g_Scheme.server_name);
 				if (eban != null)
 				{
-					SEWAPI_Ban apieban = new SEWAPI_Ban();
-					apieban.bBanned = eban.bBanned;
-					apieban.sAdminName = eban.sAdminName;
-					apieban.sAdminSteamID = eban.sAdminSteamID;
-					apieban.iDuration = eban.iDuration;
-					apieban.iTimeStamp_Issued = eban.iTimeStamp_Issued;
-					apieban.sReason = eban.sReason;
-					apieban.sClientName = eban.sClientName;
-					apieban.sClientSteamID = eban.sClientSteamID;
+					SEWAPI_Ban apieban = new()
+					{
+						bBanned = eban.bBanned,
+						sAdminName = eban.sAdminName,
+						sAdminSteamID = eban.sAdminSteamID,
+						iDuration = eban.iDuration,
+						iTimeStamp_Issued = eban.iTimeStamp_Issued,
+						sReason = eban.sReason,
+						sClientName = eban.sClientName,
+						sClientSteamID = eban.sClientSteamID
+					};
 					return apieban;
 				}
 			}
@@ -38,7 +40,7 @@ namespace EntWatchSharp
 		}
 		public void Native_EntWatch_UpdateStatusBanClient(CCSPlayerController Player)
 		{
-			if (!EW.g_BannedPlayer[Player].GetBan(Player)) EW.g_BannedPlayer[Player].bBanned = false;
+			if (!EbanPlayer.GetBan(Player)) EW.g_EWPlayer[Player].BannedPlayer.bBanned = false;
 		}
 		public bool Native_EntWatch_IsSpecialItem(CEntityInstance cEntity)
 		{
@@ -69,6 +71,14 @@ namespace EntWatchSharp
 				if (ItemTest.Owner == player) return true;
 			}
 			return false;
+		}
+		public void Native_EntWatch_EnableWeaponGlow(CCSPlayerController player)
+		{
+			if(player.IsValid && EW.CheckDictionary(player)) EW.g_EWPlayer[player].PrivilegePlayer.WeaponGlow = true;
+		}
+		public void Native_EntWatch_DisableWeaponGlow(CCSPlayerController player)
+		{
+			if (player.IsValid && EW.CheckDictionary(player)) EW.g_EWPlayer[player].PrivilegePlayer.WeaponGlow = false;
 		}
 		//===================================================================================================
 		public event IEntWatchSharpAPI.Forward_OnClientBanned Forward_EntWatch_OnClientBanned;

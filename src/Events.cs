@@ -9,7 +9,6 @@ using EntWatchSharp.Helpers;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
-using EntWatchSharpAPI;
 
 namespace EntWatchSharp
 {
@@ -126,11 +125,11 @@ namespace EntWatchSharp
 			{
 				Utilities.GetPlayers().ForEach(player =>
 				{
-					if (player.IsValid && EW.CheckDictionary(player, EW.g_BannedPlayer))
+					if (player.IsValid && EW.CheckDictionary(player))
 					{
 						Server.NextFrame(() =>
 						{
-							EW.g_BannedPlayer[player].GetBan(player);
+							EbanPlayer.GetBan(player);
 						});
 					}
 				});
@@ -162,11 +161,11 @@ namespace EntWatchSharp
 			//Update (Un)Bans
 			Utilities.GetPlayers().ForEach(player =>
 			{
-				if (player.IsValid && EW.CheckDictionary(player, EW.g_BannedPlayer))
+				if (player.IsValid && EW.CheckDictionary(player))
 				{
 					Server.NextFrame(() =>
 					{
-						if (!EW.g_BannedPlayer[player].GetBan(player)) EW.g_BannedPlayer[player].bBanned = false;
+						if (!EbanPlayer.GetBan(player)) EW.g_EWPlayer[player].BannedPlayer.bBanned = false;
 					});
 				}
 			});
@@ -228,7 +227,7 @@ namespace EntWatchSharp
 										return;
 									}
 								}
-								Ability abilitytest = new Ability("", entity.DesignerName, true, 0, 0, 0, iButtonID, entity);
+								Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, iButtonID, entity);
 								ItemTest.AbilityList.Add(abilitytest);
 							}
 						}
@@ -238,8 +237,8 @@ namespace EntWatchSharp
 			{
 				Server.NextFrame(() =>
 				{
-					CMathCounter cMathCounter = new CMathCounter(entity.Handle); // Server NextFrame or Timer - Need tests??
-					new CounterStrikeSharp.API.Modules.Timers.Timer(2.0f, () =>
+					CMathCounter cMathCounter = new(entity.Handle); // Server NextFrame or Timer - Need tests??
+					_ = new CounterStrikeSharp.API.Modules.Timers.Timer(2.0f, () =>
 					{
 						if (cMathCounter == null || !cMathCounter.IsValid || cMathCounter.Entity == null || string.IsNullOrEmpty(cMathCounter.Entity.Name)) return; //Bad math_counter
 						foreach (Item ItemTest in EW.g_ItemList.ToList())
@@ -252,12 +251,12 @@ namespace EntWatchSharp
 									if (AbilityTest.MathNameFix) // <objectname> + _ + <serial number from 1> example: weapon_fire_125
 									{
 										if (string.IsNullOrEmpty(ItemTest.WeaponHandle.Entity.Name)) continue;
-										int iIndexWeapon = ItemTest.WeaponHandle.Entity.Name.LastIndexOf("_");
+										int iIndexWeapon = ItemTest.WeaponHandle.Entity.Name.LastIndexOf('_');
 										if (iIndexWeapon == -1) continue;
-										int iIndexMathCounter = cMathCounter.Entity.Name.LastIndexOf("_");
+										int iIndexMathCounter = cMathCounter.Entity.Name.LastIndexOf('_');
 										if (iIndexMathCounter == -1) return; //Another math_counter or bad EW config
-										string sFix = cMathCounter.Entity.Name.Substring(iIndexMathCounter);
-										if (sFix.CompareTo(ItemTest.WeaponHandle.Entity.Name.Substring(iIndexWeapon)) != 0) continue;
+										string sFix = cMathCounter.Entity.Name[iIndexMathCounter..];
+										if (sFix.CompareTo(ItemTest.WeaponHandle.Entity.Name[iIndexWeapon..]) != 0) continue;
 									}
 									AbilityTest.MathCounter = cMathCounter;
 									return;
@@ -298,14 +297,14 @@ namespace EntWatchSharp
 							if (AbilityTest.Entity == entity)
 							{
 								ItemTest.AbilityList.Remove(AbilityTest);
-								if (ItemTest.Owner != null && EW.CheckDictionary(ItemTest.Owner, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[ItemTest.Owner].UpdateCountButton();
+								if (ItemTest.Owner != null && EW.CheckDictionary(ItemTest.Owner)) EW.g_EWPlayer[ItemTest.Owner].UsePriorityPlayer.UpdateCountButton(ItemTest.Owner);
 							}
 						}
 					}
 				});
 			}else if (entity.DesignerName.CompareTo("math_counter") == 0)
 			{
-				CMathCounter cMathCounter = new CMathCounter(entity.Handle);
+				CMathCounter cMathCounter = new(entity.Handle);
 				Server.NextFrame(() =>
 				{
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
@@ -315,7 +314,7 @@ namespace EntWatchSharp
 							if (AbilityTest.MathID > 0 && AbilityTest.MathCounter == cMathCounter)
 							{
 								ItemTest.AbilityList.Remove(AbilityTest);
-								if (EW.CheckDictionary(ItemTest.Owner, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[ItemTest.Owner].UpdateCountButton();
+								if (EW.CheckDictionary(ItemTest.Owner)) EW.g_EWPlayer[ItemTest.Owner].UsePriorityPlayer.UpdateCountButton(ItemTest.Owner);
 							}
 						}
 					}
@@ -329,8 +328,8 @@ namespace EntWatchSharp
 			if (!EW.g_CfgLoaded || !Cvar.UsePriority) return;
 			Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false, PawnIsAlive: true }).ToList().ForEach(player =>
 			{
-				if (!EW.CheckDictionary(player, EW.g_UsePriorityPlayer)) return;
-				EW.g_UsePriorityPlayer[player].DetectUse();
+				if (!EW.CheckDictionary(player)) return;
+				EW.g_EWPlayer[player].UsePriorityPlayer.DetectUse(player);
 			});
 		}
 
@@ -342,11 +341,22 @@ namespace EntWatchSharp
 #nullable disable
 			{
 				if (player == null || !player.IsValid) continue;
-				foreach (KeyValuePair<CCSPlayerController,UHud> hud in EW.g_HudPlayer)
+				foreach (KeyValuePair<CCSPlayerController, EWPlayer> ewp in EW.g_EWPlayer)
 				{
-					if (hud.Value is HudWorldText && ((HudWorldText)hud.Value).Entity != null && ((HudWorldText)hud.Value).Entity.IsValid && player != hud.Key)
+					if (ewp.Value.HudPlayer is HudWorldText hud && hud.Entity != null && hud.Entity.IsValid && player != ewp.Key)
 					{
-						info.TransmitEntities.Remove(((HudWorldText)hud.Value).Entity);
+						info.TransmitEntities.Remove(hud.Entity);
+					}
+					if (Cvar.GlowVIP)
+					{
+						if(!ewp.Value.PrivilegePlayer.WeaponGlow)
+						{
+							foreach (Item ItemTest in EW.g_ItemList.ToList())
+							{
+								if (Cvar.GlowProp && ItemTest.Prop != null && ItemTest.Prop.IsValid) info.TransmitEntities.Remove(ItemTest.Prop);
+								if (Cvar.GlowParticle && ItemTest.Particle != null && ItemTest.Particle.IsValid) info.TransmitEntities.Remove(ItemTest.Particle);
+							}
+						}
 					}
 				}
 			}
@@ -359,7 +369,7 @@ namespace EntWatchSharp
 			Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false, PawnIsAlive: true }).ToList().ForEach(player =>
 			{
 				ClanTag.RemoveClanTag(player);
-				if (EW.CheckDictionary(player, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[player].UpdateCountButton();
+				if (EW.CheckDictionary(player)) EW.g_EWPlayer[player].UsePriorityPlayer.UpdateCountButton(player);
 			});
 			return HookResult.Continue;
 		}
@@ -376,7 +386,7 @@ namespace EntWatchSharp
 		{
 			if (!EW.g_CfgLoaded || @event.Userid == null) return HookResult.Continue;
 
-			CCSPlayerController pl = new CCSPlayerController(@event.Userid.Handle);
+			CCSPlayerController pl = new(@event.Userid.Handle);
 
 			if (pl.IsValid)
 			{
@@ -389,15 +399,16 @@ namespace EntWatchSharp
 
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
 					{
-						if (ItemTest.thisItem(ownerWeapon.Index))
+						if (ItemTest.ThisItem(ownerWeapon.Index))
 						{
 							ItemTest.Owner = pl;
 							ItemTest.Team = pl.TeamNum;
 							ItemTest.SetDelay();
-							if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
+							if (EW.CheckDictionary(pl)) EW.g_EWPlayer[pl].UsePriorityPlayer.UpdateCountButton(pl);
 							UI.EWChatActivity("Chat.Pickup", EW.g_Scheme.color_pickup, ItemTest, ItemTest.Owner);
 							EW.g_cAPI?.OnPickUpItem(ItemTest.Name, pl);
 							ClanTag.UpdatePickUp(ItemTest);
+							ItemTest.DisableGlow();
 							foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 							{
 								if (pl.UserId == OfflineTest.UserID)
@@ -426,7 +437,7 @@ namespace EntWatchSharp
 					var client = new CCSPlayerController(service.Pawn.Value.Controller.Value.Handle);
 					var weapon = hook.GetParam<CBasePlayerWeapon>(1);
 
-					if (EW.CheckDictionary(client, EW.g_BannedPlayer) && EW.g_BannedPlayer[client].bFixSpawnItem)
+					if (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bFixSpawnItem)
 					{
 						hook.SetReturn(false);
 						return HookResult.Handled;
@@ -434,7 +445,7 @@ namespace EntWatchSharp
 
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
 					{
-						if (ItemTest.WeaponHandle == weapon && (Cvar.BlockEPickup && (client.Buttons & PlayerButtons.Use) != 0 || (EW.CheckDictionary(client, EW.g_BannedPlayer) && EW.g_BannedPlayer[client].bBanned)))
+						if (ItemTest.WeaponHandle == weapon && (Cvar.BlockEPickup && (client.Buttons & PlayerButtons.Use) != 0 || (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bBanned)))
 						{
 							hook.SetReturn(false);
 							return HookResult.Handled;
@@ -470,10 +481,11 @@ namespace EntWatchSharp
 								if (ItemTest.Owner == client)
 								{
 									ItemTest.Owner = null;
-									if (EW.CheckDictionary(client, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[client].UpdateCountButton();
+									if (EW.CheckDictionary(client)) EW.g_EWPlayer[client].UsePriorityPlayer.UpdateCountButton(client);
 									UI.EWChatActivity("Chat.Drop", EW.g_Scheme.color_drop, ItemTest, client);
 									EW.g_cAPI?.OnDropItem(ItemTest.Name, client);
 									ClanTag.RemoveClanTag(client);
+									ItemTest.EnableGlow();
 								}
 								return;
 							}
@@ -489,13 +501,13 @@ namespace EntWatchSharp
 		{
 			if (!EW.g_CfgLoaded || @event.Userid == null) return HookResult.Continue;
 
-			CCSPlayerController pl = new CCSPlayerController(@event.Userid.Handle);
+			CCSPlayerController pl = new(@event.Userid.Handle);
 
 			if (pl.IsValid)
 			{
-				if (EW.CheckDictionary(pl, EW.g_HudPlayer))
+				if (EW.CheckDictionary(pl))
 				{
-					EW.RemoveEntityHud(pl);
+					EW.g_EWPlayer[pl].RemoveEntityHud();
 				}
 
 				foreach(Item ItemTest in EW.g_ItemList.ToList())
@@ -503,10 +515,11 @@ namespace EntWatchSharp
 					if (ItemTest.Owner == pl)
 					{
 						ItemTest.Owner = null;
-						if (EW.CheckDictionary(pl, EW.g_UsePriorityPlayer)) EW.g_UsePriorityPlayer[pl].UpdateCountButton();
+						if (EW.CheckDictionary(pl)) EW.g_EWPlayer[pl].UsePriorityPlayer.UpdateCountButton(pl);
 						UI.EWChatActivity("Chat.Death", EW.g_Scheme.color_death, ItemTest, pl);
 						EW.g_cAPI?.OnPlayerDeathWithItem(ItemTest.Name, pl);
 						ClanTag.RemoveClanTag(pl);
+						ItemTest.EnableGlow();
 						if (!ItemTest.ForceDrop)
 						{
 							ItemTest.WeaponHandle.Remove();
@@ -525,27 +538,26 @@ namespace EntWatchSharp
 
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
-			CCSPlayerController pl = new CCSPlayerController(@event.Userid.Handle);
+			CCSPlayerController pl = new(@event.Userid.Handle);
 
 			if (pl.IsValid)
 			{
-				EW.CheckDictionary(pl, EW.g_HudPlayer); //Add HUD
-
-				EW.CheckDictionary(pl, EW.g_UsePriorityPlayer); //Add UsePriority
+				EW.CheckDictionary(pl); //Add EWPlayer
 
 				EW.LoadClientPrefs(pl);
 
-				if(EW.CheckDictionary(pl, EW.g_BannedPlayer))  //Add Eban
+				//Add Eban
+				Server.NextFrame(() =>
 				{
-					Server.NextFrame(() =>
+					if (EW.CheckDictionary(pl))
 					{
-						EW.g_BannedPlayer[pl].GetBan(pl); //Set Eban
+						EbanPlayer.GetBan(pl); //Set Eban
 						Server.NextFrame(() =>
 						{
-							if (EW.g_BannedPlayer[pl].bBanned) UI.EWSysInfo("Info.Eban.PlayerConnect", 4, UI.PlayerInfo(pl), EW.g_BannedPlayer[pl].iDuration, EW.g_BannedPlayer[pl].iTimeStamp_Issued, UI.PlayerInfo(EW.g_BannedPlayer[pl].sAdminName, EW.g_BannedPlayer[pl].sAdminSteamID), EW.g_BannedPlayer[pl].sReason);
+							if (EW.CheckDictionary(pl) && EW.g_EWPlayer[pl].BannedPlayer.bBanned) UI.EWSysInfo("Info.Eban.PlayerConnect", 4, UI.PlayerInfo(pl), EW.g_EWPlayer[pl].BannedPlayer.iDuration, EW.g_EWPlayer[pl].BannedPlayer.iTimeStamp_Issued, UI.PlayerInfo(EW.g_EWPlayer[pl].BannedPlayer.sAdminName, EW.g_EWPlayer[pl].BannedPlayer.sAdminSteamID), EW.g_EWPlayer[pl].BannedPlayer.sReason);
 						});
-					});
-				}
+					}
+				});
 			}
 
 			return HookResult.Continue;
@@ -559,14 +571,8 @@ namespace EntWatchSharp
 
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
-			if (EW.g_HudPlayer.ContainsKey(@event.Userid))
-				EW.g_HudPlayer.Remove(@event.Userid);   //Remove HUD
-
-			if (EW.g_UsePriorityPlayer.ContainsKey(@event.Userid))
-				EW.g_UsePriorityPlayer.Remove(@event.Userid);   //Remove UsePriority
-
-			if (EW.g_BannedPlayer.ContainsKey(@event.Userid))
-				EW.g_BannedPlayer.Remove(@event.Userid);   //Remove Eban
+			if (EW.g_EWPlayer.ContainsKey(@event.Userid))
+				EW.g_EWPlayer.Remove(@event.Userid);   //Remove EWPlayer
 
 			foreach(Item ItemTest in EW.g_ItemList.ToList())
 			{
@@ -576,6 +582,7 @@ namespace EntWatchSharp
 					UI.EWChatActivity("Chat.Disconnect", EW.g_Scheme.color_disconnect, ItemTest, @event.Userid);
 					EW.g_cAPI?.OnPlayerDisconnectWithItem(ItemTest.Name, @event.Userid);
 					ClanTag.RemoveClanTag(@event.Userid);
+					ItemTest.EnableGlow();
 					if (!ItemTest.ForceDrop)
 					{
 						ItemTest.WeaponHandle.Remove();
@@ -591,15 +598,15 @@ namespace EntWatchSharp
 			if (!EW.g_CfgLoaded || @event.Userid == null) return HookResult.Continue;
 			try
 			{
-				CCSPlayerController player = new CCSPlayerController(@event.Userid.Handle);
+				CCSPlayerController player = new(@event.Userid.Handle);
 				AddTimer(0.3f, () =>
 				{
 					if (player.IsValid)
 					{
-						if (EW.CheckDictionary(player, EW.g_HudPlayer))
+						if (EW.CheckDictionary(player))
 						{
-							var plHud = EW.g_HudPlayer[player];
-							if (plHud is HudWorldText) ((HudWorldText)plHud).CreateHud();
+							var plHud = EW.g_EWPlayer[player].HudPlayer;
+							if (plHud is HudWorldText hud) hud.CreateHud(player);
 						}
 					}
 				});
@@ -614,7 +621,7 @@ namespace EntWatchSharp
 		//[EntityOutputHook("func_door", "OnOpen")]
 		//[EntityOutputHook("func_door_rotating", "OnOpen")]
 		//public HookResult OnButtonPressed(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
-		private bool OnButtonPressed(CEntityInstance activator, CEntityInstance caller)
+		private static bool OnButtonPressed(CEntityInstance activator, CEntityInstance caller)
 		{
 			if (!EW.g_CfgLoaded) return true;
 			try
@@ -649,7 +656,7 @@ namespace EntWatchSharp
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
-			var cEntity = hook.GetParam<CEntityIdentity>(0);
+			//var cEntity = hook.GetParam<CEntityIdentity>(0);
 			var cInput = hook.GetParam<CUtlSymbolLarge>(1);
 			var cActivator = hook.GetParam<CEntityInstance>(2);
 			var cCaller = hook.GetParam<CEntityInstance>(3);
@@ -675,9 +682,9 @@ namespace EntWatchSharp
 			{
 				foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 				{
-					if (AbilityTest.ButtonClass.ToLower().StartsWith("game_ui::"))
+					if (AbilityTest.ButtonClass.StartsWith("game_ui::", StringComparison.OrdinalIgnoreCase))
 					{
-						if (AbilityTest.ButtonClass.ToLower().Substring(9).CompareTo(cValue.KeyValue.ToLower()) == 0)
+						if (AbilityTest.ButtonClass.ToLower()[9..].CompareTo(cValue.KeyValue.ToLower()) == 0)
 						{
 							if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == cActivator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
 							{
@@ -694,7 +701,7 @@ namespace EntWatchSharp
 			return HookResult.Continue;
 		}
 #nullable enable
-		public CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
+		public static CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
 #nullable disable
 		{
 			if (entity != null && entity.IsValid && entity.DesignerName.CompareTo("player") == 0)
@@ -724,8 +731,8 @@ namespace EntWatchSharp
 
 				//Console.WriteLine($"Player: {player.PlayerName} OnStartTouch: {trigger.Entity.Name}[HID:{trigger.UniqueHammerID}|ID:{trigger.Index}]");
 
-				if (!EW.CheckDictionary(player, EW.g_BannedPlayer)) return HookResult.Continue;
-				if (EW.g_BannedPlayer[player].bBanned)
+				if (!EW.CheckDictionary(player)) return HookResult.Continue;
+				if (EW.g_EWPlayer[player].BannedPlayer.bBanned)
 				{
 					foreach (ItemConfig ItemTest in EW.g_ItemConfig.ToList())
 					{

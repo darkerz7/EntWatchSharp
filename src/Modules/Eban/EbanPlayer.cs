@@ -44,15 +44,17 @@ namespace EntWatchSharp.Modules.Eban
                 }
                 if(EW.g_cAPI != null)
                 {
-					SEWAPI_Ban apiBan = new SEWAPI_Ban();
-					apiBan.bBanned = bBanned;
-                    apiBan.sAdminName = sAdminName;
-                    apiBan.sAdminSteamID = sAdminSteamID;
-                    apiBan.iDuration = iDuration;
-                    apiBan.iTimeStamp_Issued= iTimeStamp_Issued;
-                    apiBan.sReason = sReason;
-                    apiBan.sClientName = sClientName;
-                    apiBan.sClientSteamID = sClientSteamID;
+					SEWAPI_Ban apiBan = new()
+					{
+						bBanned = bBanned,
+						sAdminName = sAdminName,
+						sAdminSteamID = sAdminSteamID,
+						iDuration = iDuration,
+						iTimeStamp_Issued = iTimeStamp_Issued,
+						sReason = sReason,
+						sClientName = sClientName,
+						sClientSteamID = sClientSteamID
+					};
 					EW.g_cAPI.OnClientBanned(apiBan);
 				}
                 return EbanDB.BanClient(sBanClientName, sBanClientSteamID, sAdminName, sAdminSteamID, EW.g_Scheme.server_name, iDuration, iTimeStamp_Issued, sReason);
@@ -68,15 +70,17 @@ namespace EntWatchSharp.Modules.Eban
                 if (string.IsNullOrEmpty(sUnbanReason)) sUnbanReason = "Amnesty";
 				if (EW.g_cAPI != null)
 				{
-					SEWAPI_Ban apiBan = new SEWAPI_Ban();
-					apiBan.bBanned = bBanned;
-					apiBan.sAdminName = sUnBanAdminName;
-					apiBan.sAdminSteamID = sUnBanAdminSteamID;
-					apiBan.iDuration = 0;
-					apiBan.iTimeStamp_Issued = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-					apiBan.sReason = sUnbanReason;
-					apiBan.sClientName = "";
-					apiBan.sClientSteamID = sUnBanClientSteamID;
+					SEWAPI_Ban apiBan = new()
+					{
+						bBanned = bBanned,
+						sAdminName = sUnBanAdminName,
+						sAdminSteamID = sUnBanAdminSteamID,
+						iDuration = 0,
+						iTimeStamp_Issued = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
+						sReason = sUnbanReason,
+						sClientName = "",
+						sClientSteamID = sUnBanClientSteamID
+					};
 					EW.g_cAPI.OnClientUnbanned(apiBan);
 				}
 				return EbanDB.UnBanClient(sUnBanClientSteamID, sUnBanAdminName, sUnBanAdminSteamID, EW.g_Scheme.server_name, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), sUnbanReason);
@@ -84,15 +88,12 @@ namespace EntWatchSharp.Modules.Eban
             return false;
         }
 
-        public bool GetBan(CCSPlayerController player)
+        public static bool GetBan(CCSPlayerController player)
         {
             if (player.IsValid)
             {
                 return EbanDB.GetBan(player, EW.g_Scheme.server_name);
             }
-            else
-            if (EW.g_BannedPlayer.ContainsKey(player))
-                EW.g_BannedPlayer.Remove(player);
             return false;
         }
 

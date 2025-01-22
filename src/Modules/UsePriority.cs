@@ -8,21 +8,19 @@ namespace EntWatchSharp.Modules
     {
         public bool Activate;
 
-        CCSPlayerController UPlayer;
         bool LockSpam;
         bool OneButton;
         Item OneItem;
-        public UsePriority(CCSPlayerController player)
+        public UsePriority()
         {
             Activate = true;
-            UPlayer = player;
             LockSpam = false;
             OneButton = false;
             OneItem = null;
         }
-        public void DetectUse()
+        public void DetectUse(CCSPlayerController UPlayer)
         {
-            if (!EW.g_UsePriorityPlayer[UPlayer].Activate || LockSpam || !OneButton) return;
+            if (!EW.g_EWPlayer[UPlayer].UsePriorityPlayer.Activate || LockSpam || !OneButton) return;
             if ((UPlayer.Buttons & PlayerButtons.Use) != 0)
             {
                 LockSpam = true;
@@ -52,7 +50,7 @@ namespace EntWatchSharp.Modules
         {
             LockSpam = false;
         }
-        public void UpdateCountButton()
+        public void UpdateCountButton(CCSPlayerController UPlayer)
         {
             OneButton = false;
             int iCount = 0;

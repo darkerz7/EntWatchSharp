@@ -8,8 +8,8 @@ namespace EntWatchSharp
 {
 	public partial class EntWatchSharp : BasePlugin
 	{
-		public static MemoryFunctionVoid<nint, CPlayer_WeaponServices, CBaseEntity, IntPtr> CPlayer_WeaponServices_WeaponDropFunc = new (GameData.GetSignature("CPlayer_WeaponServices_WeaponDrop"));
-		public static MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant, int> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
+		static readonly MemoryFunctionVoid<nint, CPlayer_WeaponServices, CBaseEntity, IntPtr> CPlayer_WeaponServices_WeaponDropFunc = new (GameData.GetSignature("CPlayer_WeaponServices_WeaponDrop"));
+		static readonly MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant, int> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
 
 		public void VirtualFunctionsInitialize()
 		{
@@ -34,15 +34,13 @@ namespace EntWatchSharp
 		}
 	}
 
-	public class CUtlSymbolLarge : NativeObject
+	public class CUtlSymbolLarge(IntPtr pointer) : NativeObject(pointer)
 	{
-		public CUtlSymbolLarge(IntPtr pointer) : base(pointer) { }
 		public string KeyValue => Utilities.ReadStringUtf8(Handle + 0);
 	}
 
-	public class CEntityOutputTemplate_float : NativeObject
+	public class CEntityOutputTemplate_float(IntPtr pointer) : NativeObject(pointer)
 	{
-		public CEntityOutputTemplate_float(IntPtr pointer) : base(pointer) { }
 		public unsafe float OutValue => Unsafe.Add(ref *(float*)Handle, 6);
 	}
 }

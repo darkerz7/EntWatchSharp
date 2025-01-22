@@ -76,9 +76,9 @@ namespace EntWatchSharp.Modules.Eban
 		{
 			uint iAdminImmunity = AdminManager.GetPlayerImmunity(admin);
 			OfflineBan target = null;
-			if (sTarget.ToLower().StartsWith("#steam_"))
+			if (sTarget.StartsWith("#steam_", StringComparison.OrdinalIgnoreCase))
 			{
-				string sTargetSteamID = sTarget.Substring(1).ToLower();
+				string sTargetSteamID = sTarget[1..].ToLower();
 				//steamid
 				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 				{
@@ -92,7 +92,7 @@ namespace EntWatchSharp.Modules.Eban
 			else if (sTarget[0] == '#')
 			{
 				//userid
-				if (!int.TryParse(sTarget.Substring(1), out int iUID))
+				if (!int.TryParse(sTarget[1..], out int iUID))
 				{
 					UI.EWReplyInfo(admin, "Reply.Must_be_an_integer", bConsole);
 					return null;
@@ -112,7 +112,7 @@ namespace EntWatchSharp.Modules.Eban
 				int iCount = 0;
 				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 				{
-					if (!OfflineTest.Online && OfflineTest.Name.ToLower().Contains(sTarget.ToLower()) && (admin == null || iAdminImmunity > OfflineTest.Immutity))
+					if (!OfflineTest.Online && OfflineTest.Name.Contains(sTarget, StringComparison.OrdinalIgnoreCase) && (admin == null || iAdminImmunity > OfflineTest.Immutity))
 					{
 						target = OfflineTest;
 						iCount++;

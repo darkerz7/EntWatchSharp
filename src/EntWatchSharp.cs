@@ -18,7 +18,7 @@ namespace EntWatchSharp
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.13.beta";
+		public override string ModuleVersion => "0.DZ.14.beta";
 
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
@@ -77,13 +77,9 @@ namespace EntWatchSharp
 				EW.g_Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerUpdate, TimerFlags.REPEAT);
 				Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(player =>
 				{
-					EW.CheckDictionary(player, EW.g_HudPlayer);
-
-					EW.CheckDictionary(player, EW.g_UsePriorityPlayer);
+					EW.CheckDictionary(player);
 
 					//EW.LoadClientPrefs(player);
-
-					EW.CheckDictionary(player, EW.g_BannedPlayer);
 
 					OfflineFunc.PlayerConnectFull(player);
 				});
@@ -125,9 +121,9 @@ namespace EntWatchSharp
 			{
 				if (player.IsValid)
 				{
-					if (EW.CheckDictionary(player, EW.g_HudPlayer))
+					if (EW.CheckDictionary(player))
 					{
-						EW.RemoveEntityHud(player);
+						EW.g_EWPlayer[player].RemoveEntityHud();
 					}
 				}
 			});

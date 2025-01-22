@@ -25,8 +25,10 @@ namespace EntWatchSharp
 		public FakeConVar<bool> FakeCvar_lower_mapname = new("ewc_lower_mapname", "Automatically lowercase map name", false, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
 		public FakeConVar<bool> FakeCvar_triggeronce = new("ewc_triggeronce", "Exclude trigger_once from ban check", true, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
 
-		public FakeConVar<bool> FakeCvar_glow_spawn = new("ewc_glow_spawn", "Enable/Disable the glow after Spawn Items", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
-		public FakeConVar<bool> FakeCvar_glow_particle = new("ewc_glow_particle", "Enable/Disable the glow using a particle", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_glow_spawn = new("ewc_glow_spawn", "Enable/Disable the glow after Spawn Items", false, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_glow_particle = new("ewc_glow_particle", "Enable/Disable the glow using a particle", false, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_glow_prop = new("ewc_glow_prop", "Enable/Disable the glow using a prop_dynamic", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_glow_vip = new("ewc_glow_vip", "Enable/Disable the glow for privileged users", false, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
 
 		public FakeConVar<int> FakeCvar_bantime = new("ewc_bantime", "Default ban time. 0 - Permanent", 0, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<int>(0, 43200));
 		public FakeConVar<int> FakeCvar_banlong = new("ewc_banlong", "Max ban time with once @css/ew_ban privilege", 720, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 1440000));
@@ -58,6 +60,8 @@ namespace EntWatchSharp
 
 			Cvar.GlowSpawn = FakeCvar_glow_spawn.Value;
 			Cvar.GlowParticle = FakeCvar_glow_particle.Value;
+			Cvar.GlowProp = FakeCvar_glow_prop.Value;
+			Cvar.GlowVIP = FakeCvar_glow_vip.Value;
 
 			Cvar.BanTime = FakeCvar_bantime.Value;
 			Cvar.BanLong = FakeCvar_banlong.Value;
@@ -154,6 +158,16 @@ namespace EntWatchSharp
 				Cvar.GlowParticle = value;
 				UI.CvarChangeNotify(FakeCvar_glow_particle.Name, value.ToString(), FakeCvar_glow_particle.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
 			};
+			FakeCvar_glow_prop.ValueChanged += (sender, value) =>
+			{
+				Cvar.GlowProp = value;
+				UI.CvarChangeNotify(FakeCvar_glow_prop.Name, value.ToString(), FakeCvar_glow_prop.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
+			};
+			FakeCvar_glow_vip.ValueChanged += (sender, value) =>
+			{
+				Cvar.GlowVIP = value;
+				UI.CvarChangeNotify(FakeCvar_glow_vip.Name, value.ToString(), FakeCvar_glow_vip.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
+			};
 
 			FakeCvar_bantime.ValueChanged += (sender, value) =>
 			{
@@ -230,6 +244,8 @@ namespace EntWatchSharp
 
 		public static bool GlowSpawn;
 		public static bool GlowParticle;
+		public static bool GlowProp;
+		public static bool GlowVIP;
 
 		public static int BanTime;
 		public static int BanLong;

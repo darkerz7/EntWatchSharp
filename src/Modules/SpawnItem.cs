@@ -15,10 +15,10 @@ namespace EntWatchSharp.Modules
 				return;
 			}
 			int iCount = 0;
-			ItemConfig Item = new ItemConfig();
+			ItemConfig Item = new();
 			foreach (ItemConfig ItemTest in EW.g_ItemConfig.ToList())
 			{
-				if ((ItemTest.Name.ToLower().Contains(sItemName) || ItemTest.ShortName.ToLower().Contains(sItemName)) && ItemTest.SpawnerID > 0)
+				if ((ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase)) && ItemTest.SpawnerID > 0)
 				{
 					iCount++;
 					Item = ItemTest;
@@ -34,7 +34,7 @@ namespace EntWatchSharp.Modules
 				UI.EWReplyInfo(admin, "Reply.Spawn.ManyItems", bConsole);
 				foreach (ItemConfig ItemTest in EW.g_ItemConfig.ToList())
 				{
-					if ((ItemTest.Name.ToLower().Contains(sItemName) || ItemTest.ShortName.ToLower().Contains(sItemName)) && ItemTest.SpawnerID > 0)
+					if ((ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase)) && ItemTest.SpawnerID > 0)
 					{
 						UI.EWReplyInfo(admin, $"~{ItemTest.Name} ({ItemTest.ShortName})", bConsole);
 					}
@@ -60,11 +60,11 @@ namespace EntWatchSharp.Modules
 			if (entPT != null && entPT.IsValid && entPT.Entity != null)
 			{
 				if (bStrip) receiver.RemoveWeapons();
-				CounterStrikeSharp.API.Modules.Utils.Vector vec = new CounterStrikeSharp.API.Modules.Utils.Vector(receiver.Pawn.Value.AbsOrigin.X, receiver.Pawn.Value.AbsOrigin.Y, receiver.Pawn.Value.AbsOrigin.Z + 20);
+				CounterStrikeSharp.API.Modules.Utils.Vector vec = new(receiver.Pawn.Value.AbsOrigin.X, receiver.Pawn.Value.AbsOrigin.Y, receiver.Pawn.Value.AbsOrigin.Z + 20);
 				
 				Utilities.GetPlayers().ForEach(player =>
 				{
-					if (player != null && player.IsValid && player.Pawn.Value != null && player.Pawn.Value.IsValid && EW.CheckDictionary(player, EW.g_BannedPlayer) && EW.Distance(vec, player.Pawn.Value.AbsOrigin) <= 64.0) EW.g_BannedPlayer[player].bFixSpawnItem = true;
+					if (player != null && player.IsValid && player.Pawn.Value != null && player.Pawn.Value.IsValid && EW.CheckDictionary(player) && EW.Distance(vec, player.Pawn.Value.AbsOrigin) <= 64.0) EW.g_EWPlayer[player].BannedPlayer.bFixSpawnItem = true;
 				});
 
 				CEnvEntityMaker Maker = Utilities.CreateEntityByName<CEnvEntityMaker>("env_entity_maker");
@@ -77,11 +77,11 @@ namespace EntWatchSharp.Modules
 					Maker.AcceptInput("ForceSpawn");
 					Maker.Remove();
 				}
-				new CounterStrikeSharp.API.Modules.Timers.Timer(0.2f, () =>
+				_ = new CounterStrikeSharp.API.Modules.Timers.Timer(0.2f, () =>
 				{
 					Utilities.GetPlayers().ForEach(player =>
 					{
-						if (player != null && player.IsValid && EW.CheckDictionary(player, EW.g_BannedPlayer)) EW.g_BannedPlayer[player].bFixSpawnItem = false;
+						if (player != null && player.IsValid && EW.CheckDictionary(player)) EW.g_EWPlayer[player].BannedPlayer.bFixSpawnItem = false;
 					});
 				});
 				UI.EWChatAdmin("Reply.Spawn.Notify", $"{UI.PlayerInfo(admin)}{EW.g_Scheme.color_warning}", $"{Item.Color}{Item.Name}({Item.ShortName}){EW.g_Scheme.color_warning}", $"{UI.PlayerInfo(receiver)}");

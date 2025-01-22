@@ -42,6 +42,7 @@
   "Reply.Player": "玩家",
   "Reply.Hud.Type": "HUD 现在是",
   "Reply.Hud.Position": "HUD 位置:",
+  "Reply.Hud.Color": "HUD 颜色:",
   "Reply.Hud.Refresh": "每 {0}{1} {2}秒刷新 HUD",
   "Reply.Hud.Sheet": "该表显示 {0}{1} {2} 项目",
   "Reply.Eban.Has_a_Restrict": "目前被限制",

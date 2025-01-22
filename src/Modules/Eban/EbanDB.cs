@@ -17,7 +17,7 @@ namespace EntWatchSharp.Modules.Eban
             {
                 sData = File.ReadAllText(sConfig);
                 dbConfig = JsonSerializer.Deserialize<DBConfig>(sData);
-                if (dbConfig == null) dbConfig = new DBConfig();
+				dbConfig ??= new DBConfig();
 			}
             else dbConfig = new DBConfig();
             if (dbConfig.TypeDB == "mysql") db = new DB_Mysql(dbConfig.SQL_NameDatabase, $"{dbConfig.SQL_Server}:{dbConfig.SQL_Port}", dbConfig.SQL_User, dbConfig.SQL_Password);
@@ -184,20 +184,19 @@ namespace EntWatchSharp.Modules.Eban
 												"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([EW.ConvertSteamID64ToSteamID(player.SteamID.ToString()), sServer]));
 					if (res.Count > 0)
                     {
-						if (EW.g_BannedPlayer.ContainsKey(player))
+						if (EW.CheckDictionary(player))
                         {
-							EW.g_BannedPlayer[player].bBanned = true;
-                            EW.g_BannedPlayer[player].sAdminName = res[0][0];
-							EW.g_BannedPlayer[player].sAdminSteamID = res[0][1];
-							EW.g_BannedPlayer[player].iDuration = Convert.ToInt32(res[0][2]);
-							EW.g_BannedPlayer[player].iTimeStamp_Issued = Convert.ToInt32(res[0][3]);
-							EW.g_BannedPlayer[player].sReason = res[0][4];
+							EW.g_EWPlayer[player].BannedPlayer.bBanned = true;
+                            EW.g_EWPlayer[player].BannedPlayer.sAdminName = res[0][0];
+							EW.g_EWPlayer[player].BannedPlayer.sAdminSteamID = res[0][1];
+							EW.g_EWPlayer[player].BannedPlayer.iDuration = Convert.ToInt32(res[0][2]);
+							EW.g_EWPlayer[player].BannedPlayer.iTimeStamp_Issued = Convert.ToInt32(res[0][3]);
+							EW.g_EWPlayer[player].BannedPlayer.sReason = res[0][4];
 
 							return true;
                         }
 						else
 						{
-							EW.g_BannedPlayer.TryAdd(player, new EbanPlayer());
 							return GetBan(player, sServer);
 						}
 					}
@@ -217,15 +216,17 @@ namespace EntWatchSharp.Modules.Eban
 												"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([SteamID, sServer]));
 					if (res.Count > 0)
 					{
-						EbanPlayer player = new EbanPlayer();
-						player.bBanned = true;
-						player.sAdminName = res[0][0];
-						player.sAdminSteamID = res[0][1];
-						player.iDuration = Convert.ToInt32(res[0][2]);
-						player.iTimeStamp_Issued = Convert.ToInt32(res[0][3]);
-						player.sReason = res[0][4];
-						player.sClientName = res[0][5];
-						player.sClientSteamID = SteamID;
+						EbanPlayer player = new()
+						{
+							bBanned = true,
+							sAdminName = res[0][0],
+							sAdminSteamID = res[0][1],
+							iDuration = Convert.ToInt32(res[0][2]),
+							iTimeStamp_Issued = Convert.ToInt32(res[0][3]),
+							sReason = res[0][4],
+							sClientName = res[0][5],
+							sClientSteamID = SteamID
+						};
 						return player;
 					}
 					return null;

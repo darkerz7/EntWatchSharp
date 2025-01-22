@@ -30,7 +30,7 @@ Beta version of the plugin, needs many improvements
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
-2. [AnyBaseLibCS2](https://github.com/NickFox007/AnyBaseLibCS2) (0.9.1)
+2. [AnyBaseLibCS2](https://github.com/NickFox007/AnyBaseLibCS2) (0.9.2)
 3. [CS2-HammerIDFix](https://github.com/darkerz7/CS2-HammerIDFix)
 4. [ClientPrefs_CS2](https://github.com/darkerz7/ClientPrefs_CS2)
 5. Recomended [CS2-EntityFix](https://github.com/darkerz7/CS2-EntityFix)
@@ -138,8 +138,10 @@ Cvar | Parameters | Description
 `ewc_path_cfg` | `<string>` | Directory for configs. (Default addons/entwatch/maps/)
 `ewc_lower_mapname` | `<false-true>` | Automatically lowercase map name. (Default false)
 `ewc_triggeronce` | `<false-true>` | Exclude trigger_once from ban check. (Default true)
-`ewc_glow_spawn` | `<false-true> `| Enable/Disable the glow after Spawn Items. (Default true)
-`ewc_glow_particle` | `<false-true>` | Enable/Disable the glow using a particle. (Default true)
+`ewc_glow_spawn` | `<false-true> `| Enable/Disable the glow after Spawn Items. (Default false)
+`ewc_glow_particle` | `<false-true>` | Enable/Disable the glow using a particle. (Default false)
+`ewc_glow_prop` | `<false-true>` | Enable/Disable the glow using a prop_dynamic. (Default true)
+`ewc_glow_vip` | `<false-true>` | Enable/Disable the glow for privileged users. (Default false)
 `ewc_bantime` | `<0-43200>` | Default ban time. 0 - Permanent. (Default 0)
 `ewc_banlong` | `<1-1440000>` | Max ban time with once @css/ew_ban privilege. (Default 720)
 `ewc_banreason` | `<string>` | Default ban reason. (Default Trolling)
@@ -153,7 +155,8 @@ Cvar | Parameters | Description
 Client Command | Description
 --- | ---
 `ehud` | Allows the player to switch the HUD (0 - Disabled, 1 - Center, 2 - Alert, 3 - WorldText)
-`ehud_pos` | Allows the player to change the position of the HUD {X Y Z} (default: 50 50 50; min -200.0; max 200.0)
+`ehud_pos` | Allows the player to change the position of the HUD {X Y Z} (default: -100 25 80; min -200.0; max 200.0)
+`ehud_color` | Allows the player to change the color of the HUD {R G B A} (default: 255 255 255 255; min 0; max 255)
 `ehud_refresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
 `ehud_sheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
 `eup` | Allows the player to use UsePriority {bool}
@@ -220,5 +223,4 @@ WHERE admin_steamid_unban LIKE '%STEAM_1:%';
 ```
 
 ## Future plans
-1. Fixes Errors
-2. Fix item highlighting
+Fixes Errors

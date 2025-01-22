@@ -158,7 +158,7 @@ namespace EntWatchSharp
 #nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
-			MCS_ValueIntBool Value = new MCS_ValueIntBool();
+			MCS_ValueIntBool Value = new();
 			if (!Int32.TryParse(command.GetArg(3), out Value.iVal) || Value.iVal < 0) return;
 
 			Value.bFlag = false;
@@ -179,7 +179,7 @@ namespace EntWatchSharp
 #nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
-			MCS_ValueIntBool Value = new MCS_ValueIntBool();
+			MCS_ValueIntBool Value = new();
 			if (!Int32.TryParse(command.GetArg(3), out Value.iVal) || Value.iVal < 0) return;
 
 			Value.bFlag = false;
@@ -200,7 +200,7 @@ namespace EntWatchSharp
 #nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
-			MCS_ValueIntBool Value = new MCS_ValueIntBool();
+			MCS_ValueIntBool Value = new();
 			if (!Int32.TryParse(command.GetArg(3), out Value.iVal) || Value.iVal < 0) return;
 
 			Value.bFlag = false;
@@ -240,7 +240,7 @@ namespace EntWatchSharp
 #nullable disable
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 6) return;
-			MCS_ValueMode Value = new MCS_ValueMode();
+			MCS_ValueMode Value = new();
 			if (!Int32.TryParse(command.GetArg(3), out Value.iMode) || Value.iMode < 0 ||  Value.iMode > 8) return;
 			if (!Int32.TryParse(command.GetArg(4), out Value.iCooldown) || Value.iCooldown < 0) return;
 			if (!Int32.TryParse(command.GetArg(5), out Value.iMaxuses) || Value.iMaxuses < 0) return;
@@ -264,8 +264,7 @@ namespace EntWatchSharp
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 4) return;
 
-			bool bFlag = false;
-			if (!bool.TryParse(command.GetArg(3), out bFlag))
+			if (!bool.TryParse(command.GetArg(3), out bool bFlag))
 				if (Int32.TryParse(command.GetArg(3), out int iFBuf) && iFBuf == 1) bFlag = true;
 
 			MapCommands<bool>.ForAllAbilities(command, MapCommands<bool>.DG_LockButton, bFlag);
@@ -325,8 +324,7 @@ namespace EntWatchSharp
 		{
 			if (!EW.g_CfgLoaded || command.ArgCount < 3) return;
 			
-			bool bFlag = false;
-			if (!bool.TryParse(command.GetArg(2), out bFlag))
+			if (!bool.TryParse(command.GetArg(2), out bool bFlag))
 				if (Int32.TryParse(command.GetArg(2), out int iFBuf) && iFBuf == 1) bFlag = true;
 
 			MapCommands<bool>.ForAllItems(command, MapCommands<bool>.DG_Block, bFlag);

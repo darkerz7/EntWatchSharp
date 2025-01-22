@@ -9,17 +9,16 @@ namespace EntWatchSharp.Modules
 {
     abstract class UHud
     {
-        public CCSPlayerController HudPlayer;
-
-        public Vector vecEntity = new Vector(-100, 25, 80);
-        public int iSheetMax = 5;
+        public Vector vecEntity = new(-100, 25, 80);
+        public int[] colorEntity = [255, 255, 255, 255];
+		public int iSheetMax = 5;
         public int iRefresh = 3;
         int iCurrentNumList = 0;
         double fNextUpdateList = EW.fGameTime - 3;
 		public UHud() { }
-        public void ConstructString()
+        public void ConstructString(CCSPlayerController HudPlayer)
         {
-			List<Item> ListShow = new List<Item>();
+			List<Item> ListShow = [];
 			bool bAdminPermissions = AdminManager.PlayerHasPermissions(HudPlayer, "@css/ew_hud") && Cvar.AdminHud < 2;
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
@@ -64,31 +63,31 @@ namespace EntWatchSharp.Modules
                     sItems += $": {ListShow[i].Owner.PlayerName}";
 				}
                 if(iCountList > 1) sItems += $"\nList:[{iCurrentNumList+1}/{iCountList}]";
-				UpdateText(sItems);
+				UpdateText(sItems, HudPlayer);
 			}
-            else UpdateText("");
+            else UpdateText("", HudPlayer);
 		}
-        public abstract void UpdateText(string sItems);
+        public abstract void UpdateText(string sItems, CCSPlayerController HudPlayer);
     }
 
     class HudNull : UHud
     {
-        public HudNull(CCSPlayerController player) { HudPlayer = player; }
-        public override void UpdateText(string sItems) { }
+        public HudNull() { }
+        public override void UpdateText(string sItems, CCSPlayerController HudPlayer) { }
     }
 
     class HudCenter : UHud
     {
-        public HudCenter(CCSPlayerController player) { HudPlayer = player; }
-        public override void UpdateText(string sItems)
+        public HudCenter() { }
+        public override void UpdateText(string sItems, CCSPlayerController HudPlayer)
         {
             if (HudPlayer is { IsValid: true, IsBot: false } && !string.IsNullOrEmpty(sItems)) HudPlayer.PrintToCenter(sItems);
         }
     }
     class HudAlert : UHud
     {
-        public HudAlert(CCSPlayerController player) { HudPlayer = player; }
-        public override void UpdateText(string sItems)
+        public HudAlert() { }
+        public override void UpdateText(string sItems, CCSPlayerController HudPlayer)
         {
             if (HudPlayer is { IsValid: true, IsBot: false } && !string.IsNullOrEmpty(sItems)) HudPlayer.PrintToCenterAlert(sItems);
         }
@@ -97,7 +96,7 @@ namespace EntWatchSharp.Modules
     class HudWorldText : UHud
     {
         public CPointWorldText Entity = null;
-		public HudWorldText(CCSPlayerController player) { HudPlayer = player; }
+		public HudWorldText() { }
 		/*public void CreateHud()
         {
             if (HudPlayer.IsValid && EW.IsPlayerAlive(HudPlayer))
@@ -131,7 +130,7 @@ namespace EntWatchSharp.Modules
                 HudPlayer.Pawn.Value?.Teleport(HudPlayer.PlayerPawn.Value?.AbsOrigin, vAngle, HudPlayer.PlayerPawn.Value?.AbsVelocity);
             }
         }*/
-		public void CreateHud()
+		public void CreateHud(CCSPlayerController HudPlayer)
 		{
 			if (HudPlayer.IsValid && EW.IsPlayerAlive(HudPlayer))
 			{
@@ -146,11 +145,12 @@ namespace EntWatchSharp.Modules
 				}
 				CPointWorldText entity = Utilities.CreateEntityByName<CPointWorldText>("point_worldtext")!;
 				entity.FontSize = 18;
-				entity.FontName = "Consolas";
+				//entity.FontName = "Consolas";
+				entity.FontName = "Verdana";
 				entity.Enabled = true;
 				entity.Fullbright = true;
 				entity.WorldUnitsPerPx = 0.25f;
-				entity.Color = System.Drawing.Color.White;
+                entity.Color = System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]); //System.Drawing.Color.White;
 				entity.MessageText = "";
 				entity.JustifyHorizontal = PointWorldTextJustifyHorizontal_t.POINT_WORLD_TEXT_JUSTIFY_HORIZONTAL_LEFT;
 				entity.JustifyVertical = PointWorldTextJustifyVertical_t.POINT_WORLD_TEXT_JUSTIFY_VERTICAL_TOP;
@@ -178,7 +178,7 @@ namespace EntWatchSharp.Modules
 				Entity = entity;
 			}
 		}
-		public override void UpdateText(string sItems)
+		public override void UpdateText(string sItems, CCSPlayerController HudPlayer)
         {
             if (Entity != null && Entity.IsValid)
             {

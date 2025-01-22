@@ -10,11 +10,12 @@ namespace EntWatchSharp.Items
         public CCSWeaponBase WeaponHandle;
         public CCSPlayerController Owner;
         public CParticleSystem Particle;
+        public CDynamicProp Prop;
 
 		public double fDelay;
         public byte Team;
 
-        public bool thisItem(uint weaponindex)
+        public bool ThisItem(uint weaponindex)
         {
             if (WeaponHandle.Index == weaponindex) return true;
             return false;
@@ -38,7 +39,7 @@ namespace EntWatchSharp.Items
 			UsePriority = cNewItem.UsePriority;
             TriggerID = cNewItem.TriggerID;
             SpawnerID = cNewItem.SpawnerID;
-			AbilityList = new List<Ability>();
+			AbilityList = [];
             foreach(Ability ability in cNewItem.AbilityList.ToList())
             {
 				AbilityList.Add(new Ability(ability));
@@ -60,9 +61,11 @@ namespace EntWatchSharp.Items
                 }
             }
 
-            if (Cvar.GlowSpawn)
+			if (Cvar.GlowSpawn)
             {
-                WeaponHandle.Glow.GlowColor.X = GlowColor[0];
+				WeaponHandle!.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags = (uint)(WeaponHandle.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags & ~(1 << 2));
+				WeaponHandle.Glow.GlowColorOverride = System.Drawing.Color.FromArgb(255, GlowColor[0], GlowColor[1], GlowColor[2]);
+				WeaponHandle.Glow.GlowColor.X = GlowColor[0];
                 WeaponHandle.Glow.GlowColor.Y = GlowColor[1];
                 WeaponHandle.Glow.GlowColor.Z = GlowColor[2];
                 WeaponHandle.Glow.GlowType = 3;
@@ -71,13 +74,55 @@ namespace EntWatchSharp.Items
                 WeaponHandle.Glow.GlowTeam = -1;
                 WeaponHandle.Glow.GlowTime = 1;
                 WeaponHandle.Glow.Glowing = true;
-            }
+			}
 
-            EW.UpdateTime();
+			if (!Cvar.GlowSpawn) EnableGlow();
+
+			EW.UpdateTime();
             fDelay = EW.fGameTime - Cvar.Delay;
 
             UI.EWSysInfo("Info.Item.Spawn", 8,  Name, weapon.Index);
         }
+
+        public void EnableGlow()
+        {
+            if (Cvar.GlowProp)
+            {
+                Prop = Utilities.CreateEntityByName<CDynamicProp>("prop_dynamic");
+                if (Prop != null && Prop.IsValid)
+                {
+                    Prop.Spawnflags = 256;
+                    Prop!.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags = (uint)(Prop.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags & ~(1 << 2));
+
+                    //Prop.Teleport(WeaponHandle.CBodyComponent?.SceneNode?.AbsOrigin, WeaponHandle.CBodyComponent?.SceneNode?.AbsRotation, new Vector(0, 0, 0));
+                    Prop.SetModel(WeaponHandle.CBodyComponent!.SceneNode!.GetSkeletonInstance().ModelState.ModelName);
+                    Prop.Glow.GlowColorOverride = System.Drawing.Color.FromArgb(255, GlowColor[0], GlowColor[1], GlowColor[2]);
+                    Prop.Glow.GlowColor.X = GlowColor[0];
+                    Prop.Glow.GlowColor.Y = GlowColor[1];
+                    Prop.Glow.GlowColor.Z = GlowColor[2];
+                    Prop.Glow.GlowType = 3;
+                    Prop.Glow.GlowRange = 5000;
+                    Prop.Glow.GlowRangeMin = 1;
+                    Prop.Glow.GlowTeam = -1;
+                    Prop.Glow.GlowTime = 1;
+                    Prop.Glow.Glowing = true;
+                    //Prop.AcceptInput("SetParent", WeaponHandle, null, "!activator");
+                    Prop.AcceptInput("FollowEntity", WeaponHandle, null, "!activator");
+                }
+            }
+		}
+
+        public void DisableGlow()
+        {
+			if (Cvar.GlowProp)
+            {
+                if (Prop != null && Prop.IsValid)
+                {
+                    Prop.Remove();
+                }
+                Prop = null;
+			}
+		}
 
 		~Item()
 		{

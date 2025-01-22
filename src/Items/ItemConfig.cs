@@ -18,7 +18,7 @@
 
 		public List<Ability> AbilityList { get; set; }
 
-        public bool thisItemConfig(int iHammerID)
+        public bool ThisItemConfig(int iHammerID)
         {
             if (iHammerID == HammerID) return true;
             return false;
@@ -38,7 +38,7 @@
             Hud = false;
             TriggerID = 0;
 			UsePriority = false;
-			AbilityList = new List<Ability>();
+			AbilityList = [];
             SpawnerID = 0;
         }
 	}

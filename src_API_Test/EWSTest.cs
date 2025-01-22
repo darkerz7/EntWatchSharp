@@ -14,7 +14,7 @@ namespace EWSTestAPI
 		public override string ModuleName => "EntWatchSharp Test API";
 		public override string ModuleDescription => "";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "API.0.DZ.2";
+		public override string ModuleVersion => "API.0.DZ.3";
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
 			try
@@ -150,6 +150,24 @@ namespace EWSTestAPI
 			if (_EW_api == null || player == null || !player.IsValid) return;
 			if (_EW_api.Native_EntWatch_HasSpecialItem(player)) PrintToConsole("You have a Special Item");
 			else PrintToConsole("You have NOT a Special Item");
+		}
+
+		[ConsoleCommand("ewt_8", "")]
+		[RequiresPermissions("@css/ew_reload")]
+		public void OnEWT8(CCSPlayerController? player, CommandInfo command)
+		{
+			if (_EW_api == null || player == null || !player.IsValid) return;
+			_EW_api.Native_EntWatch_EnableWeaponGlow(player);
+			PrintToConsole("Glow of special objects is allowed for you");
+		}
+
+		[ConsoleCommand("ewt_9", "")]
+		[RequiresPermissions("@css/ew_reload")]
+		public void OnEWT9(CCSPlayerController? player, CommandInfo command)
+		{
+			if (_EW_api == null || player == null || !player.IsValid) return;
+			_EW_api.Native_EntWatch_DisableWeaponGlow(player);
+			PrintToConsole("Glow of special objects is prohibited for you");
 		}
 
 		public static void PrintToConsole(string sMessage)

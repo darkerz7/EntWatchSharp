@@ -5,7 +5,6 @@ using ClientPrefsAPI;
 using EntWatchSharp.Items;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
-using EntWatchSharp.Modules;
 using EntWatchSharpAPI;
 
 namespace EntWatchSharp
@@ -13,9 +12,9 @@ namespace EntWatchSharp
     static class EW
 	{
 		public static double fGameTime;
-		public static List<ItemConfig> g_ItemConfig = new List<ItemConfig>();
-		public static List<Item> g_ItemList = new List<Item>();
-		public static Scheme g_Scheme = new Scheme();
+		public static List<ItemConfig> g_ItemConfig = [];
+		public static List<Item> g_ItemList = [];
+		public static Scheme g_Scheme = new();
 		public static bool g_CfgLoaded = false;
 		
 		public static IClientPrefsAPI _CP_api;
@@ -23,37 +22,18 @@ namespace EntWatchSharp
 		public static IEntWatchSharpAPI _EW_api;
 		public static EWAPI g_cAPI = null;
 
-		public static Dictionary<CCSPlayerController, EbanPlayer> g_BannedPlayer = new Dictionary<CCSPlayerController, EbanPlayer>();
-		public static Dictionary<CCSPlayerController, UHud> g_HudPlayer = new Dictionary<CCSPlayerController, UHud>();
-		public static Dictionary<CCSPlayerController, UsePriority> g_UsePriorityPlayer = new Dictionary<CCSPlayerController, UsePriority>();
-		public static List<OfflineBan> g_OfflinePlayer = new List<OfflineBan>();
+		public static Dictionary<CCSPlayerController, EWPlayer> g_EWPlayer = [];
+		public static List<OfflineBan> g_OfflinePlayer = [];
 
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_Timer = null;
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerRetryDB = null;
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerUnban = null;
 
-		public static bool CheckDictionary(CCSPlayerController player, object dictionary)
+		public static bool CheckDictionary(CCSPlayerController player)
 		{
-			if (dictionary is Dictionary<CCSPlayerController, EbanPlayer>)
-			{
-				if (!g_BannedPlayer.ContainsKey(player))
-					return g_BannedPlayer.TryAdd(player, new EbanPlayer());
-				return true;
-			}
-			if (dictionary is Dictionary<CCSPlayerController, UHud>)
-			{
-				if (!g_HudPlayer.ContainsKey(player))
-					return g_HudPlayer.TryAdd(player, new HudNull(player));
-				return true;
-			}
-			if (dictionary is Dictionary<CCSPlayerController, UsePriority>)
-			{
-				if (!g_UsePriorityPlayer.ContainsKey(player))
-					return g_UsePriorityPlayer.TryAdd(player, new UsePriority(player));
-				return true;
-			}
-
-			return false;
+			if (!g_EWPlayer.ContainsKey(player))
+				return g_EWPlayer.TryAdd(player, new EWPlayer());
+			return true;
 		}
 
 		public static void UpdateTime()
@@ -116,9 +96,9 @@ namespace EntWatchSharp
 				int iHammerID = Int32.Parse(weapon.UniqueHammerID);
 				foreach (ItemConfig ItemTest in g_ItemConfig.ToList())
 				{
-					if (ItemTest.thisItemConfig(iHammerID))
+					if (ItemTest.ThisItemConfig(iHammerID))
 					{
-						Item cNewItem = new Item(ItemTest, weapon);
+						Item cNewItem = new(ItemTest, weapon);
 						g_ItemList.Add(cNewItem);
 						return true;
 					}
@@ -157,94 +137,60 @@ namespace EntWatchSharp
 			{
 				string sHUDType = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Type") : "3";
 				string sHUDPos = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos") : "-100_25_80";
+				string sHUDColor = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Color") : "255_255_255_255";
 				string sHUDRefresh = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh") : "3";
 				string sHUDSheet = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Sheet") : "5";
-				if (player.IsValid && CheckDictionary(player, g_HudPlayer))
+
+				string sUsePriority = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_Use_Priority") : "1";
+				if (player.IsValid && CheckDictionary(player))
 				{
 					if (!string.IsNullOrEmpty(sHUDPos))
 					{
 						try
 						{
-							string[] Pos = sHUDPos.Split(new char[] { '_' });
+							string[] Pos = sHUDPos.Split(['_']);
 							if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
 							{
-								g_HudPlayer[player].vecEntity.X = Int32.Parse(Pos[0]);
-								g_HudPlayer[player].vecEntity.Y = Int32.Parse(Pos[1]);
-								g_HudPlayer[player].vecEntity.Z = Int32.Parse(Pos[2]);
+								g_EWPlayer[player].HudPlayer.vecEntity.X = Int32.Parse(Pos[0]);
+								g_EWPlayer[player].HudPlayer.vecEntity.Y = Int32.Parse(Pos[1]);
+								g_EWPlayer[player].HudPlayer.vecEntity.Z = Int32.Parse(Pos[2]);
+							}
+						}
+						catch { }
+					}
+					if (!string.IsNullOrEmpty(sHUDColor))
+					{
+						try
+						{
+							string[] Pos = sHUDColor.Split(['_']);
+							if (Pos[0] != null && Pos[1] != null && Pos[2] != null && Pos[3] != null)
+							{
+								g_EWPlayer[player].HudPlayer.colorEntity[0] = Int32.Parse(Pos[0]);
+								g_EWPlayer[player].HudPlayer.colorEntity[1] = Int32.Parse(Pos[1]);
+								g_EWPlayer[player].HudPlayer.colorEntity[2] = Int32.Parse(Pos[2]);
+								g_EWPlayer[player].HudPlayer.colorEntity[3] = Int32.Parse(Pos[3]);
 							}
 						}
 						catch { }
 					}
 					if (!string.IsNullOrEmpty(sHUDType))
 					{
-						int number;
-						if (!Int32.TryParse(sHUDType, out number)) number = 3;
-						SwitchHud(player, number);
+						if (!Int32.TryParse(sHUDType, out int number)) number = 3;
+						g_EWPlayer[player].SwitchHud(player, number);
 					}
 					if (!string.IsNullOrEmpty(sHUDRefresh))
 					{
-						int number;
-						if (Int32.TryParse(sHUDRefresh, out number)) g_HudPlayer[player].iRefresh = number;
+						if (Int32.TryParse(sHUDRefresh, out int number)) g_EWPlayer[player].HudPlayer.iRefresh = number;
 					}
 					if (!string.IsNullOrEmpty(sHUDSheet))
 					{
-						int number;
-						if (Int32.TryParse(sHUDSheet, out number)) g_HudPlayer[player].iSheetMax = number;
+						if (Int32.TryParse(sHUDSheet, out int number)) g_EWPlayer[player].HudPlayer.iSheetMax = number;
 					}
-				}
-				string sUsePriority = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_Use_Priority") : "1";
-				if (player.IsValid && CheckDictionary(player, g_UsePriorityPlayer))
-				{
-					if (!string.IsNullOrEmpty(sUsePriority)) g_UsePriorityPlayer[player].Activate = sUsePriority.CompareTo("0") != 0;
-					else g_UsePriorityPlayer[player].Activate = true;
+
+					if (!string.IsNullOrEmpty(sUsePriority)) g_EWPlayer[player].UsePriorityPlayer.Activate = sUsePriority.CompareTo("0") != 0;
+					else g_EWPlayer[player].UsePriorityPlayer.Activate = true;
 				}
 			}catch (Exception ex) { Console.WriteLine(ex); }
-		}
-
-		public static void RemoveEntityHud(CCSPlayerController player)
-		{
-			var plHud = g_HudPlayer[player];
-			if (plHud is HudWorldText && ((HudWorldText)plHud).Entity != null)
-			{
-				if (((HudWorldText)plHud).Entity.IsValid)
-				{
-					//((HudWorldText)plHud).Entity.AcceptInput("Kill");
-					((HudWorldText)plHud).Entity.Remove();
-				}
-				((HudWorldText)plHud).Entity = null;
-			}
-		}
-
-		public static void SwitchHud(CCSPlayerController player, int number)
-		{
-			Server.NextFrame(() =>
-			{
-				if (CheckDictionary(player, g_HudPlayer))
-				{
-					RemoveEntityHud(player);
-
-					var LastCfg = g_HudPlayer[player];
-
-					if (g_HudPlayer.Remove(player))
-					{
-						switch (number)
-						{
-							case 0: g_HudPlayer.TryAdd(player, new HudNull(player)); break;
-							case 1: g_HudPlayer.TryAdd(player, new HudCenter(player)); break;
-							case 2: g_HudPlayer.TryAdd(player, new HudAlert(player)); break;
-							case 3: g_HudPlayer.TryAdd(player, new HudWorldText(player)); break;
-							default: g_HudPlayer.TryAdd(player, new HudNull(player)); break;
-						}
-					}
-					if (CheckDictionary(player, g_HudPlayer))
-					{
-						g_HudPlayer[player].vecEntity = LastCfg.vecEntity;
-						g_HudPlayer[player].iSheetMax = LastCfg.iSheetMax;
-						g_HudPlayer[player].iRefresh = LastCfg.iRefresh;
-						if (g_HudPlayer[player] is HudWorldText && ((HudWorldText)g_HudPlayer[player]).Entity == null) ((HudWorldText)g_HudPlayer[player]).CreateHud();
-					}
-				}
-			});
 		}
 
 		public static void ShowHud()
@@ -252,7 +198,7 @@ namespace EntWatchSharp
 			EW.UpdateTime();
 			Utilities.GetPlayers().ForEach(player =>
 			{
-				if (player.IsValid && CheckDictionary(player, g_HudPlayer) && g_HudPlayer[player] != null) EW.g_HudPlayer[player].ConstructString();
+				if (player.IsValid && CheckDictionary(player) && g_EWPlayer[player].HudPlayer != null) g_EWPlayer[player].HudPlayer.ConstructString(player);
 			});
 		}
 
