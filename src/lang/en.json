@@ -3,7 +3,7 @@
   "Info.Error": "Error: {0}",
   "Info.ChangeMap": "The server changed the map to {0}",
   "Info.DB.Success": "Database connection established. Type of DB: {0}",
-  "Info.DB.Failed": "No connection to database. Type of DB: {0}. Error: {1}",
+  "Info.DB.Failed": "No connection to database. Type of DB: {0}",
   "Info.EWLoaded": "EntWatchSharp Loaded!",
   "Info.Cfg.Loading": "Loading EntWatch Config from {0}",
   "Info.Cfg.NotFound": "Map haven't a EntWatch Config",

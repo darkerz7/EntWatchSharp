@@ -3,7 +3,7 @@
   "Info.Error": "Ошибка: {0}",
   "Info.ChangeMap": "Сервер сменил карту на {0}",
   "Info.DB.Success": "Соединение с базой данных установлено. Тип БД: {0}",
-  "Info.DB.Failed": "Нет соединения с базой данных. Тип БД: {0}. Ошибка: {1}",
+  "Info.DB.Failed": "Нет соединения с базой данных. Тип БД: {0}",
   "Info.EWLoaded": "EntWatchSharp загружен!",
   "Info.Cfg.Loading": "Загрузка конфигурации EntWatch из {0}",
   "Info.Cfg.NotFound": "Карта не имеет конфигурации EntWatch",

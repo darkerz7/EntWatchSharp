@@ -3,7 +3,7 @@
   "Info.Error": "错误: {0}",
   "Info.ChangeMap": "服务器已更换地图为 {0}",
   "Info.DB.Success": "数据库连接已建立。数据库类型: {0}",
-  "Info.DB.Failed": "无法连接到数据库。数据库类型: {0}。错误: {1}",
+  "Info.DB.Failed": "无法连接到数据库。数据库类型: {0}",
   "Info.EWLoaded": "EntWatchSharp 已加载!",
   "Info.Cfg.Loading": "正在从 {0} 加载 EntWatch 配置",
   "Info.Cfg.NotFound": "地图没有 EntWatch 配置",
