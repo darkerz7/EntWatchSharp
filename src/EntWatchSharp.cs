@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Timers;
+using CS2_GameHUDAPI;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharpAPI;
@@ -18,7 +19,7 @@ namespace EntWatchSharp
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "0.DZ.14.beta";
+		public override string ModuleVersion => "1.DZ.0";
 
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
@@ -42,6 +43,17 @@ namespace EntWatchSharp
 			{
 				EW._EW_api = null;
 				UI.EWSysInfo("Info.Error", 15, "EntWatch API Failed!");
+			}
+
+			try
+			{
+				PluginCapability<IGameHUDAPI> CapabilityCP = new("gamehud:api");
+				EW._GH_api = IGameHUDAPI.Capability.Get();
+			}
+			catch (Exception)
+			{
+				EW._GH_api = null;
+				UI.EWSysInfo("Info.Error", 15, "GameHUD API Failed!");
 			}
 
 			if (hotReload)
@@ -123,7 +135,7 @@ namespace EntWatchSharp
 				{
 					if (EW.CheckDictionary(player))
 					{
-						EW.g_EWPlayer[player].RemoveEntityHud();
+						EW.g_EWPlayer[player].RemoveEntityHud(player);
 					}
 				}
 			});

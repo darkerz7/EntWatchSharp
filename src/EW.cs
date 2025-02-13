@@ -6,11 +6,14 @@ using EntWatchSharp.Items;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharpAPI;
+using CS2_GameHUDAPI;
 
 namespace EntWatchSharp
 {
     static class EW
 	{
+		public static readonly byte HUDCHANNEL = 10;
+
 		public static double fGameTime;
 		public static List<ItemConfig> g_ItemConfig = [];
 		public static List<Item> g_ItemList = [];
@@ -21,6 +24,8 @@ namespace EntWatchSharp
 
 		public static IEntWatchSharpAPI _EW_api;
 		public static EWAPI g_cAPI = null;
+
+		public static IGameHUDAPI _GH_api;
 
 		public static Dictionary<CCSPlayerController, EWPlayer> g_EWPlayer = [];
 		public static List<OfflineBan> g_OfflinePlayer = [];

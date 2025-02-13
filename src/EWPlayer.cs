@@ -20,12 +20,19 @@ namespace EntWatchSharp
 			PrivilegePlayer = new Privilege();
 		}
 
-		public void RemoveEntityHud()
+		/*public void RemoveEntityHud()
 		{
 			if (HudPlayer is HudWorldText hud && hud.Entity != null)
 			{
 				if (hud.Entity.IsValid) hud.Entity.Remove();
 				hud.Entity = null;
+			}
+		}*/
+		public void RemoveEntityHud(CCSPlayerController player)
+		{
+			if (EW._GH_api != null && player.IsValid)
+			{
+				EW._GH_api.Native_GameHUD_Remove(player, EW.HUDCHANNEL);
 			}
 		}
 
@@ -33,7 +40,7 @@ namespace EntWatchSharp
 		{
 			Server.NextFrame(() =>
 			{
-				RemoveEntityHud();
+				RemoveEntityHud(player);
 
 				var LastCfg = HudPlayer;
 
@@ -49,7 +56,8 @@ namespace EntWatchSharp
 				HudPlayer.colorEntity = LastCfg.colorEntity;
 				HudPlayer.iSheetMax = LastCfg.iSheetMax;
 				HudPlayer.iRefresh = LastCfg.iRefresh;
-				if (HudPlayer is HudWorldText hud && hud.Entity == null) hud.CreateHud(player);
+				//if (HudPlayer is HudWorldText hud && hud.Entity == null) hud.CreateHud(player);
+				if (HudPlayer is HudWorldText hud) hud.InitHud(player);
 			});
 		}
 	}

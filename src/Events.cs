@@ -9,6 +9,7 @@ using EntWatchSharp.Helpers;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
+using CounterStrikeSharp.API.Modules.Entities;
 
 namespace EntWatchSharp
 {
@@ -31,7 +32,6 @@ namespace EntWatchSharp
 			RegisterEventHandler<EventPlayerDeath>(OnEventPlayerDeathPost);
 			RegisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
 			RegisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
-			RegisterEventHandler<EventPlayerSpawn>(OnEventPlayerSpawn);
 
 			//Garbage collector crashes when reloading plugin on these hooks
 			/*HookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
@@ -82,7 +82,6 @@ namespace EntWatchSharp
 			DeregisterEventHandler<EventPlayerDeath>(OnEventPlayerDeathPost);
 			DeregisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
 			DeregisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
-			DeregisterEventHandler<EventPlayerSpawn>(OnEventPlayerSpawn);
 
 			/*UnhookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
 			UnhookEntityOutput("func_rot_button", "OnPressed", OnButtonPressed, HookMode.Pre);
@@ -343,10 +342,10 @@ namespace EntWatchSharp
 				if (player == null || !player.IsValid) continue;
 				foreach (KeyValuePair<CCSPlayerController, EWPlayer> ewp in EW.g_EWPlayer)
 				{
-					if (ewp.Value.HudPlayer is HudWorldText hud && hud.Entity != null && hud.Entity.IsValid && player != ewp.Key)
+					/*if (ewp.Value.HudPlayer is HudWorldText hud && hud.Entity != null && hud.Entity.IsValid && player != ewp.Key)
 					{
 						info.TransmitEntities.Remove(hud.Entity);
-					}
+					}*/
 					if (Cvar.GlowVIP)
 					{
 						if(!ewp.Value.PrivilegePlayer.WeaponGlow)
@@ -505,11 +504,6 @@ namespace EntWatchSharp
 
 			if (pl.IsValid)
 			{
-				if (EW.CheckDictionary(pl))
-				{
-					EW.g_EWPlayer[pl].RemoveEntityHud();
-				}
-
 				foreach(Item ItemTest in EW.g_ItemList.ToList())
 				{
 					if (ItemTest.Owner == pl)
@@ -589,29 +583,6 @@ namespace EntWatchSharp
 					}
 				}
 			}
-			return HookResult.Continue;
-		}
-
-		[GameEventHandler(mode: HookMode.Post)]
-		private HookResult OnEventPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
-		{
-			if (!EW.g_CfgLoaded || @event.Userid == null) return HookResult.Continue;
-			try
-			{
-				CCSPlayerController player = new(@event.Userid.Handle);
-				AddTimer(0.3f, () =>
-				{
-					if (player.IsValid)
-					{
-						if (EW.CheckDictionary(player))
-						{
-							var plHud = EW.g_EWPlayer[player].HudPlayer;
-							if (plHud is HudWorldText hud) hud.CreateHud(player);
-						}
-					}
-				});
-			}catch (Exception) { }
-
 			return HookResult.Continue;
 		}
 

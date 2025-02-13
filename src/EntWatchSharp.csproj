@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.301" />
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.305" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +29,9 @@
     </Reference>
     <Reference Include="ClientPrefsAPI">
       <HintPath>API\ClientPrefsAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="CS2-GameHUDAPI">
+      <HintPath>API\CS2-GameHUDAPI.dll</HintPath>
     </Reference>
     <Reference Include="EntWatchSharpAPI">
       <HintPath>API\EntWatchSharpAPI.dll</HintPath>
