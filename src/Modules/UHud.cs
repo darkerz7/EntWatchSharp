@@ -7,7 +7,7 @@ namespace EntWatchSharp.Modules
 {
     abstract class UHud
     {
-        public Vector vecEntity = new(-100, 25, 80);
+        public Vector vecEntity = new(-8, 2, 7);
         public int[] colorEntity = [255, 255, 255, 255];
 		public int iSheetMax = 5;
         public int iRefresh = 3;
@@ -98,7 +98,7 @@ namespace EntWatchSharp.Modules
 		{
 			if (EW._GH_api != null && HudPlayer.IsValid)
 			{
-				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]));
+				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), 54, "Verdana", 0.1f);
 			}
 		}
 		public override void UpdateText(string sItems, CCSPlayerController HudPlayer)
