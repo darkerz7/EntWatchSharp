@@ -111,6 +111,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ehud", "Allows the player to switch the HUD")]
+		[ConsoleCommand("css_hud", "Allows the player to switch the HUD")]
 		[CommandHelper(minArgs: 1, usage: "[number]", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHud(CCSPlayerController? player, CommandInfo command)
@@ -148,6 +149,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
+		[ConsoleCommand("css_hudpos", "Allows the player to change the position of the HUD")]
 		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -8 2 7; min -200,0; max 200,0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
@@ -184,6 +186,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ehud_color", "Allows the player to change the color of the HUD")]
+		[ConsoleCommand("css_hudcolor", "Allows the player to change the color of the HUD")]
 		[CommandHelper(minArgs: 4, usage: "[R G B A] (default: 255 255 255 255; min 0; max 255)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudColor(CCSPlayerController? player, CommandInfo command)
@@ -218,6 +221,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ehud_refresh", "Allows the player to change the time it takes to scroll through the list")]
+		[ConsoleCommand("css_hudrefresh", "Allows the player to change the time it takes to scroll through the list")]
 		[CommandHelper(minArgs: 1, usage: "[sec] (default: 3; min 1; max 10)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudRefresh(CCSPlayerController? player, CommandInfo command)
@@ -244,6 +248,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("ehud_sheet", "Allows the player to change the number of items on the sheet")]
+		[ConsoleCommand("css_hudsheet", "Allows the player to change the number of items on the sheet")]
 		[CommandHelper(minArgs: 1, usage: "[count] (default: 5; min 1; max 15)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudSheet(CCSPlayerController? player, CommandInfo command)
@@ -271,6 +276,7 @@ namespace EntWatchSharp
 		}
 
 		[ConsoleCommand("eup", "Allows the player to use UsePriority")]
+		[ConsoleCommand("css_eup", "Allows the player to use UsePriority")]
 		[CommandHelper(minArgs: 0, usage: "[bool]", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeUsePriority(CCSPlayerController? player, CommandInfo command)
