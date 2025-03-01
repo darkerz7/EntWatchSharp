@@ -99,7 +99,7 @@ namespace EntWatchSharp.Modules
 		{
 			if (EW._GH_api != null && HudPlayer.IsValid)
 			{
-				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), iSize, "Verdana", iSize/540.0f);
+				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), iSize, "Verdana", iSize/7000.0f);
 			}
 		}
 		public override void UpdateText(string sItems, CCSPlayerController HudPlayer)
