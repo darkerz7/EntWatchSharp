@@ -167,9 +167,9 @@ namespace EntWatchSharp
 				if (!float.TryParse(command.GetArg(1), out float fX)) fX = -8;
 				if (!float.TryParse(command.GetArg(2), out float fY)) fY = 2;
 				if (!float.TryParse(command.GetArg(3), out float fZ)) fZ = 7;
-				fX = (float)Math.Round(fX, 1);
-				fY = (float)Math.Round(fY, 1);
-				fZ = (float)Math.Round(fZ, 1);
+				fX = (float)Math.Round(fX, 2);
+				fY = (float)Math.Round(fY, 2);
+				fZ = (float)Math.Round(fZ, 2);
 				if (fX >= -200.0 && fX <= 200.0 && fY >= -200.0 && fY <= 200.0 && fZ >= -200.0 && fZ <= 200.0)
 				{
 					EW.g_EWPlayer[player].HudPlayer.vecEntity = new CounterStrikeSharp.API.Modules.Utils.Vector(fX, fY, fZ);
@@ -214,6 +214,35 @@ namespace EntWatchSharp
 					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Color", sCookie);
 
 					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Color"]} {EW.g_Scheme.color_enabled}R: {iRed} G: {iGreen} B: {iBlue} A: {iAlpha}", bConsole);
+				}
+				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
+			}
+			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+		}
+
+		[ConsoleCommand("ehud_size", "Allows the player to change the size of the HUD")]
+		[ConsoleCommand("css_hudsize", "Allows the player to change the size of the HUD")]
+		[CommandHelper(minArgs: 1, usage: "[size] (default: 54; min 16; max 128)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+#nullable enable
+		public void OnEWChangeHudSize(CCSPlayerController? player, CommandInfo command)
+#nullable disable
+		{
+			if (EW._CP_api == null || player == null || !player.IsValid) return;
+			bool bConsole = command.CallingContext == CommandCallingContext.Console;
+			if (!EW.CheckDictionary(player))
+			{
+				UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
+				return;
+			}
+			try
+			{
+				if (!Int32.TryParse(command.GetArg(1), out int number)) number = 0;
+				if (number >= 16 && number <= 128)
+				{
+					EW.g_EWPlayer[player].HudPlayer.iSize = number;
+					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
+					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Size", number.ToString());
+					UI.EWReplyInfo(player, "Reply.Hud.Size", bConsole, EW.g_Scheme.color_enabled, number);
 				}
 				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
 			}

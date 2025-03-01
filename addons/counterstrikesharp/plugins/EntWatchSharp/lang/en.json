@@ -43,6 +43,7 @@
   "Reply.Hud.Type": "The HUD is now",
   "Reply.Hud.Position": "Position HUD:",
   "Reply.Hud.Color": "Color HUD:",
+  "Reply.Hud.Size": "Size HUD: {0}{1}",
   "Reply.Hud.Refresh": "Update HUD every {0}{1} {2}sec",
   "Reply.Hud.Sheet": "The sheet displays {0}{1} {2} items",
   "Reply.Eban.Has_a_Restrict": "is currently restricted",

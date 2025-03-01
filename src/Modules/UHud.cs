@@ -11,6 +11,7 @@ namespace EntWatchSharp.Modules
         public int[] colorEntity = [255, 255, 255, 255];
 		public int iSheetMax = 5;
         public int iRefresh = 3;
+        public int iSize = 54;
         int iCurrentNumList = 0;
         double fNextUpdateList = EW.fGameTime - 3;
 		public UHud() { }
@@ -98,7 +99,7 @@ namespace EntWatchSharp.Modules
 		{
 			if (EW._GH_api != null && HudPlayer.IsValid)
 			{
-				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), 54, "Verdana", 0.1f);
+				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), iSize, "Verdana", iSize/540.0f);
 			}
 		}
 		public override void UpdateText(string sItems, CCSPlayerController HudPlayer)

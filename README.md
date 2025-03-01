@@ -153,12 +153,12 @@ Cvar | Parameters | Description
 ## Commands
 Client Command | Description
 --- | ---
-`ehud` | Allows the player to switch the HUD (0 - Disabled, 1 - Center, 2 - Alert, 3 - WorldText)
-`ehud_pos` | Allows the player to change the position of the HUD {X Y Z} (default: -100 25 80; min -200.0; max 200.0)
-`ehud_color` | Allows the player to change the color of the HUD {R G B A} (default: 255 255 255 255; min 0; max 255)
-`ehud_refresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
-`ehud_sheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
-`eup` | Allows the player to use UsePriority {bool}
+`ehud`<br>`css_hud` | Allows the player to switch the HUD (0 - Disabled, 1 - Center, 2 - Alert, 3 - WorldText)
+`ehud_pos`<br>`css_hudpos` | Allows the player to change the position of the HUD {X Y Z} (default: -8 2 7; min -200,0; max 200,0)
+`ehud_size`<br>`css_hudsize` | Allows the player to change the size of the HUD {size} (default: 54; min 16; max 128)
+`ehud_refresh`<br>`css_hudrefresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
+`ehud_sheet`<br>`css_hudsheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
+`eup`<br>`css_eup` | Allows the player to use UsePriority {bool}
 `ew_status`<br>`css_estatus` | Allows the player to view the restrictions {null/target}
 
 ## Admin's commands

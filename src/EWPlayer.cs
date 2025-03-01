@@ -56,6 +56,7 @@ namespace EntWatchSharp
 				HudPlayer.colorEntity = LastCfg.colorEntity;
 				HudPlayer.iSheetMax = LastCfg.iSheetMax;
 				HudPlayer.iRefresh = LastCfg.iRefresh;
+				HudPlayer.iSize = LastCfg.iSize;
 				//if (HudPlayer is HudWorldText hud && hud.Entity == null) hud.CreateHud(player);
 				if (HudPlayer is HudWorldText hud) hud.InitHud(player);
 			});

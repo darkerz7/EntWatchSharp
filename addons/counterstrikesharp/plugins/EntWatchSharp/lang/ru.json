@@ -43,6 +43,7 @@
   "Reply.Hud.Type": "Информация в HUD",
   "Reply.Hud.Position": "Позиция HUD:",
   "Reply.Hud.Color": "Цвет HUD:",
+  "Reply.Hud.Size": "Размер HUD: {0}{1}",
   "Reply.Hud.Refresh": "HUD обновляется каждые {0}{1} {2}секунд",
   "Reply.Hud.Sheet": "На листе отображается {0}{1} {2}итемов",
   "Reply.Eban.Has_a_Restrict": "имеет запрет на подбор предметов",
