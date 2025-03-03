@@ -7,7 +7,7 @@ namespace EntWatchSharp.Modules
 {
     abstract class UHud
     {
-        public Vector vecEntity = new(-8, 2, 7);
+        public Vector vecEntity = new(-6.5f, 2, 7);
         public int[] colorEntity = [255, 255, 255, 255];
 		public int iSheetMax = 5;
         public int iRefresh = 3;

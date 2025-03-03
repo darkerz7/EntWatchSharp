@@ -150,7 +150,7 @@ namespace EntWatchSharp
 
 		[ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
 		[ConsoleCommand("css_hudpos", "Allows the player to change the position of the HUD")]
-		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -8 2 7; min -200,0; max 200,0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -6.5 2 7; min -200,0; max 200,0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
 #nullable disable
@@ -164,13 +164,13 @@ namespace EntWatchSharp
 			}
 			try
 			{
-				if (!float.TryParse(command.GetArg(1), out float fX)) fX = -8;
-				if (!float.TryParse(command.GetArg(2), out float fY)) fY = 2;
-				if (!float.TryParse(command.GetArg(3), out float fZ)) fZ = 7;
+				if (!float.TryParse(command.GetArg(1).Replace('.', ','), out float fX)) fX = -8.0f;
+				if (!float.TryParse(command.GetArg(2).Replace('.', ','), out float fY)) fY = 2.0f;
+				if (!float.TryParse(command.GetArg(3).Replace('.', ','), out float fZ)) fZ = 7.0f;
 				fX = (float)Math.Round(fX, 2);
 				fY = (float)Math.Round(fY, 2);
 				fZ = (float)Math.Round(fZ, 2);
-				if (fX >= -200.0 && fX <= 200.0 && fY >= -200.0 && fY <= 200.0 && fZ >= -200.0 && fZ <= 200.0)
+				if (fX >= -200.0f && fX <= 200.0f && fY >= -200.0f && fY <= 200.0f && fZ >= -200.0f && fZ <= 200.0f)
 				{
 					EW.g_EWPlayer[player].HudPlayer.vecEntity = new CounterStrikeSharp.API.Modules.Utils.Vector(fX, fY, fZ);
 					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
