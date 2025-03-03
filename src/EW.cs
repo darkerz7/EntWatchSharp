@@ -7,6 +7,7 @@ using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharpAPI;
 using CS2_GameHUDAPI;
+using System.Globalization;
 
 namespace EntWatchSharp
 {
@@ -141,7 +142,7 @@ namespace EntWatchSharp
 			try
 			{
 				string sHUDType = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Type") : "3";
-				string sHUDPos = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos") : "-6,5_2_7";
+				string sHUDPos = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos") : "-6.5_2_7";
 				string sHUDSize = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Size") : "54";
 				string sHUDColor = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Color") : "255_255_255_255";
 				string sHUDRefresh = _CP_api != null ? _CP_api.GetClientCookie(player.SteamID.ToString(), "EW_HUD_Refresh") : "3";
@@ -157,9 +158,9 @@ namespace EntWatchSharp
 							string[] Pos = sHUDPos.Replace(',','.').Split(['_']);
 							if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
 							{
-								g_EWPlayer[player].HudPlayer.vecEntity.X = float.Parse(Pos[0]);
-								g_EWPlayer[player].HudPlayer.vecEntity.Y = float.Parse(Pos[1]);
-								g_EWPlayer[player].HudPlayer.vecEntity.Z = float.Parse(Pos[2]);
+								g_EWPlayer[player].HudPlayer.vecEntity.X = float.Parse(Pos[0], NumberStyles.Any, new CultureInfo("en-EN"));
+								g_EWPlayer[player].HudPlayer.vecEntity.Y = float.Parse(Pos[1], NumberStyles.Any, new CultureInfo("en-EN"));
+								g_EWPlayer[player].HudPlayer.vecEntity.Z = float.Parse(Pos[2], NumberStyles.Any, new CultureInfo("en-EN"));
 							}
 						}
 						catch { }

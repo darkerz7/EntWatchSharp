@@ -8,6 +8,7 @@ using static EntWatchSharp.Helpers.FindTarget;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
+using System.Globalization;
 
 namespace EntWatchSharp
 {
@@ -150,7 +151,7 @@ namespace EntWatchSharp
 
 		[ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
 		[ConsoleCommand("css_hudpos", "Allows the player to change the position of the HUD")]
-		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -6.5 2 7; min -200,0; max 200,0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -6.5 2 7; min -200.0; max 200.0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
 #nullable disable
@@ -164,9 +165,10 @@ namespace EntWatchSharp
 			}
 			try
 			{
-				if (!float.TryParse(command.GetArg(1).Replace('.', ','), out float fX)) fX = -6.5f;
-				if (!float.TryParse(command.GetArg(2).Replace('.', ','), out float fY)) fY = 2.0f;
-				if (!float.TryParse(command.GetArg(3).Replace('.', ','), out float fZ)) fZ = 7.0f;
+				CultureInfo culture = new CultureInfo("en-EN");
+				if (!float.TryParse(command.GetArg(1).Replace(',', '.'), NumberStyles.Any, culture, out float fX)) fX = -6.5f;
+				if (!float.TryParse(command.GetArg(2).Replace(',', '.'), NumberStyles.Any, culture, out float fY)) fY = 2.0f;
+				if (!float.TryParse(command.GetArg(3).Replace(',', '.'), NumberStyles.Any, culture, out float fZ)) fZ = 7.0f;
 				fX = (float)Math.Round(fX, 2);
 				fY = (float)Math.Round(fY, 2);
 				fZ = (float)Math.Round(fZ, 2);
@@ -175,7 +177,7 @@ namespace EntWatchSharp
 					EW.g_EWPlayer[player].HudPlayer.vecEntity = new CounterStrikeSharp.API.Modules.Utils.Vector(fX, fY, fZ);
 					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
 
-					string sCookie = $"{fX}_{fY}_{fZ}";
+					string sCookie = $"{fX.ToString(culture)}_{fY.ToString(culture)}_{fZ.ToString(culture)}";
 					EW._CP_api.SetClientCookie(player.SteamID.ToString(), "EW_HUD_Pos", sCookie);
 
 					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Position"]} {EW.g_Scheme.color_enabled}X: {fX} Y: {fY} Z: {fZ}", bConsole);
