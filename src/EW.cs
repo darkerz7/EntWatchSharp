@@ -20,7 +20,8 @@ namespace EntWatchSharp
 		public static List<Item> g_ItemList = [];
 		public static Scheme g_Scheme = new();
 		public static bool g_CfgLoaded = false;
-		
+		public static CultureInfo cultureEN = new CultureInfo("en-EN");
+
 		public static IClientPrefsAPI _CP_api;
 
 		public static IEntWatchSharpAPI _EW_api;
@@ -158,9 +159,9 @@ namespace EntWatchSharp
 							string[] Pos = sHUDPos.Replace(',','.').Split(['_']);
 							if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
 							{
-								g_EWPlayer[player].HudPlayer.vecEntity.X = float.Parse(Pos[0], NumberStyles.Any, new CultureInfo("en-EN"));
-								g_EWPlayer[player].HudPlayer.vecEntity.Y = float.Parse(Pos[1], NumberStyles.Any, new CultureInfo("en-EN"));
-								g_EWPlayer[player].HudPlayer.vecEntity.Z = float.Parse(Pos[2], NumberStyles.Any, new CultureInfo("en-EN"));
+								g_EWPlayer[player].HudPlayer.vecEntity.X = float.Parse(Pos[0], NumberStyles.Any, cultureEN);
+								g_EWPlayer[player].HudPlayer.vecEntity.Y = float.Parse(Pos[1], NumberStyles.Any, cultureEN);
+								g_EWPlayer[player].HudPlayer.vecEntity.Z = float.Parse(Pos[2], NumberStyles.Any, cultureEN);
 							}
 						}
 						catch { }
