@@ -164,7 +164,7 @@ namespace EntWatchSharp
 			}
 			try
 			{
-				if (!float.TryParse(command.GetArg(1).Replace('.', ','), out float fX)) fX = -8.0f;
+				if (!float.TryParse(command.GetArg(1).Replace('.', ','), out float fX)) fX = -6.5f;
 				if (!float.TryParse(command.GetArg(2).Replace('.', ','), out float fY)) fY = 2.0f;
 				if (!float.TryParse(command.GetArg(3).Replace('.', ','), out float fZ)) fZ = 7.0f;
 				fX = (float)Math.Round(fX, 2);
