@@ -52,7 +52,9 @@ namespace EntWatchSharp
 					3 => new HudWorldText(),
 					_ => new HudNull(),
 				};
-				HudPlayer.vecEntity = LastCfg.vecEntity;
+				HudPlayer.fXEntity = LastCfg.fXEntity;
+				HudPlayer.fYEntity = LastCfg.fYEntity;
+				HudPlayer.fZEntity = LastCfg.fZEntity;
 				HudPlayer.colorEntity = LastCfg.colorEntity;
 				HudPlayer.iSheetMax = LastCfg.iSheetMax;
 				HudPlayer.iRefresh = LastCfg.iRefresh;

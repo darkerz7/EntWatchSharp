@@ -173,7 +173,10 @@ namespace EntWatchSharp
 				fZ = (float)Math.Round(fZ, 2);
 				if (fX >= -200.0f && fX <= 200.0f && fY >= -200.0f && fY <= 200.0f && fZ >= -200.0f && fZ <= 200.0f)
 				{
-					EW.g_EWPlayer[player].HudPlayer.vecEntity = new CounterStrikeSharp.API.Modules.Utils.Vector(fX, fY, fZ);
+					EW.g_EWPlayer[player].HudPlayer.fXEntity = fX;
+					EW.g_EWPlayer[player].HudPlayer.fYEntity = fY;
+					EW.g_EWPlayer[player].HudPlayer.fZEntity = fZ;
+
 					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
 
 					string sCookie = $"{fX.ToString(EW.cultureEN)}_{fY.ToString(EW.cultureEN)}_{fZ.ToString(EW.cultureEN)}";

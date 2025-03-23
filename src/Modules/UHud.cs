@@ -2,13 +2,16 @@
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Items;
 using CounterStrikeSharp.API.Modules.Admin;
+using CounterStrikeSharp.API.Modules.Entities;
 
 namespace EntWatchSharp.Modules
 {
     abstract class UHud
     {
-        public Vector vecEntity = new(-6.5f, 2, 7);
-        public int[] colorEntity = [255, 255, 255, 255];
+        public float fXEntity = -6.5f;
+		public float fYEntity = 2.0f;
+		public float fZEntity = 7.0f;
+		public int[] colorEntity = [255, 255, 255, 255];
 		public int iSheetMax = 5;
         public int iRefresh = 3;
         public int iSize = 54;
@@ -99,7 +102,7 @@ namespace EntWatchSharp.Modules
 		{
 			if (EW._GH_api != null && HudPlayer.IsValid)
 			{
-				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, vecEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), iSize, "Verdana", iSize/7000.0f);
+				EW._GH_api.Native_GameHUD_SetParams(HudPlayer, EW.HUDCHANNEL, fXEntity, fYEntity, fZEntity, System.Drawing.Color.FromArgb(colorEntity[3], colorEntity[0], colorEntity[1], colorEntity[2]), iSize, "Verdana", iSize/7000.0f);
 			}
 		}
 		public override void UpdateText(string sItems, CCSPlayerController HudPlayer)

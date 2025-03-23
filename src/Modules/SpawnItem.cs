@@ -7,6 +7,7 @@ namespace EntWatchSharp.Modules
 {
 	static class SpawnItem
 	{
+		static CounterStrikeSharp.API.Modules.Utils.Vector vec = new (0, 0, 0);
 		public static void Spawn(CCSPlayerController admin, CCSPlayerController receiver, string sItemName, bool bStrip, bool bConsole)
 		{
 			if (receiver.Pawn.Value == null || !receiver.Pawn.Value.IsValid || receiver.Pawn.Value.AbsOrigin == null)
@@ -60,7 +61,9 @@ namespace EntWatchSharp.Modules
 			if (entPT != null && entPT.IsValid && entPT.Entity != null)
 			{
 				if (bStrip) receiver.RemoveWeapons();
-				CounterStrikeSharp.API.Modules.Utils.Vector vec = new(receiver.Pawn.Value.AbsOrigin.X, receiver.Pawn.Value.AbsOrigin.Y, receiver.Pawn.Value.AbsOrigin.Z + 20);
+				vec.X = receiver.Pawn.Value.AbsOrigin.X;
+				vec.Y = receiver.Pawn.Value.AbsOrigin.Y;
+				vec.Z = receiver.Pawn.Value.AbsOrigin.Z + 20;
 				
 				Utilities.GetPlayers().ForEach(player =>
 				{

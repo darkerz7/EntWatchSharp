@@ -55,7 +55,7 @@ namespace EntWatchSharp.Items
                     Particle.TintCP = 1;
                     Particle.Tint = System.Drawing.Color.FromArgb(GlowColor[3], GlowColor[0], GlowColor[1], GlowColor[2]);
                     Particle.StartActive = true;
-                    Particle.Teleport(WeaponHandle.CBodyComponent?.SceneNode?.AbsOrigin, WeaponHandle.CBodyComponent?.SceneNode?.AbsRotation, new Vector(0, 0, 0));
+                    Particle.Teleport(WeaponHandle.CBodyComponent?.SceneNode?.AbsOrigin, WeaponHandle.CBodyComponent?.SceneNode?.AbsRotation, EW.vecNull);
                     Particle.DispatchSpawn();
                     Particle.AcceptInput("SetParent", WeaponHandle, null, "!activator");
                 }
@@ -94,8 +94,8 @@ namespace EntWatchSharp.Items
                     Prop.Spawnflags = 256;
                     Prop!.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags = (uint)(Prop.CBodyComponent!.SceneNode!.Owner!.Entity!.Flags & ~(1 << 2));
 
-                    //Prop.Teleport(WeaponHandle.CBodyComponent?.SceneNode?.AbsOrigin, WeaponHandle.CBodyComponent?.SceneNode?.AbsRotation, new Vector(0, 0, 0));
-                    Prop.SetModel(WeaponHandle.CBodyComponent!.SceneNode!.GetSkeletonInstance().ModelState.ModelName);
+					//Prop.Teleport(WeaponHandle.CBodyComponent?.SceneNode?.AbsOrigin, WeaponHandle.CBodyComponent?.SceneNode?.AbsRotation, EW.vecNull);
+					Prop.SetModel(WeaponHandle.CBodyComponent!.SceneNode!.GetSkeletonInstance().ModelState.ModelName);
                     Prop.Glow.GlowColorOverride = System.Drawing.Color.FromArgb(255, GlowColor[0], GlowColor[1], GlowColor[2]);
                     Prop.Glow.GlowColor.X = GlowColor[0];
                     Prop.Glow.GlowColor.Y = GlowColor[1];

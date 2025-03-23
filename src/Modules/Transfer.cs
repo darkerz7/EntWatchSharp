@@ -76,12 +76,11 @@ namespace EntWatchSharp.Modules
 				}
 				ItemTest.Owner = null;
 				//fix bug drop
-				CounterStrikeSharp.API.Modules.Utils.Vector vec = new(receiver.Pawn.Value.AbsOrigin.Handle);
 				_ = new CounterStrikeSharp.API.Modules.Timers.Timer(0.2f, () =>
 				{
 					try
 					{
-						if (ItemTest != null && ItemTest.WeaponHandle.IsValid) ItemTest.WeaponHandle.Teleport(vec, null, null);
+						if (ItemTest != null && ItemTest.WeaponHandle.IsValid) ItemTest.WeaponHandle.Teleport(receiver.Pawn.Value.AbsOrigin, null, null);
 					}
 					catch (Exception) { }
 				});

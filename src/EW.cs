@@ -36,6 +36,8 @@ namespace EntWatchSharp
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerRetryDB = null;
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerUnban = null;
 
+		public static CounterStrikeSharp.API.Modules.Utils.Vector vecNull = new(0, 0, 0);
+
 		public static bool CheckDictionary(CCSPlayerController player)
 		{
 			if (!g_EWPlayer.ContainsKey(player))
@@ -159,9 +161,9 @@ namespace EntWatchSharp
 							string[] Pos = sHUDPos.Replace(',','.').Split(['_']);
 							if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
 							{
-								g_EWPlayer[player].HudPlayer.vecEntity.X = float.Parse(Pos[0], NumberStyles.Any, cultureEN);
-								g_EWPlayer[player].HudPlayer.vecEntity.Y = float.Parse(Pos[1], NumberStyles.Any, cultureEN);
-								g_EWPlayer[player].HudPlayer.vecEntity.Z = float.Parse(Pos[2], NumberStyles.Any, cultureEN);
+								g_EWPlayer[player].HudPlayer.fXEntity = float.Parse(Pos[0], NumberStyles.Any, cultureEN);
+								g_EWPlayer[player].HudPlayer.fYEntity = float.Parse(Pos[1], NumberStyles.Any, cultureEN);
+								g_EWPlayer[player].HudPlayer.fZEntity = float.Parse(Pos[2], NumberStyles.Any, cultureEN);
 							}
 						}
 						catch { }
