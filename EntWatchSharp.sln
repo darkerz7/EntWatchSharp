@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntWatchSharp", "EntWatchSharp\EntWatchSharp.csproj", "{B339189F-A056-43C9-A3EE-10DECA195480}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntWatchSharpAPI", "EntWatchSharpAPI\EntWatchSharpAPI.csproj", "{0EAE3C65-6691-4DAF-A171-EC86FE575C44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EWSTestAPI", "EWSTestAPI\EWSTestAPI.csproj", "{9310EA39-8876-4AF1-B34B-11E07820585E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B339189F-A056-43C9-A3EE-10DECA195480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B339189F-A056-43C9-A3EE-10DECA195480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B339189F-A056-43C9-A3EE-10DECA195480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B339189F-A056-43C9-A3EE-10DECA195480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EAE3C65-6691-4DAF-A171-EC86FE575C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EAE3C65-6691-4DAF-A171-EC86FE575C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EAE3C65-6691-4DAF-A171-EC86FE575C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EAE3C65-6691-4DAF-A171-EC86FE575C44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9310EA39-8876-4AF1-B34B-11E07820585E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9310EA39-8876-4AF1-B34B-11E07820585E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9310EA39-8876-4AF1-B34B-11E07820585E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9310EA39-8876-4AF1-B34B-11E07820585E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

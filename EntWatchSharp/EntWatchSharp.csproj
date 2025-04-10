@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>EntWatchSharp</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>warnings</Nullable>
+    <Title>EntWatchSharp</Title>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>True</Optimize>
+    <NoWarn>1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>True</Optimize>
+    <NoWarn>1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.316" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EntWatchSharpAPI\EntWatchSharpAPI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AnyBaseLib">
+      <HintPath>API\AnyBaseLib.dll</HintPath>
+    </Reference>
+    <Reference Include="CS2-GameHUDAPI">
+      <HintPath>API\CS2-GameHUDAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="PlayerSettingsApi">
+      <HintPath>API\PlayerSettingsApi.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="addons\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="copy /Y $(TargetDir)$(TargetName).dll $(TargetDir)addons\counterstrikesharp\plugins\EntWatchSharp\$(TargetName).dll" />
+		<Exec Command="if not exist $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI mkdir $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI" />
+		<Exec Command="copy /Y $(TargetDir)EntWatchSharpAPI.dll $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI\EntWatchSharpAPI.dll" />
+		<Exec Command="if exist $(SolutionDir)build rmdir /s/q $(SolutionDir)build" />
+		<Exec Command="move /Y $(TargetDir)addons $(SolutionDir)build" />
+	</Target>
+  
+
+</Project>

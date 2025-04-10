@@ -28,16 +28,16 @@ Notify players about entity interactions
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
-2. [AnyBaseLibCS2](https://github.com/NickFox007/AnyBaseLibCS2) (0.9.2)
+2. [AnyBaseLibCS2](https://github.com/NickFox007/AnyBaseLibCS2) (0.9.3)
 3. [CS2-HammerIDFix](https://github.com/darkerz7/CS2-HammerIDFix)
-4. [ClientPrefs_CS2](https://github.com/darkerz7/ClientPrefs_CS2)
+4. [PlayerSettingsCS2](https://github.com/NickFox007/PlayerSettingsCS2) (0.9.3)
 5. [CS2-GameHUD](https://github.com/darkerz7/CS2-GameHUD)
 6. Recomended [CS2-EntityFix](https://github.com/darkerz7/CS2-EntityFix)
 7. Recomended [CS2-CustomIO](https://github.com/darkerz7/CS2-CustomIO)
 8. Recomended [CSSharp-Fixes](https://github.com/darkerz7/CSSharp-Fixes)
 
 ## Installation:
-1. Install `CS2-HammerIDFix`, `AnyBaseLibCS2`, `ClientPrefs_CS2`, `CS2-GameHUD`, `CS2-CustomIO`, `CS2-EntityFix` and `CSSharp-Fixes`
+1. Install `CS2-HammerIDFix`, `AnyBaseLibCS2`, `PlayerSettingsCS2`, `CS2-GameHUD`, `CS2-CustomIO`, `CS2-EntityFix` and `CSSharp-Fixes`
 2. Compile or copy EntWatchSharp to `counterstrikesharp/plugins/EntWatchSharp` folger
 3. Copy and configure the configuration file `db_config.json` and `log_config.json` to `counterstrikesharp/plugins/EntWatchSharp` folger
 4. Copy `lang` folger to `counterstrikesharp/plugins/EntWatchSharp/lang` folger
