@@ -232,7 +232,7 @@ namespace EntWatchSharp.Helpers
             {
                 string[] sResult = new string[4];
                 sResult[0] = $"{EW.g_Scheme.color_name}{player.PlayerName}{EW.g_Scheme.color_warning}";
-                sResult[1] = $"{sResult[0]}[{EW.g_Scheme.color_steamid}#{player.UserId}{EW.g_Scheme.color_warning}{EW.g_Scheme.color_warning}]";
+                sResult[1] = $"{sResult[0]}[{EW.g_Scheme.color_steamid}#{player.UserId}{EW.g_Scheme.color_warning}]";
                 sResult[2] = $"{sResult[0]}[{EW.g_Scheme.color_steamid}#{EW.ConvertSteamID64ToSteamID(player.SteamID.ToString())}{EW.g_Scheme.color_warning}]";
                 sResult[3] = $"{sResult[0]}[{EW.g_Scheme.color_steamid}#{player.UserId}{EW.g_Scheme.color_warning}|{EW.g_Scheme.color_steamid}#{EW.ConvertSteamID64ToSteamID(player.SteamID.ToString())}{EW.g_Scheme.color_warning}]";
                 return sResult;
