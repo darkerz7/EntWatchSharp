@@ -128,7 +128,7 @@ Cvar | Parameters | Description
 `ewc_teamonly` | `<false-true>` | Enable/Disable team only mode. (Default true)
 `ewc_adminchat` | `<0-2>` | Change Admin Chat Mode (0 - All Messages, 1 - Only Pickup/Drop Items, 2 - Nothing). (Default 0)
 `ewc_adminhud` | `<0-2>` | Change Admin Hud Mode (0 - All Items, 1 - Only Item Name, 2 - Nothing). (Default 0)
-`ewc_player_format` | `<0-3>` | Changes the way player information is displayed by default (0 - Only Nickname, 1 - Nickname and UserID, 2 - Nickname and SteamID, 3 - Nickname, UserID and SteamID). (Default 0)
+`ewc_player_format` | `<0-3>` | Changes the way player information is displayed by default (0 - Only Nickname, 1 - Nickname and UserID, 2 - Nickname and SteamID, 3 - Nickname, UserID and SteamID). (Default 3)
 `ewc_blockepick` | `<false-true>` | Block players from using E key to grab items. (Default true)
 `ewc_delay_use` | `<0.0-60.0>` | Change delay before use. (Default 1.0)
 `ewc_globalblock` | `<false-true>` | Blocks the pickup of any items by players. (Default false)
