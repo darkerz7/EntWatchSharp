@@ -154,6 +154,7 @@ namespace EntWatchSharp
 				string sHUDColor = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Color", "255_255_255_255") : "255_255_255_255";
 				string sHUDRefresh = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Refresh", "3") : "3";
 				string sHUDSheet = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Sheet", "5") : "5";
+				string sPlayerInfoFormat = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_PInfo_Format", $"{Cvar.PlayerFormat}") : $"{Cvar.PlayerFormat}";
 
 				string sUsePriority = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_Use_Priority", "1") : "1";
 				if (player.IsValid && CheckDictionary(player))
@@ -204,6 +205,10 @@ namespace EntWatchSharp
 					if (!string.IsNullOrEmpty(sHUDSheet))
 					{
 						if (Int32.TryParse(sHUDSheet, out int number)) g_EWPlayer[player].HudPlayer.iSheetMax = number;
+					}
+					if (!string.IsNullOrEmpty(sPlayerInfoFormat))
+					{
+						if (Int32.TryParse(sPlayerInfoFormat, out int number)) g_EWPlayer[player].PFormatPlayer = number;
 					}
 
 					if (!string.IsNullOrEmpty(sUsePriority)) g_EWPlayer[player].UsePriorityPlayer.Activate = !string.Equals(sUsePriority, "0");

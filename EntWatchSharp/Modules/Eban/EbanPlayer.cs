@@ -112,7 +112,7 @@ namespace EntWatchSharp.Modules.Eban
 					if (bShow)
 						Server.NextFrame(() =>
 						{
-							UI.EWSysInfo("Info.Eban.PlayerConnect", 4, UI.PlayerInfo(player), EW.g_EWPlayer[player].BannedPlayer.iDuration, EW.g_EWPlayer[player].BannedPlayer.iTimeStamp_Issued, UI.PlayerInfo(EW.g_EWPlayer[player].BannedPlayer.sAdminName, EW.g_EWPlayer[player].BannedPlayer.sAdminSteamID), EW.g_EWPlayer[player].BannedPlayer.sReason);
+							UI.EWSysInfo("Info.Eban.PlayerConnect", 4, UI.PlayerInfoFormat(player)[3], EW.g_EWPlayer[player].BannedPlayer.iDuration, EW.g_EWPlayer[player].BannedPlayer.iTimeStamp_Issued, UI.PlayerInfoFormat(EW.g_EWPlayer[player].BannedPlayer.sAdminName, EW.g_EWPlayer[player].BannedPlayer.sAdminSteamID)[3], EW.g_EWPlayer[player].BannedPlayer.sReason);
 						});
 				}
 				else

@@ -10,8 +10,6 @@ using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
 using System.Globalization;
 using static EntWatchSharp.Modules.Eban.EbanDB;
-using CounterStrikeSharp.API.Modules.Commands.Targeting;
-using CounterStrikeSharp.API.Modules.Entities;
 
 namespace EntWatchSharp
 {
@@ -30,6 +28,7 @@ namespace EntWatchSharp
 			RemoveCommand("ehud_color", OnEWChangeHudColor);
 			RemoveCommand("ehud_refresh", OnEWChangeHudRefresh);
 			RemoveCommand("ehud_sheet", OnEWChangeHudSheet);
+			RemoveCommand("css_epf", OnEWChangePlayerFormat);
 			RemoveCommand("eup", OnEWChangeUsePriority);
 			RemoveCommand("ew_ban", OnEWBan);
 			RemoveCommand("css_eban", OnEWBan);
@@ -311,6 +310,40 @@ namespace EntWatchSharp
 			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 		}
 
+		[ConsoleCommand("epf", "Allows the player to change the player display format")]
+		[ConsoleCommand("css_epf", "Allows the player to change the player display format")]
+		[CommandHelper(minArgs: 1, usage: "[number] (default: 3; min 0; max 3)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+#nullable enable
+		public void OnEWChangePlayerFormat(CCSPlayerController? player, CommandInfo command)
+#nullable disable
+		{
+			if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
+			bool bConsole = command.CallingContext == CommandCallingContext.Console;
+			if (!EW.CheckDictionary(player))
+			{
+				UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
+				return;
+			}
+			try
+			{
+				if (!Int32.TryParse(command.GetArg(1), out int number)) number = 3;
+				if (number >= 0 && number <= 3)
+				{
+					EW.g_EWPlayer[player].PFormatPlayer = number;
+					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_PInfo_Format", number.ToString());
+					switch (number)
+					{
+						case 1: UI.EWReplyInfo(player, "Reply.PlayerInfo.UserID", bConsole, EW.g_Scheme.color_enabled); break;
+						case 2: UI.EWReplyInfo(player, "Reply.PlayerInfo.SteamID", bConsole, EW.g_Scheme.color_enabled); break;
+						case 3: UI.EWReplyInfo(player, "Reply.PlayerInfo.Full", bConsole, EW.g_Scheme.color_enabled); break;
+						default: UI.EWReplyInfo(player, "Reply.PlayerInfo.NicknameOnly", bConsole, EW.g_Scheme.color_enabled); break;
+					}
+				}
+				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
+			}
+			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+		}
+
 		[ConsoleCommand("eup", "Allows the player to use UsePriority")]
 		[ConsoleCommand("css_eup", "Allows the player to use UsePriority")]
 		[CommandHelper(minArgs: 0, usage: "[bool]", whoCanExecute: CommandUsage.CLIENT_ONLY)]
@@ -363,7 +396,7 @@ namespace EntWatchSharp
 			if (admin != null && !admin.IsValid) return;
 			bool bConsole = command.CallingContext == CommandCallingContext.Console;
 
-			(List<CCSPlayerController> players, string targetname) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
+			(List<CCSPlayerController> players, string _) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
 
 			OfflineBan target = null;
 
@@ -385,7 +418,7 @@ namespace EntWatchSharp
 
 				if (EW.g_EWPlayer[targetOnline].BannedPlayer.bBanned)
 				{
-					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(targetOnline)} {Strlocalizer["Reply.Eban.Has_a_Restrict"]}", bConsole);
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(admin, UI.PlayerInfoFormat(targetOnline))} {Strlocalizer["Reply.Eban.Has_a_Restrict"]}", bConsole);
 					return;
 				}
 
@@ -443,11 +476,7 @@ namespace EntWatchSharp
 				return;
 			}
 
-			Server.NextFrame(() =>
-			{
-				UI.EWChatAdmin("Chat.Admin.Restricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_disabled, target.Online ? UI.PlayerInfo(target.Player) : UI.PlayerInfo(target.Name, target.SteamID));
-				UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
-			});
+			UI.EWChatAdminBan(UI.PlayerInfoFormat(admin), target.Online ? UI.PlayerInfoFormat(target.Player) : UI.PlayerInfoFormat(target.Name, target.SteamID), reason, true);
 		}
 
 		[ConsoleCommand("ew_unban", "Allows the admin to remove the item restriction for a player")]
@@ -461,7 +490,7 @@ namespace EntWatchSharp
 			if (admin != null && !admin.IsValid) return;
 			bool bConsole = command.CallingContext == CommandCallingContext.Console;
 
-			(List<CCSPlayerController> players, string targetname) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
+			(List<CCSPlayerController> players, string _) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
 
 			EbanPlayer target = new();
 			string sTarget = command.GetArg(1);
@@ -533,7 +562,7 @@ namespace EntWatchSharp
 
 			if (!target.bBanned)
 			{
-				UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target.sClientName, target.sClientSteamID)} {Strlocalizer["Reply.Eban.Can_pickup"]}", bConsole);
+				UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(admin, UI.PlayerInfoFormat(target.sClientName, target.sClientSteamID))} {Strlocalizer["Reply.Eban.Can_pickup"]}", bConsole);
 				return;
 			}
 
@@ -560,11 +589,7 @@ namespace EntWatchSharp
 				return;
 			}
 
-			Server.NextFrame(() =>
-			{
-				UI.EWChatAdmin("Chat.Admin.Unrestricted", EW.g_Scheme.color_warning, UI.PlayerInfo(admin), EW.g_Scheme.color_enabled, UI.PlayerInfo(target.sClientName, target.sClientSteamID));
-				UI.EWChatAdmin("Chat.Admin.Reason", EW.g_Scheme.color_warning, reason);
-			});
+			UI.EWChatAdminBan(UI.PlayerInfoFormat(admin), UI.PlayerInfoFormat(target.sClientName, target.sClientSteamID), reason, false);
 		}
 
 		[ConsoleCommand("ew_status", "Allows the player to view the restrictions")]
@@ -593,9 +618,9 @@ namespace EntWatchSharp
 			}
 			if (EW.g_EWPlayer[target].BannedPlayer.bBanned)
 			{
-				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target)} {Strlocalizer["Reply.Eban.Has_a_Restrict"]}", bConsole);
+				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(player, UI.PlayerInfoFormat(target))} {Strlocalizer["Reply.Eban.Has_a_Restrict"]}", bConsole);
 
-				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Admin"]}: {EW.g_Scheme.color_name}{UI.PlayerInfo(EW.g_EWPlayer[target].BannedPlayer.sAdminName, EW.g_EWPlayer[target].BannedPlayer.sAdminSteamID)}", bConsole);
+				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Admin"]}: {EW.g_Scheme.color_name}{UI.PlayerInfo(player, UI.PlayerInfoFormat(EW.g_EWPlayer[target].BannedPlayer.sAdminName, EW.g_EWPlayer[target].BannedPlayer.sAdminSteamID))}", bConsole);
 
 				switch(EW.g_EWPlayer[target].BannedPlayer.iDuration)
 				{
@@ -609,7 +634,7 @@ namespace EntWatchSharp
 				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Eban.Reason"]}: {EW.g_Scheme.color_disabled}{EW.g_EWPlayer[target].BannedPlayer.sReason}", bConsole);
 			} else
 			{
-				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target)} {Strlocalizer["Reply.Eban.Can_pickup"]}", bConsole);
+				UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(player, UI.PlayerInfoFormat(target))} {Strlocalizer["Reply.Eban.Can_pickup"]}", bConsole);
 			}
 		}
 		[ConsoleCommand("ew_banlist", "Displays a list of restrictions")]
@@ -629,8 +654,8 @@ namespace EntWatchSharp
 			{
 				if (EW.CheckDictionary(target) && EW.g_EWPlayer[target].BannedPlayer.bBanned)
 				{
-					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}***{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(target)}{EW.g_Scheme.color_warning}***", bConsole);
-					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Admin"]} {EW.g_Scheme.color_name}{UI.PlayerInfo(EW.g_EWPlayer[target].BannedPlayer.sAdminName, EW.g_EWPlayer[target].BannedPlayer.sAdminSteamID)}", bConsole);
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}***{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(admin, UI.PlayerInfoFormat(target))}{EW.g_Scheme.color_warning}***", bConsole);
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Admin"]} {EW.g_Scheme.color_name}{UI.PlayerInfo(admin, UI.PlayerInfoFormat(EW.g_EWPlayer[target].BannedPlayer.sAdminName, EW.g_EWPlayer[target].BannedPlayer.sAdminSteamID))}", bConsole);
 					switch (EW.g_EWPlayer[target].BannedPlayer.iDuration)
 					{
 						case -1: UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Eban.Duration"]}: {EW.g_Scheme.color_enabled}{Strlocalizer["Reply.Eban.Temporary"]}", bConsole); break;

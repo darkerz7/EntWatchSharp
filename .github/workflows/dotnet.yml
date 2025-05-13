@@ -25,7 +25,7 @@ jobs:
     - name: Restore
       run: dotnet restore
     - name: Build
-      run: dotnet build ${{ env.PROJECT_PATH }} -c Release
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
   publish:
     if: github.event_name == 'push'
     permissions: write-all
@@ -40,7 +40,7 @@ jobs:
     - name: Restore
       run: dotnet restore
     - name: Build
-      run: dotnet build ${{ env.PROJECT_PATH }} -c Release
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
     - name: Set build version
       run: |
         $VER = Get-Content VERSION

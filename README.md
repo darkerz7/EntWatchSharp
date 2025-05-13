@@ -25,6 +25,7 @@ Notify players about entity interactions
 21. API for interaction with other plugins
 22. Usage GameHUD API
 23. Display in clantag
+24. Allows you to select the player display format
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
@@ -127,6 +128,7 @@ Cvar | Parameters | Description
 `ewc_teamonly` | `<false-true>` | Enable/Disable team only mode. (Default true)
 `ewc_adminchat` | `<0-2>` | Change Admin Chat Mode (0 - All Messages, 1 - Only Pickup/Drop Items, 2 - Nothing). (Default 0)
 `ewc_adminhud` | `<0-2>` | Change Admin Hud Mode (0 - All Items, 1 - Only Item Name, 2 - Nothing). (Default 0)
+`ewc_player_format` | `<0-3>` | Changes the way player information is displayed by default (0 - Only Nickname, 1 - Nickname and UserID, 2 - Nickname and SteamID, 3 - Nickname, UserID and SteamID). (Default 0)
 `ewc_blockepick` | `<false-true>` | Block players from using E key to grab items. (Default true)
 `ewc_delay_use` | `<0.0-60.0>` | Change delay before use. (Default 1.0)
 `ewc_globalblock` | `<false-true>` | Blocks the pickup of any items by players. (Default false)
@@ -158,6 +160,7 @@ Client Command | Description
 `ehud_size`<br>`css_hudsize` | Allows the player to change the size of the HUD {size} (default: 54; min 16; max 128)
 `ehud_refresh`<br>`css_hudrefresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
 `ehud_sheet`<br>`css_hudsheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
+`epf`<br>`css_epf` | Allows the player to change the player display format (0 - Only Nickname, 1 - Nickname and UserID, 2 - Nickname and SteamID, 3 - Nickname, UserID and SteamID)
 `eup`<br>`css_eup` | Allows the player to use UsePriority {bool}
 `ew_status`<br>`css_estatus` | Allows the player to view the restrictions {null/target}
 

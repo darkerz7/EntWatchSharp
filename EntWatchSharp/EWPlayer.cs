@@ -11,6 +11,7 @@ namespace EntWatchSharp
 		public UHud HudPlayer;
 		public UsePriority UsePriorityPlayer;
 		public Privilege PrivilegePlayer;
+		public int PFormatPlayer;
 
 		public EWPlayer()
 		{
@@ -18,6 +19,7 @@ namespace EntWatchSharp
 			HudPlayer = new HudNull();
 			UsePriorityPlayer = new UsePriority();
 			PrivilegePlayer = new Privilege();
+			PFormatPlayer = Cvar.PlayerFormat;
 		}
 
 		/*public void RemoveEntityHud()

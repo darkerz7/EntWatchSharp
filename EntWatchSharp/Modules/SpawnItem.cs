@@ -87,7 +87,7 @@ namespace EntWatchSharp.Modules
 						if (player != null && player.IsValid && EW.CheckDictionary(player)) EW.g_EWPlayer[player].BannedPlayer.bFixSpawnItem = false;
 					});
 				});
-				UI.EWChatAdmin("Reply.Spawn.Notify", $"{UI.PlayerInfo(admin)}{EW.g_Scheme.color_warning}", $"{Item.Color}{Item.Name}({Item.ShortName}){EW.g_Scheme.color_warning}", $"{UI.PlayerInfo(receiver)}");
+				UI.EWChatAdminSpawn(UI.PlayerInfoFormat(admin), UI.PlayerInfoFormat(receiver), $"{Item.Color}{Item.Name}({Item.ShortName}){EW.g_Scheme.color_warning}");
 				EW.g_cAPI?.OnAdminSpawnItem(admin, Item.Name, receiver);
 			} else
 			{

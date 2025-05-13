@@ -12,6 +12,7 @@ namespace EntWatchSharp
 		public FakeConVar<bool> FakeCvar_teamonly = new("ewc_teamonly", "Enable/Disable team only mode", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
 		public FakeConVar<byte> FakeCvar_adminchat = new("ewc_adminchat", "Change Admin Chat Mode (0 - All Messages, 1 - Only Pickup/Drop Items, 2 - Nothing)", 0, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<byte>(0, 2));
 		public FakeConVar<byte> FakeCvar_adminhud = new("ewc_adminhud", "Change Admin Hud Mode (0 - All Items, 1 - Only Item Name, 2 - Nothing)", 0, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<byte>(0, 2));
+		public FakeConVar<byte> FakeCvar_playerformat = new("ewc_player_format", "Changes the way player information is displayed by default (0 - Only Nickname, 1 - Nickname and UserID, 2 - Nickname and SteamID, 3 - Nickname, UserID and SteamID)", 3, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<byte>(0, 3));
 
 		public FakeConVar<bool> FakeCvar_blockepick = new("ewc_blockepick", "Block players from using E key to grab items", true, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<bool>(false, true));
 		public FakeConVar<double> FakeCvar_delay = new("ewc_delay_use", "Change delay before use", 1.0, flags: ConVarFlags.FCVAR_NOTIFY, new RangeValidator<double>(0.0, 60.0));
@@ -45,6 +46,7 @@ namespace EntWatchSharp
 			Cvar.TeamOnly = FakeCvar_teamonly.Value;
 			Cvar.AdminChat = FakeCvar_adminchat.Value;
 			Cvar.AdminHud = FakeCvar_adminhud.Value;
+			Cvar.PlayerFormat = FakeCvar_playerformat.Value;
 
 			Cvar.BlockEPickup = FakeCvar_blockepick.Value;
 			Cvar.Delay = FakeCvar_delay.Value;
@@ -87,6 +89,11 @@ namespace EntWatchSharp
 			{
 				Cvar.AdminHud = value;
 				UI.CvarChangeNotify(FakeCvar_adminhud.Name, value.ToString(), FakeCvar_adminhud.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
+			};
+			FakeCvar_playerformat.ValueChanged += (sender, value) =>
+			{
+				Cvar.PlayerFormat = value;
+				UI.CvarChangeNotify(FakeCvar_playerformat.Name, value.ToString(), FakeCvar_playerformat.Flags.HasFlag(ConVarFlags.FCVAR_NOTIFY));
 			};
 
 			FakeCvar_blockepick.ValueChanged += (sender, value) =>
@@ -229,6 +236,7 @@ namespace EntWatchSharp
 		public static bool TeamOnly;
 		public static byte AdminChat;
 		public static byte AdminHud;
+		public static byte PlayerFormat;
 
 		public static bool BlockEPickup;
 		public static double Delay;
