@@ -25,9 +25,9 @@ namespace EntWatchSharp.Helpers
 			{
 				Server.NextFrame(() =>
 				{
-					if (!player.IsValid) return;
+					if (!pl.IsValid || !EW.g_EWPlayer.ContainsKey(pl)) return;
 
-					if (Cvar.TeamOnly && player.TeamNum > 1 && ItemTest.Team != player.TeamNum && (!AdminManager.PlayerHasPermissions(player, "@css/ew_chat") || Cvar.AdminChat == 2 || (Cvar.AdminChat == 1 && AbilityTest != null))) return;
+					if (Cvar.TeamOnly && pl.TeamNum > 1 && ItemTest.Team != pl.TeamNum && (!AdminManager.PlayerHasPermissions(player, "@css/ew_chat") || Cvar.AdminChat == 2 || (Cvar.AdminChat == 1 && AbilityTest != null))) return;
 
 					using (new WithTemporaryCulture(pl.GetLanguage()))
 					{

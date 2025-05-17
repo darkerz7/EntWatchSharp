@@ -61,43 +61,61 @@ namespace EntWatchSharp
 		}
 		public static void LoadConfig()
 		{
-			string sFileName = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}.json";
-			string sFileNameOverride = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}_override.json";
-			string sData;
-			if (File.Exists(sFileNameOverride))
+			try
 			{
-				sData = File.ReadAllText(sFileNameOverride);
-				UI.EWSysInfo("Info.Cfg.Loading", 7, sFileNameOverride);
+				string sFileName = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}.json";
+				string sFileNameOverride = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}_override.json";
+				string sData;
+				if (File.Exists(sFileNameOverride))
+				{
+					sData = File.ReadAllText(sFileNameOverride);
+					UI.EWSysInfo("Info.Cfg.Loading", 7, sFileNameOverride);
+				}
+				else if (File.Exists(sFileName))
+				{
+					sData = File.ReadAllText(sFileName);
+					UI.EWSysInfo("Info.Cfg.Loading", 7, sFileName);
+				}
+				else
+				{
+					UI.EWSysInfo("Info.Cfg.NotFound", 14);
+					return;
+				}
+				g_ItemConfig = JsonSerializer.Deserialize<List<ItemConfig>>(sData);
+				g_CfgLoaded = true;
 			}
-			else if (File.Exists(sFileName))
+			catch (Exception e)
 			{
-				sData = File.ReadAllText(sFileName);
-				UI.EWSysInfo("Info.Cfg.Loading", 7, sFileName);
+				UI.EWSysInfo("Info.Error", 15, $"Bad Config file for {(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}!");
+				UI.EWSysInfo("Info.Error", 15, $"{e.Message}");
+				g_CfgLoaded = false;
 			}
-			else
-			{
-				UI.EWSysInfo("Info.Cfg.NotFound", 14);
-				return;
-			}
-			g_ItemConfig = JsonSerializer.Deserialize<List<ItemConfig>>(sData);
-			g_CfgLoaded = true;
 		}
 
 		public static void LoadScheme()
 		{
-			string sFileName = $"../../csgo/{Cvar.PathScheme}";
-			string sData;
-			if (File.Exists(sFileName) || File.Exists(sFileName = "../../csgo/addons/entwatch/scheme/default.json"))
+			try
 			{
-				sData = File.ReadAllText(sFileName);
-				UI.EWSysInfo("Info.Scheme.Loading", 7, sFileName);
+				string sFileName = $"../../csgo/{Cvar.PathScheme}";
+				string sData;
+				if (File.Exists(sFileName) || File.Exists(sFileName = "../../csgo/addons/entwatch/scheme/default.json"))
+				{
+					sData = File.ReadAllText(sFileName);
+					UI.EWSysInfo("Info.Scheme.Loading", 7, sFileName);
+				}
+				else
+				{
+					UI.EWSysInfo("Info.Scheme.NotFound", 14);
+					return;
+				}
+				g_Scheme = JsonSerializer.Deserialize<Scheme>(sData);
 			}
-			else
+			catch (Exception e)
 			{
-				UI.EWSysInfo("Info.Scheme.NotFound", 14);
-				return;
+				UI.EWSysInfo("Info.Error", 15, $"Bad Scheme file for {Cvar.PathScheme}!");
+				UI.EWSysInfo("Info.Error", 15, $"{e.Message}");
+				g_CfgLoaded = false;
 			}
-			g_Scheme = JsonSerializer.Deserialize<Scheme>(sData);
 		}
 
 		public static bool WeaponIsItem(CEntityInstance entity)
