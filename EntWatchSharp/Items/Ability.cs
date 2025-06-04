@@ -194,7 +194,7 @@ namespace EntWatchSharp.Items
                         if (MathCounter != null && MathCounter.IsValid)
                         {
                             float fValue = EntWatchSharp.MathCounter_GetValue(MathCounter);
-                            if (fValue > MathCounter.Min) return $"{fValue:F1}" + (!MathDontShowMax ? $"/{MathCounter.Max:F1}" : "");
+                            if (fValue > MathCounter.Min) return $"{fValue:R}" + (!MathDontShowMax ? $"/{MathCounter.Max:R}" : "");
                             else return "E";
                         }
                         else return "+";
@@ -204,7 +204,7 @@ namespace EntWatchSharp.Items
                         if (MathCounter != null && MathCounter.IsValid) 
                         {
                             float fValue = MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter);
-							if(fValue < MathCounter.Max) return $"{fValue:F1}" + (!MathDontShowMax ? $"/{MathCounter.Max:F1}" : "");
+							if(fValue < MathCounter.Max) return $"{fValue:R}" + (!MathDontShowMax ? $"/{MathCounter.Max:R}" : "");
                             else return "E";
 						}
                         else return "+";
