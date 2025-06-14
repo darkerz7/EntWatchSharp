@@ -92,7 +92,10 @@ namespace EntWatchSharp
 			EW.g_TimerUnban = new CounterStrikeSharp.API.Modules.Timers.Timer(60.0f, TimerUnban, TimerFlags.REPEAT);
 
 			RegEvents();
-			VirtualFunctionsInitialize();
+			RegisterListener<Listeners.OnMetamodAllPluginsLoaded>(() =>
+			{
+				VirtualFunctionsInitialize();
+			});
 			EbanDB.Init_DB(ModuleDirectory);
 			LogManager.LoadConfig(ModuleDirectory);
 			UI.EWSysInfo("Info.EWLoaded", 6);
