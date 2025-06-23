@@ -250,15 +250,15 @@ namespace EntWatchSharp.Helpers
         }
         readonly static string[] colorPatterns =
         [
-            "{default}", "{darkred}", "{purple}", "{green}", "{lightgreen}", "{lime}", "{red}", "{grey}",
-            "{olive}", "{a}", "{lightblue}", "{blue}", "{d}", "{pink}", "{darkorange}", "{orange}",
-            "{white}", "{yellow}", "{magenta}", "{silver}", "{bluegrey}", "{lightred}", "{cyan}", "{gray}", "{lightyellow}", "{gold}"
+            "{default}", "{darkred}", "{purple}", "{green}", "{lightgreen}", "{lime}", "{red}", "{grey}", "{team}", "{red2}",
+			"{olive}", "{a}", "{lightblue}", "{blue}", "{d}", "{pink}", "{darkorange}", "{orange}", "{darkblue}", "{gold}",
+			"{white}", "{yellow}", "{magenta}", "{silver}", "{bluegrey}", "{lightred}", "{cyan}", "{gray}", "{lightyellow}", 
 		];
 		readonly static string[] colorReplacements =
         [
-            "\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "\x07", "\x08",
-            "\x09", "\x0A", "\x0B", "\x0C", "\x0D", "\x0E", "\x0F", "\x10",
-            "\x01", "\x09", "\x0E", "\x0A", "\x0D", "\x0F", "\x03", "\x08", "\x06", "\x10"
+            "\x01", "\x02", "\x03", "\x04", "\x05", "\x06", "\x07", "\x08", "\x03", "\x0F",
+            "\x06", "\x0A", "\x0B", "\x0C", "\x0D", "\x0E", "\x0F", "\x10", "\x0C", "\x10",
+			"\x01", "\x09", "\x0E", "\x0A", "\x0D", "\x0F", "\x03", "\x08", "\x06"
 		];
     }
 }
