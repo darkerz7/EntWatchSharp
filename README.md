@@ -28,7 +28,7 @@ Notify players about entity interactions
 24. Allows you to select the player display format
 
 ## Required packages:
-1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 285)
+1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) (Min version: 322)
 2. [AnyBaseLibCS2](https://github.com/NickFox007/AnyBaseLibCS2) (0.9.3)
 3. [CS2-HammerIDFix](https://github.com/darkerz7/CS2-HammerIDFix)
 4. [PlayerSettingsCS2](https://github.com/NickFox007/PlayerSettingsCS2) (0.9.3)

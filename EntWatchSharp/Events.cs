@@ -9,7 +9,6 @@ using EntWatchSharp.Helpers;
 using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharp.Modules;
-using CounterStrikeSharp.API.Modules.Entities;
 
 namespace EntWatchSharp
 {
@@ -601,25 +600,27 @@ namespace EntWatchSharp
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
 			//var cEntity = hook.GetParam<CEntityIdentity>(0);
-			var cInput = hook.GetParam<CUtlSymbolLarge>(1);
+			var sInput = hook.GetParam<CUtlSymbolLarge>(1).String;
+			if (string.IsNullOrEmpty(sInput)) return HookResult.Continue;
 			var cActivator = hook.GetParam<CEntityInstance>(2);
 			var cCaller = hook.GetParam<CEntityInstance>(3);
 			//Fix func_physbox:OnPlayerUse begin
 			/*if (cActivator == null || !cActivator.IsValid) return HookResult.Continue;
 			if (string.Equals(cEntity?.DesignerName, "func_physbox"))
 			{
-				Console.WriteLine($"Input: cEntity - {cEntity.DesignerName} cInput - {cInput.KeyValue}");
-				if(string.Equals(cInput.KeyValue.ToLower(), "use"))
+				Console.WriteLine($"Input: cEntity - {cEntity.DesignerName} sInput - {sInput}");
+				if(string.Equals(sInput.ToLower(), "use"))
 				{
 					if (!OnButtonPressed(cActivator, cEntity.EntityInstance)) return HookResult.Handled;
 					return HookResult.Continue;
 				}
 				return HookResult.Continue;
 			}
-			if (!EW.IsGameUI(cCaller) || !string.Equals(cInput.KeyValue.ToLower(), "invalue")) return HookResult.Continue;*/
+			if (!EW.IsGameUI(cCaller) || !string.Equals(sInput.ToLower(), "invalue")) return HookResult.Continue;*/
 			//Fix func_physbox:OnPlayerUse end
-			if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || !string.Equals(cInput.KeyValue.ToLower(), "invalue")) return HookResult.Continue;
-			var cValue = new CUtlSymbolLarge(hook.GetParam<CVariant>(4).Handle);
+			if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || !string.Equals(sInput.ToLower(), "invalue")) return HookResult.Continue;
+			var cValue = hook.GetParam<CVariant>(4);
+			var sValue = cValue.FieldType == fieldtype_t.FIELD_CSTRING ? NativeAPI.GetStringFromSymbolLarge(cValue.Handle) : "";
 
 			EW.UpdateTime();
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
@@ -628,7 +629,7 @@ namespace EntWatchSharp
 				{
 					if (AbilityTest.ButtonClass.StartsWith("game_ui::", StringComparison.OrdinalIgnoreCase))
 					{
-						if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], cValue.KeyValue.ToLower()))
+						if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], sValue.ToLower()))
 						{
 							if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == cActivator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
 							{

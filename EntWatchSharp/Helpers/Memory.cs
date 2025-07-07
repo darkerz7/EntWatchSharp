@@ -34,11 +34,6 @@ namespace EntWatchSharp
 		}
 	}
 
-	public class CUtlSymbolLarge(IntPtr pointer) : NativeObject(pointer)
-	{
-		public string KeyValue => Utilities.ReadStringUtf8(Handle + 0);
-	}
-
 	public class CEntityOutputTemplate_float(IntPtr pointer) : NativeObject(pointer)
 	{
 		public unsafe float OutValue => Unsafe.Add(ref *(float*)Handle, 6);
