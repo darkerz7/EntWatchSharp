@@ -13,17 +13,21 @@ namespace EntWatchSharp
 	{
 		public static void ForAllAbilities(CommandInfo command, MapCommAbilityFunc<T> mc_func, T Value)
 		{
-			if(!Int32.TryParse(command.GetArg(1), out int iHammerID) || iHammerID < 0 || !Int32.TryParse(command.GetArg(2), out int iButtonID) || iButtonID < 0) return;
+			if(command.ArgCount < 1) return;
+			string sHammerID = command.GetArg(1);
+			if (string.IsNullOrEmpty(sHammerID)) return;
+
+			string sButtonID = command.ArgCount >= 2 ? command.GetArg(2) : "";
 
 			EW.UpdateTime();
 
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
-				if (ItemTest.HammerID == iHammerID)
+				if (string.Equals(ItemTest.HammerID, sHammerID))
 				{
 					foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 					{
-						if (iButtonID == AbilityTest.ButtonID || iButtonID == 0) mc_func(AbilityTest, Value);
+						if (string.Equals(sButtonID, AbilityTest.ButtonID) || string.IsNullOrEmpty(sButtonID) || string.Equals(sButtonID, "0")) mc_func(AbilityTest, Value);
 					}
 				}
 			}
@@ -31,11 +35,13 @@ namespace EntWatchSharp
 		
 		public static void ForAllItems(CommandInfo command, MapCommItemFunc<T> mc_func, T Value)
 		{
-			if(!Int32.TryParse(command.GetArg(1), out int iHammerID) || iHammerID < 0) return;
+			if (command.ArgCount < 1) return;
+			string sHammerID = command.GetArg(1);
+			if (string.IsNullOrEmpty(sHammerID)) return;
 
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
-				if (ItemTest.HammerID == iHammerID)
+				if (string.Equals(sHammerID, ItemTest.HammerID))
 				{
 					mc_func(ItemTest, Value);
 				}

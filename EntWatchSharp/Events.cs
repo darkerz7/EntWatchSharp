@@ -181,18 +181,18 @@ namespace EntWatchSharp
 					var weapon = EW.EntityParentRecursive(entity);
 					if (weapon != null && weapon.IsValid)
 					{
-						int iButtonID = 0;
+						string sButtonID = "";
 						if (string.Equals(entity.DesignerName, "func_button") || string.Equals(entity.DesignerName, "func_rot_button"))
-							iButtonID = Int32.Parse(new CBaseButton(entity.Handle).UniqueHammerID);
+							sButtonID = new CBaseButton(entity.Handle).UniqueHammerID;
 						else if(string.Equals(entity.DesignerName, "func_physbox"))
 						{
-							iButtonID = Int32.Parse(new CPhysBox(entity.Handle).UniqueHammerID);
+							sButtonID = new CPhysBox(entity.Handle).UniqueHammerID;
 						}
 						else 
 						{
 							var cDoor = new CBasePropDoor(entity.Handle);
 							if ((cDoor.Spawnflags & 256) != 1) return;
-							iButtonID = Int32.Parse(cDoor.UniqueHammerID);
+							sButtonID = cDoor.UniqueHammerID;
 						}
 						foreach (Item ItemTest in EW.g_ItemList.ToList())
 						{
@@ -200,15 +200,15 @@ namespace EntWatchSharp
 							{
 								foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 								{
-									if (AbilityTest.ButtonID == iButtonID || AbilityTest.ButtonID == 0)
+									if (string.Equals(AbilityTest.ButtonID, sButtonID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
 									{
 										AbilityTest.Entity = entity;
-										AbilityTest.ButtonID = iButtonID;
+										AbilityTest.ButtonID = sButtonID;
 										AbilityTest.ButtonClass = entity.DesignerName;
 										return;
 									}
 								}
-								Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, iButtonID, entity);
+								Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, sButtonID, entity);
 								ItemTest.AbilityList.Add(abilitytest);
 							}
 						}
@@ -227,7 +227,7 @@ namespace EntWatchSharp
 							if (ItemTest.WeaponHandle == null || !ItemTest.WeaponHandle.IsValid || ItemTest.WeaponHandle.Entity == null) continue;
 							foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 							{
-								if (!AbilityTest.MathFindSpawned && AbilityTest.MathID > 0 && AbilityTest.MathID == Int32.Parse(cMathCounter.UniqueHammerID))
+								if (!AbilityTest.MathFindSpawned && !string.IsNullOrEmpty(AbilityTest.MathID) && !string.Equals(AbilityTest.MathID, "0") && string.Equals(AbilityTest.MathID, cMathCounter.UniqueHammerID))
 								{
 									if (AbilityTest.MathNameFix) // <objectname> + _ + <serial number from 1> example: weapon_fire_125
 									{
@@ -292,7 +292,7 @@ namespace EntWatchSharp
 					{
 						foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 						{
-							if (AbilityTest.MathID > 0 && AbilityTest.MathCounter == cMathCounter)
+							if (!string.IsNullOrEmpty(AbilityTest.MathID) && !string.Equals(AbilityTest.MathID, "0") && AbilityTest.MathCounter == cMathCounter)
 							{
 								ItemTest.AbilityList.Remove(AbilityTest);
 								if (EW.CheckDictionary(ItemTest.Owner)) EW.g_EWPlayer[ItemTest.Owner].UsePriorityPlayer.UpdateCountButton(ItemTest.Owner);
@@ -681,7 +681,7 @@ namespace EntWatchSharp
 				{
 					foreach (ItemConfig ItemTest in EW.g_ItemConfig.ToList())
 					{
-						if (ItemTest.TriggerID > 0 && string.Equals(ItemTest.TriggerID.ToString(), trigger.UniqueHammerID))
+						if (!string.IsNullOrEmpty(ItemTest.TriggerID) && !string.Equals(ItemTest.TriggerID, "0") && string.Equals(ItemTest.TriggerID, trigger.UniqueHammerID))
 						{
 							return HookResult.Handled;
 						}

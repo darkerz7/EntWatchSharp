@@ -11,13 +11,14 @@ namespace EntWatchSharp.Items
         public int Mode { get; set; }
         public int MaxUses { get; set; }
         public int CoolDown { get; set; }
-        public int ButtonID { get; set; }
+        public string ButtonID { get; set; }
         public bool Ignore { get; set; }
         public bool LockItem { get; set; }
-		public int MathID { get; set; }
+		public string MathID { get; set; }
         public bool MathNameFix { get; set; }
         public bool MathFindSpawned { get; set; }
         public bool MathDontShowMax { get; set; }
+        public bool MathZero { get; set; }
 		public string Filter { get; set; } // <activatorname> or <Context:1> or <$attribute>
 
 		public CEntityInstance Entity;
@@ -33,13 +34,14 @@ namespace EntWatchSharp.Items
             Mode = 0;
             MaxUses = 0;
             CoolDown = 0;
-            ButtonID = 0;
+            ButtonID = "";
             Ignore = false;
             LockItem = false;
-			MathID = 0;
+			MathID = "";
 			MathNameFix = false;
 			MathFindSpawned = false;
             MathDontShowMax = false;
+			MathZero = false;
 			Filter = "";
 
 			Entity = null;
@@ -47,7 +49,7 @@ namespace EntWatchSharp.Items
 			fLastUse = 0.0;
             iCurrentUses = 0;
         }
-        public Ability(string name, string buttonclass, bool chat_uses, int mode, int maxuses, int cooldown, int buttonid, CEntityInstance entity = null)
+        public Ability(string name, string buttonclass, bool chat_uses, int mode, int maxuses, int cooldown, string buttonid, CEntityInstance entity = null)
         {
             Name = name;
             ButtonClass = buttonclass;
@@ -58,10 +60,11 @@ namespace EntWatchSharp.Items
             ButtonID = buttonid;
             Ignore = false;
             LockItem = false;
-			MathID = 0;
+			MathID = "";
 			MathNameFix = false;
 			MathFindSpawned = false;
 			MathDontShowMax = false;
+			MathZero = false;
 			Filter = "";
 
 			Entity = entity;
@@ -87,7 +90,8 @@ namespace EntWatchSharp.Items
             MathNameFix = cCopyAbility.MathNameFix;
 			MathFindSpawned = cCopyAbility.MathFindSpawned;
             MathDontShowMax = cCopyAbility.MathDontShowMax;
-            Filter = cCopyAbility.Filter;
+            MathZero = cCopyAbility.MathZero;
+			Filter = cCopyAbility.Filter;
 
 			Entity = null;
 			MathCounter = null;
@@ -122,12 +126,12 @@ namespace EntWatchSharp.Items
 
         public void SetSpawnedMath()
         {
-            if ((Mode == 6 || Mode == 7) && MathFindSpawned && MathID > 0)
+            if ((Mode == 6 || Mode == 7) && MathFindSpawned && !string.IsNullOrEmpty(MathID) && !string.Equals(MathID, "0"))
             {
 				var entMaths = Utilities.FindAllEntitiesByDesignerName<CMathCounter>("math_counter");
 				foreach (var entMath in entMaths)
 				{
-					if (entMath != null && entMath.IsValid && Int32.Parse(entMath.UniqueHammerID) == MathID)
+					if (entMath != null && entMath.IsValid && string.Equals(entMath.UniqueHammerID, MathID))
 					{
 						MathCounter = entMath;
 						break;
@@ -251,10 +255,10 @@ namespace EntWatchSharp.Items
 					else return false;
 				case 5: return true;
                 case 6:
-                     if (MathCounter != null && MathCounter.IsValid && EntWatchSharp.MathCounter_GetValue(MathCounter) > MathCounter.Min) return true;
+                     if (MathCounter != null && MathCounter.IsValid && (MathZero ? EntWatchSharp.MathCounter_GetValue(MathCounter) >= MathCounter.Min : EntWatchSharp.MathCounter_GetValue(MathCounter) > MathCounter.Min)) return true;
                      else return false;
                 case 7:
-					if (MathCounter != null && MathCounter.IsValid && (MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter)) < MathCounter.Max) return true;
+					if (MathCounter != null && MathCounter.IsValid && (MathZero ? (MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter)) <= MathCounter.Max : (MathCounter.Max - EntWatchSharp.MathCounter_GetValue(MathCounter)) < MathCounter.Max)) return true;
 					else return false;
                 case 8: return false;
 				default: return true;

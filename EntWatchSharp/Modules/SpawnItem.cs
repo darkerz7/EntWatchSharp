@@ -19,7 +19,7 @@ namespace EntWatchSharp.Modules
 			ItemConfig Item = new();
 			foreach (ItemConfig ItemTest in EW.g_ItemConfig.ToList())
 			{
-				if ((ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase)) && ItemTest.SpawnerID > 0)
+				if ((ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase)) && !string.IsNullOrEmpty(ItemTest.SpawnerID) && !string.Equals(ItemTest.SpawnerID, "0"))
 				{
 					iCount++;
 					Item = ItemTest;
@@ -35,14 +35,14 @@ namespace EntWatchSharp.Modules
 				UI.EWReplyInfo(admin, "Reply.Spawn.ManyItems", bConsole);
 				foreach (ItemConfig ItemTest in EW.g_ItemConfig.ToList())
 				{
-					if ((ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase)) && ItemTest.SpawnerID > 0)
+					if ((ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase)) && !string.IsNullOrEmpty(ItemTest.SpawnerID) && !string.Equals(ItemTest.SpawnerID, "0"))
 					{
 						UI.EWReplyInfo(admin, $"~{ItemTest.Name} ({ItemTest.ShortName})", bConsole);
 					}
 				}
 				return;
 			}
-			if(Item.SpawnerID == 0)
+			if(string.IsNullOrEmpty(Item.SpawnerID) || string.Equals(Item.SpawnerID, "0"))
 			{
 				UI.EWReplyInfo(admin, "Reply.Spawn.NoCfgSpawner", bConsole);
 				return;
@@ -52,7 +52,7 @@ namespace EntWatchSharp.Modules
 			CPointTemplate entPT = null;
 			foreach (var entity in entPTs)
 			{
-				if (entity != null && Int32.Parse(entity.UniqueHammerID) == Item.SpawnerID)
+				if (entity != null && string.Equals(entity.UniqueHammerID, Item.SpawnerID))
 				{
 					entPT = entity;
 					break;

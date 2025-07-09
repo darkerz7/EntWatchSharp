@@ -55,20 +55,20 @@ Notify players about entity interactions
 		"Name": "",					//String, FullName of Item (Chat)
 		"ShortName": "",				//String, ShortName of Item (Hud)
 		"Color": "",					//String, One of the colors. (Chat)
-		"HammerID": 0,					//Integer, weapon_* HammerID
+		"HammerID": "",					//String, weapon_* HammerID
 		"GlowColor": [0,0,0,0],				//Array[4], One of the colors. (Glow)
 		"BlockPickup": false,				//Bool, The item cannot be picked up
 		"AllowTransfer": false,				//Bool, Allow admins to transfer an item
 		"ForceDrop": false,				//Bool, The item will be dropped if player dies or disconnects
 		"Chat": false,					//Bool, Display chat items
 		"Hud": false,					//Bool, Display Hud items
-		"TriggerID": 0,					//Integer, Sets a trigger that an ebanned player cant activate, mostly to prevent picking up weapon_knife items
+		"TriggerID": "",					//String, Sets a trigger that an ebanned player cant activate, mostly to prevent picking up weapon_knife items
 		"UsePriority": false,				//Bool, Enabled by default. You can disable the forced pressing of the button on a specific item
-		"SpawnerID": 0,					//Integer, Allows admins to spawn items. Not recommended to use because it can break the items. Type point_template's HammerID which spawns the item
+		"SpawnerID": "",					//String, Allows admins to spawn items. Not recommended to use because it can break the items. Type point_template's HammerID which spawns the item
 		"AbilityList": [				//Array of abilities
 			{
 				"Name": "",			//String, Custom ability name, can be omitted
-				"ButtonID": 0,			//Integer, Allows you to sort buttons
+				"ButtonID": "",			//String, Allows you to sort buttons
 				"ButtonClass": "",		//String, Button Class, Can use "game_ui" for anoter activation method
 				"Filter": "",			//String, Filter value for activator. |$attribute| for filter_activator_attribute_int (starts with $); |context:value| for filter_activator_context (contains :); other for filter_activator_name
 				"Chat_Uses": false,		//Bool, Display chat someone is using an item(if disabled chat)
@@ -77,14 +77,15 @@ Notify players about entity interactions
 				"CoolDown": 0,			//Integer, Cooldown of item for modes 2, 4, 5
 				"Ignore": false,		//Bool, Ignore item display
 				"LockItem": false,		//Bool, Lock button/door/game_ui_IO
-				"MathID": 0,			//Integer, math_counter HammerID for modes 6, 7
+				"MathID": "",			//String, math_counter HammerID for modes 6, 7
 				"MathNameFix": false,		//Bool, Fix the name of the math_counter (Work with flag: Preserve entity names (Don't do name fixup) ->point_template/env_entity_maker)
 				"MathFindSpawned": false,	//Bool, Search for math_counter on map after weapon spawn(e.x. The math_counter is not included in the point_template and spawns at the beginning of the round, and the weapon spawns much later than 2 seconds)
-				"MathDontShowMax": false	//Bool, Do not show maximum value
+				"MathDontShowMax": false,	//Bool, Do not show maximum value
+				"MathZero": false		//Bool, Allows pressing the button when the math_counter value is zero
 			},
 			{
 				"Name": "",
-				"ButtonID": 0,
+				"ButtonID": "",
 				"ButtonClass": "game_ui::PressedAttack",	//Example for Game_UI
 				"Filter": "",
 				"Chat_Uses": false,
@@ -93,10 +94,11 @@ Notify players about entity interactions
 				"CoolDown": 0,
 				"Ignore": false,
 				"LockItem": false,
-				"MathID": 0,
+				"MathID": "",
 				"MathNameFix": false,
 				"MathFindSpawned": false,
-				"MathDontShowMax": false
+				"MathDontShowMax": false,
+				"MathZero": false
 			}
 		]
 	},
@@ -223,6 +225,15 @@ UPDATE entwatch_old_eban
 SET admin_steamid_unban = REPLACE(admin_steamid_unban, 'STEAM_1:', 'STEAM_0:')
 WHERE admin_steamid_unban LIKE '%STEAM_1:%';
 ```
+
+## Example of changing configs in Notepad++ for correct use after EntWatchSharp above version 1.DZ.4
+-Find what: `("HammerID": |"TriggerID": |"SpawnerID": |"ButtonID": |"MathID": )(-\d+|\d+)`
+-Replace with: `$1"$2"`
+-Search Mode: Regular expression
+after
+-Find what: `("HammerID": |"TriggerID": |"SpawnerID": |"ButtonID": |"MathID": )("0")`
+-Replace with: `$1""`
+-Search Mode: Regular expression
 
 ## Future plans
 1. Fixes Errors

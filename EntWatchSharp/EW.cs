@@ -124,10 +124,9 @@ namespace EntWatchSharp
 			if (weapon == null || !weapon.IsValid) return false;
 			try
 			{
-				int iHammerID = Int32.Parse(weapon.UniqueHammerID);
 				foreach (ItemConfig ItemTest in g_ItemConfig.ToList())
 				{
-					if (ItemTest.ThisItemConfig(iHammerID))
+					if (ItemTest.ThisItemConfig(weapon.UniqueHammerID))
 					{
 						Item cNewItem = new(ItemTest, weapon);
 						g_ItemList.Add(cNewItem);

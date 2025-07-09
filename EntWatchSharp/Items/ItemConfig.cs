@@ -5,22 +5,22 @@
         public string Name { get; set; }
         public string ShortName { get; set; }
         public string Color { get; set; }
-        public int HammerID { get; set; }
+        public string HammerID { get; set; }
         public int[] GlowColor { get; set; }
 		public bool BlockPickup { get; set; }
         public bool AllowTransfer { get; set; }
 		public bool ForceDrop { get; set; }
 		public bool Chat { get; set; }
 		public bool Hud { get; set; }
-		public int TriggerID { get; set; }
+		public string TriggerID { get; set; }
 		public bool UsePriority { get; set; }
-		public int SpawnerID { get; set; }
+		public string SpawnerID { get; set; }
 
 		public List<Ability> AbilityList { get; set; }
 
-        public bool ThisItemConfig(int iHammerID)
+        public bool ThisItemConfig(string sHammerID)
         {
-            if (iHammerID == HammerID) return true;
+            if (string.Equals(sHammerID, HammerID)) return true;
             return false;
         }
 
@@ -29,17 +29,17 @@
             Name = "";
             ShortName = "";
             Color = "{white}";
-            HammerID = 0;
+            HammerID = "0";
             GlowColor = [255, 255, 255, 255];
 			BlockPickup = false;
 			AllowTransfer = false;
 			ForceDrop = false;
 			Chat = false;
             Hud = false;
-            TriggerID = 0;
+            TriggerID = "";
 			UsePriority = false;
 			AbilityList = [];
-            SpawnerID = 0;
+            SpawnerID = "";
         }
 	}
 }
