@@ -227,13 +227,13 @@ WHERE admin_steamid_unban LIKE '%STEAM_1:%';
 ```
 
 ## Example of changing configs in Notepad++ for correct use after EntWatchSharp above version 1.DZ.4
--Find what: `("HammerID": |"TriggerID": |"SpawnerID": |"ButtonID": |"MathID": )(-\d+|\d+)`
--Replace with: `$1"$2"`
--Search Mode: Regular expression
-after
--Find what: `("HammerID": |"TriggerID": |"SpawnerID": |"ButtonID": |"MathID": )("0")`
--Replace with: `$1""`
--Search Mode: Regular expression
+-Find what: `("HammerID": |"TriggerID": |"SpawnerID": |"ButtonID": |"MathID": )(-\d+|\d+)`<br>
+-Replace with: `$1"$2"`<br>
+-Search Mode: Regular expression<br>
+after<br>
+-Find what: `("HammerID": |"TriggerID": |"SpawnerID": |"ButtonID": |"MathID": )("0")`<br>
+-Replace with: `$1""`<br>
+-Search Mode: Regular expression<br>
 
 ## Future plans
 1. Fixes Errors
