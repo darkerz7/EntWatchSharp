@@ -62,9 +62,9 @@ Notify players about entity interactions
 		"ForceDrop": false,				//Bool, The item will be dropped if player dies or disconnects
 		"Chat": false,					//Bool, Display chat items
 		"Hud": false,					//Bool, Display Hud items
-		"TriggerID": "",					//String, Sets a trigger that an ebanned player cant activate, mostly to prevent picking up weapon_knife items
+		"TriggerID": "",				//String, Sets a trigger that an ebanned player cant activate, mostly to prevent picking up weapon_knife items
 		"UsePriority": false,				//Bool, Enabled by default. You can disable the forced pressing of the button on a specific item
-		"SpawnerID": "",					//String, Allows admins to spawn items. Not recommended to use because it can break the items. Type point_template's HammerID which spawns the item
+		"SpawnerID": "",				//String, Allows admins to spawn items. Not recommended to use because it can break the items. Type point_template's HammerID which spawns the item
 		"AbilityList": [				//Array of abilities
 			{
 				"Name": "",			//String, Custom ability name, can be omitted
