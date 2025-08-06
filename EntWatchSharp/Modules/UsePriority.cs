@@ -18,10 +18,10 @@ namespace EntWatchSharp.Modules
             OneButton = false;
             OneItem = null;
         }
-        public void DetectUse(CCSPlayerController UPlayer)
+        public void DetectUse(CCSPlayerController UPlayer, PlayerButtons PressedButtons)
         {
             if (!EW.g_EWPlayer[UPlayer].UsePriorityPlayer.Activate || LockSpam || !OneButton) return;
-            if ((UPlayer.Buttons & PlayerButtons.Use) != 0)
+            if ((PressedButtons & PlayerButtons.Use) != 0)
             {
                 LockSpam = true;
                 var Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(0.5f, UsePriorityTimer);

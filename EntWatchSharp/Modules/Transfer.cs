@@ -80,12 +80,12 @@ namespace EntWatchSharp.Modules
 				{
 					try
 					{
-						if (ItemTest != null && ItemTest.WeaponHandle.IsValid) ItemTest.WeaponHandle.Teleport(receiver.Pawn.Value.AbsOrigin, null, null);
+						if (ItemTest != null && ItemTest.WeaponHandle.IsValid) ItemTest.WeaponHandle.Teleport((System.Numerics.Vector3)receiver.Pawn.Value.AbsOrigin, null, null);
 					}
 					catch (Exception) { }
 				});
 			}
-			ItemTest.WeaponHandle.Teleport(receiver.Pawn.Value.AbsOrigin, null, null);
+			ItemTest.WeaponHandle.Teleport((System.Numerics.Vector3)receiver.Pawn.Value.AbsOrigin, null, null);
 
 			UI.EWChatAdminTransfer(UI.PlayerInfoFormat(admin), UI.PlayerInfoFormat(receiver), $"{ItemTest.Color}{ItemTest.Name}{EW.g_Scheme.color_warning}", target != null ? UI.PlayerInfoFormat(target) : UI.PlayerInfoFormat("Console", "Server"));
 			EW.g_cAPI?.OnAdminTransferedItem(admin, ItemTest.Name, receiver);

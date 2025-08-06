@@ -21,7 +21,7 @@ namespace EntWatchSharp
 			RegisterListener<OnMapEnd>(OnMapEnd_Listener);
 			RegisterListener<OnEntitySpawned>(OnEntitySpawned_Listener);
 			RegisterListener<OnEntityDeleted>(OnEntityDeleted_Listener);
-			RegisterListener<OnTick>(OnOnTick_Listener);
+			RegisterListener<OnPlayerButtonsChanged>(OnOnPlayerButtonsChanged_Listener);
 			RegisterListener<CheckTransmit>(OnCheckTransmit_Listener);
 			RegisterEventHandler<EventRoundStart>(OnEventRoundStart);
 			RegisterEventHandler<EventRoundEnd>(OnEventRoundEnd);
@@ -73,7 +73,7 @@ namespace EntWatchSharp
 			RemoveListener<OnMapEnd>(OnMapEnd_Listener);
 			RemoveListener<OnEntitySpawned>(OnEntitySpawned_Listener);
 			RemoveListener<OnEntityDeleted>(OnEntityDeleted_Listener);
-			RemoveListener<OnTick>(OnOnTick_Listener);
+			RemoveListener<OnPlayerButtonsChanged>(OnOnPlayerButtonsChanged_Listener);
 			RemoveListener<CheckTransmit>(OnCheckTransmit_Listener);
 			DeregisterEventHandler<EventRoundStart>(OnEventRoundStart);
 			DeregisterEventHandler<EventRoundEnd>(OnEventRoundEnd);
@@ -304,14 +304,14 @@ namespace EntWatchSharp
 		}
 
 		//use priority
-		private void OnOnTick_Listener()
+		private void OnOnPlayerButtonsChanged_Listener(CCSPlayerController player, PlayerButtons pressed, PlayerButtons released)
 		{
 			if (!EW.g_CfgLoaded || !Cvar.UsePriority) return;
-			Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false, PawnIsAlive: true }).ToList().ForEach(player =>
+			if(player != null && player.IsValid)
 			{
 				if (!EW.CheckDictionary(player)) return;
-				EW.g_EWPlayer[player].UsePriorityPlayer.DetectUse(player);
-			});
+				EW.g_EWPlayer[player].UsePriorityPlayer.DetectUse(player, pressed);
+			}
 		}
 
 		private void OnCheckTransmit_Listener(CCheckTransmitInfoList infoList)

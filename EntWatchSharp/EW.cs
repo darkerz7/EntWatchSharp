@@ -40,8 +40,6 @@ namespace EntWatchSharp
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerRetryDB = null;
 		public static CounterStrikeSharp.API.Modules.Timers.Timer g_TimerUnban = null;
 
-		public static CounterStrikeSharp.API.Modules.Utils.Vector vecNull = new(0, 0, 0);
-
 		public static bool CheckDictionary(CCSPlayerController player)
 		{
 			if (!g_EWPlayer.ContainsKey(player))
@@ -268,7 +266,7 @@ namespace EntWatchSharp
 			else return false;
 		}
 
-		public static float Distance(CounterStrikeSharp.API.Modules.Utils.Vector point1, CounterStrikeSharp.API.Modules.Utils.Vector point2)
+		public static float Distance(System.Numerics.Vector3 point1, System.Numerics.Vector3 point2)
 		{
 			float dx = point2.X - point1.X;
 			float dy = point2.Y - point1.Y;

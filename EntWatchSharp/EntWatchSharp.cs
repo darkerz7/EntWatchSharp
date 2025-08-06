@@ -11,14 +11,14 @@ using Microsoft.Extensions.Localization;
 
 namespace EntWatchSharp
 {
-	[MinimumApiVersion(322)]
+	[MinimumApiVersion(330)]
 	public partial class EntWatchSharp : BasePlugin
 	{
 		public static IStringLocalizer Strlocalizer;
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "1.DZ.5";
+		public override string ModuleVersion => "1.DZ.6";
 
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
