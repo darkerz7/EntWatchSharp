@@ -38,7 +38,7 @@ namespace EntWatchSharp.Modules
                 }
                 if (iNum + 1 > OneItem.AbilityList.Count) return; //All Ignore
 
-				if (OneItem.CheckDelay() && OneItem.AbilityList[iNum].Mode != 1 && OneItem.AbilityList[iNum].Mode < 6 && OneItem.AbilityList[iNum].fLastUse < EW.fGameTime && OneItem.AbilityList[iNum].Entity.IsValid && !OneItem.AbilityList[iNum].LockItem)
+				if (OneItem.CheckDelay() && OneItem.AbilityList[iNum].Mode != 1 && OneItem.AbilityList[iNum].Mode < 6 && OneItem.AbilityList[iNum].fLastUse < EW.fGameTime && OneItem.AbilityList[iNum].Entity != null && OneItem.AbilityList[iNum].Entity.IsValid && !OneItem.AbilityList[iNum].LockItem)
                 {
                     //OneItem.AbilityList[0].Entity.AcceptInput("Press", UPlayer.PlayerPawn.Value, UPlayer.PlayerPawn.Value);
                     OneItem.AbilityList[iNum].Entity.AcceptInput("Use", UPlayer.PlayerPawn.Value, UPlayer.PlayerPawn.Value);
