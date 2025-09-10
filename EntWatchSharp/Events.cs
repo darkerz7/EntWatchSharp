@@ -31,6 +31,7 @@ namespace EntWatchSharp
 			RegisterEventHandler<EventPlayerDeath>(OnEventPlayerDeathPost);
 			RegisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
 			RegisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
+			RegisterEventHandler<EventPlayerHurt>(OnEventPlayerHurt);
 
 			//Garbage collector crashes when reloading plugin on these hooks
 			/*HookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
@@ -81,6 +82,7 @@ namespace EntWatchSharp
 			DeregisterEventHandler<EventPlayerDeath>(OnEventPlayerDeathPost);
 			DeregisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
 			DeregisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
+			DeregisterEventHandler<EventPlayerHurt>(OnEventPlayerHurt);
 
 			/*UnhookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
 			UnhookEntityOutput("func_rot_button", "OnPressed", OnButtonPressed, HookMode.Pre);
@@ -540,7 +542,9 @@ namespace EntWatchSharp
 			if (EW.g_EWPlayer.ContainsKey(@event.Userid))
 				EW.g_EWPlayer.Remove(@event.Userid);   //Remove EWPlayer
 
-			foreach(Item ItemTest in EW.g_ItemList.ToList())
+			EW.DropSpecialWeapon(@event.Userid);
+
+			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
 				if (ItemTest.Owner == @event.Userid)
 				{
@@ -555,6 +559,15 @@ namespace EntWatchSharp
 					}
 				}
 			}
+			return HookResult.Continue;
+		}
+
+		[GameEventHandler(mode: HookMode.Pre)]
+		private HookResult OnEventPlayerHurt(EventPlayerHurt @event, GameEventInfo info)
+		{
+			if (!EW.g_CfgLoaded || @event.Userid == null) return HookResult.Continue;
+
+			if (@event.Health <= 0) EW.DropSpecialWeapon(@event.Userid);
 			return HookResult.Continue;
 		}
 

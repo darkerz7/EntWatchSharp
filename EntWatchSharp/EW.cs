@@ -136,6 +136,28 @@ namespace EntWatchSharp
 			return false;
 		}
 
+		public static void DropSpecialWeapon(CCSPlayerController player)
+		{
+			if (player.IsValid)
+			{
+				System.Numerics.Vector3 vecPos = (System.Numerics.Vector3)player.PlayerPawn.Value.AbsOrigin with { Z = player.PlayerPawn.Value.AbsOrigin.Z + 30 };
+				foreach (var weapon in player.PlayerPawn.Value.WeaponServices.MyWeapons)
+				{
+					if (!weapon.IsValid || string.IsNullOrEmpty(weapon.Value.UniqueHammerID)) continue;
+
+					player.PlayerPawn.Value.WeaponServices.ActiveWeapon.Raw = weapon.Raw;
+					player.DropActiveWeapon();
+
+					//Fix for item dropping underground
+					CBasePlayerWeapon wpn = new(weapon.Value.Handle);
+					Server.NextFrame(() =>
+					{
+						if (wpn != null && wpn.IsValid) wpn.Teleport(vecPos);
+					});
+				}
+			}
+		}
+
 #nullable enable
 		public static CEntityInstance? EntityParentRecursive(CEntityInstance entity)
 #nullable disable
