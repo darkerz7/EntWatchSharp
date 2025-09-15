@@ -260,14 +260,14 @@ namespace EntWatchSharp
 		public static void ShowHud()
 		{
 			EW.UpdateTime();
-			foreach(var pair in EW.g_EWPlayer)
+			/*foreach(var pair in EW.g_EWPlayer)
 			{
 				if (g_EWPlayer[pair.Key].HudPlayer != null) g_EWPlayer[pair.Key].HudPlayer.ConstructString(pair.Key);
-			}
-			/*Utilities.GetPlayers().ForEach(player =>
+			}*/
+			Utilities.GetPlayers().ForEach(player =>
 			{
 				if (player.IsValid && CheckDictionary(player) && g_EWPlayer[player].HudPlayer != null) g_EWPlayer[player].HudPlayer.ConstructString(player);
-			});*/
+			});
 		}
 
 		public static bool IsGameUI(CEntityInstance entity)

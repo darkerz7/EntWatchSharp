@@ -542,27 +542,30 @@ namespace EntWatchSharp
 			return HookResult.Continue;
 		}
 
-		[GameEventHandler]
+		[GameEventHandler(mode: HookMode.Pre)]
 		private HookResult OnEventPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
 		{
 			if (@event.Userid == null) return HookResult.Continue;
-			OfflineFunc.PlayerDisconnect(@event.Userid);
+
+			CCSPlayerController pl = new(@event.Userid.Handle);
+
+			OfflineFunc.PlayerDisconnect(pl);
 
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
-			if (EW.g_EWPlayer.ContainsKey(@event.Userid))
-				EW.g_EWPlayer.Remove(@event.Userid);   //Remove EWPlayer
+			if (EW.g_EWPlayer.ContainsKey(pl))
+				EW.g_EWPlayer.Remove(pl);   //Remove EWPlayer
 
-			EW.DropSpecialWeapon(@event.Userid);
+			EW.DropSpecialWeapon(pl);
 
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
-				if (ItemTest.Owner == @event.Userid)
+				if (ItemTest.Owner == pl)
 				{
 					ItemTest.Owner = null;
-					UI.EWChatActivity("Chat.Disconnect", EW.g_Scheme.color_disconnect, ItemTest, @event.Userid);
-					EW.g_cAPI?.OnPlayerDisconnectWithItem(ItemTest.Name, @event.Userid);
-					ClanTag.RemoveClanTag(@event.Userid);
+					UI.EWChatActivity("Chat.Disconnect", EW.g_Scheme.color_disconnect, ItemTest, pl);
+					EW.g_cAPI?.OnPlayerDisconnectWithItem(ItemTest.Name, pl);
+					ClanTag.RemoveClanTag(pl);
 					ItemTest.EnableGlow();
 					if (!ItemTest.ForceDrop)
 					{

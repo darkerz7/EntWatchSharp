@@ -1,4 +1,5 @@
-﻿using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
@@ -851,6 +852,17 @@ namespace EntWatchSharp
 				}
 			}
 		}
+
+		/*[ConsoleCommand("ew_testhud", "This is an example command description")]
+		[RequiresPermissions("@css/ew_reload")]
+		public void OnEWTestHud(CCSPlayerController? player, CommandInfo command)
+		{
+			Console.WriteLine($"CountPlayers in dictionary: {EW.g_EWPlayer.Count}");
+			foreach(var pair in EW.g_EWPlayer)
+			{
+				Console.WriteLine($"Player: {pair.Key.Index} {pair.Key.PlayerName}");
+			}
+		}*/
 
 		/*[ConsoleCommand("ew_testhud", "This is an example command description")]
 		[RequiresPermissions("@css/ew_reload")]
