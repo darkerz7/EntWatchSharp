@@ -1,14 +1,14 @@
-﻿using CounterStrikeSharp.API.Core.Attributes.Registration;
+﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Modules.Timers;
-using static CounterStrikeSharp.API.Core.Listeners;
+using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
-using EntWatchSharp.Items;
-using EntWatchSharp.Helpers;
+using CounterStrikeSharp.API.Modules.Timers;
 using CounterStrikeSharp.API.Modules.Utils;
-using EntWatchSharp.Modules.Eban;
+using EntWatchSharp.Helpers;
+using EntWatchSharp.Items;
 using EntWatchSharp.Modules;
+using EntWatchSharp.Modules.Eban;
+using static CounterStrikeSharp.API.Core.Listeners;
 
 namespace EntWatchSharp
 {
@@ -107,7 +107,10 @@ namespace EntWatchSharp
 				EW.g_Timer = null;
 			}
 			EW.g_Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerUpdate, TimerFlags.REPEAT);
-			LogManager.SystemAction("Info.ChangeMap", sMapName);
+			Task.Run(() =>
+			{
+				LogManager.SystemAction("Info.ChangeMap", sMapName);
+			});
 		}
 
 		private void TimerUpdate()
@@ -123,10 +126,14 @@ namespace EntWatchSharp
 			//Reban after reload plugin
 			if (EbanDB.db.bDBReady)
 			{
-				Utilities.GetPlayers().ForEach(player =>
+				Task.Run(() =>
+				{
+					Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
+				});
+				/*Utilities.GetPlayers().ForEach(player =>
 				{
 					EbanPlayer.GetBan(player);
-				});
+				});*/
 				if (EW.g_TimerRetryDB != null)
 				{
 					EW.g_TimerRetryDB.Kill();
@@ -148,10 +155,14 @@ namespace EntWatchSharp
 			});
 
 			//Update (Un)Bans
-			Utilities.GetPlayers().ForEach(player =>
+			Task.Run(() =>
+			{
+				Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
+			});
+			/*Utilities.GetPlayers().ForEach(player =>
 			{
 				EbanPlayer.GetBan(player);
-			});
+			});*/
 		}
 
 		private void OnMapEnd_Listener()

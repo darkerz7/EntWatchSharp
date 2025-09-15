@@ -1,14 +1,13 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
-using EntWatchSharp.Items;
-using static EntWatchSharp.Helpers.FindTarget;
 using EntWatchSharp.Helpers;
+using EntWatchSharp.Items;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
 using System.Globalization;
+using static EntWatchSharp.Helpers.FindTarget;
 using static EntWatchSharp.Modules.Eban.EbanDB;
 
 namespace EntWatchSharp
@@ -650,6 +649,30 @@ namespace EntWatchSharp
 
 			UI.EWReplyInfo(admin, "Reply.Eban.List", bConsole);
 			int iCount = 0;
+			foreach(var pair in EW.g_EWPlayer)
+			{
+				if (pair.Value.BannedPlayer.bBanned)
+				{
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}***{Strlocalizer["Reply.Player"]} {UI.PlayerInfo(admin, UI.PlayerInfoFormat(pair.Key))}{EW.g_Scheme.color_warning}***", bConsole);
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Admin"]} {EW.g_Scheme.color_name}{UI.PlayerInfo(admin, UI.PlayerInfoFormat(pair.Value.BannedPlayer.sAdminName, pair.Value.BannedPlayer.sAdminSteamID))}", bConsole);
+					switch (pair.Value.BannedPlayer.iDuration)
+					{
+						case -1: UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Eban.Duration"]}: {EW.g_Scheme.color_enabled}{Strlocalizer["Reply.Eban.Temporary"]}", bConsole); break;
+						case 0: UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Eban.Duration"]}: {EW.g_Scheme.color_disabled}{Strlocalizer["Reply.Eban.Permanently"]}", bConsole); break;
+						default: UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Eban.Duration"]}: {EW.g_Scheme.color_disabled}{pair.Value.BannedPlayer.iDuration} {Strlocalizer["Reply.Eban.Minutes"]}", bConsole); break;
+					}
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Eban.Expires"]}: {EW.g_Scheme.color_disabled}{DateTimeOffset.FromUnixTimeSeconds(pair.Value.BannedPlayer.iTimeStamp_Issued)}", bConsole);
+
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|{Strlocalizer["Reply.Eban.Reason"]}: {EW.g_Scheme.color_disabled}{pair.Value.BannedPlayer.sReason}", bConsole);
+
+					UI.ReplyToCommand(admin, $"{EW.g_Scheme.color_warning}|__________________________________________", bConsole);
+					iCount++;
+				}
+			}
+			if (iCount == 0) UI.EWReplyInfo(admin, "Reply.Eban.NoPlayers", bConsole);
+
+			/*UI.EWReplyInfo(admin, "Reply.Eban.List", bConsole);
+			int iCount = 0;
 			Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(target =>
 			{
 				if (EW.CheckDictionary(target) && EW.g_EWPlayer[target].BannedPlayer.bBanned)
@@ -670,7 +693,7 @@ namespace EntWatchSharp
 					iCount++;
 				}
 			});
-			if (iCount == 0) UI.EWReplyInfo(admin, "Reply.Eban.NoPlayers", bConsole);
+			if (iCount == 0) UI.EWReplyInfo(admin, "Reply.Eban.NoPlayers", bConsole);*/
 		}
 		//Eban End
 

@@ -1,14 +1,14 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using System.Text.Json;
-using EntWatchSharp.Items;
+using CounterStrikeSharp.API.Core.Capabilities;
+using CS2_GameHUDAPI;
 using EntWatchSharp.Helpers;
+using EntWatchSharp.Items;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharpAPI;
-using CS2_GameHUDAPI;
-using System.Globalization;
-using CounterStrikeSharp.API.Core.Capabilities;
 using PlayerSettings;
+using System.Globalization;
+using System.Text.Json;
 
 namespace EntWatchSharp
 {
@@ -183,84 +183,91 @@ namespace EntWatchSharp
 
 		public static void LoadClientPrefs(CCSPlayerController player)
 		{
-			try
+			Task.Run(() =>
 			{
-				string sHUDType = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Type", "3") : "3";
-				string sHUDPos = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Pos", "-6.5_2_7") : "-6.5_2_7";
-				string sHUDSize = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Size", "54") : "54";
-				string sHUDColor = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Color", "255_255_255_255") : "255_255_255_255";
-				string sHUDRefresh = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Refresh", "3") : "3";
-				string sHUDSheet = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Sheet", "5") : "5";
-				string sPlayerInfoFormat = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_PInfo_Format", $"{Cvar.PlayerFormat}") : $"{Cvar.PlayerFormat}";
-
-				string sUsePriority = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_Use_Priority", "1") : "1";
-				if (player.IsValid && CheckDictionary(player))
+				try
 				{
-					if (!string.IsNullOrEmpty(sHUDPos))
-					{
-						try
-						{
-							string[] Pos = sHUDPos.Replace(',','.').Split(['_']);
-							if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
-							{
-								g_EWPlayer[player].HudPlayer.fXEntity = float.Parse(Pos[0], NumberStyles.Any, cultureEN);
-								g_EWPlayer[player].HudPlayer.fYEntity = float.Parse(Pos[1], NumberStyles.Any, cultureEN);
-								g_EWPlayer[player].HudPlayer.fZEntity = float.Parse(Pos[2], NumberStyles.Any, cultureEN);
-							}
-						}
-						catch { }
-					}
-					if (!string.IsNullOrEmpty(sHUDColor))
-					{
-						try
-						{
-							string[] Pos = sHUDColor.Split(['_']);
-							if (Pos[0] != null && Pos[1] != null && Pos[2] != null && Pos[3] != null)
-							{
-								g_EWPlayer[player].HudPlayer.colorEntity[0] = Int32.Parse(Pos[0]);
-								g_EWPlayer[player].HudPlayer.colorEntity[1] = Int32.Parse(Pos[1]);
-								g_EWPlayer[player].HudPlayer.colorEntity[2] = Int32.Parse(Pos[2]);
-								g_EWPlayer[player].HudPlayer.colorEntity[3] = Int32.Parse(Pos[3]);
-							}
-						}
-						catch { }
-					}
-					if (!string.IsNullOrEmpty(sHUDSize))
-					{
-						if (!Int32.TryParse(sHUDSize, out int number)) number = 54;
-						g_EWPlayer[player].HudPlayer.iSize = number;
-					}
-					if (!string.IsNullOrEmpty(sHUDType))
-					{
-						if (!Int32.TryParse(sHUDType, out int number)) number = 3;
-						g_EWPlayer[player].SwitchHud(player, number);
-					}
-					if (!string.IsNullOrEmpty(sHUDRefresh))
-					{
-						if (Int32.TryParse(sHUDRefresh, out int number)) g_EWPlayer[player].HudPlayer.iRefresh = number;
-					}
-					if (!string.IsNullOrEmpty(sHUDSheet))
-					{
-						if (Int32.TryParse(sHUDSheet, out int number)) g_EWPlayer[player].HudPlayer.iSheetMax = number;
-					}
-					if (!string.IsNullOrEmpty(sPlayerInfoFormat))
-					{
-						if (Int32.TryParse(sPlayerInfoFormat, out int number)) g_EWPlayer[player].PFormatPlayer = number;
-					}
+					string sHUDType = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Type", "3") : "3";
+					string sHUDPos = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Pos", "-6.5_2_7") : "-6.5_2_7";
+					string sHUDSize = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Size", "54") : "54";
+					string sHUDColor = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Color", "255_255_255_255") : "255_255_255_255";
+					string sHUDRefresh = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Refresh", "3") : "3";
+					string sHUDSheet = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Sheet", "5") : "5";
+					string sPlayerInfoFormat = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_PInfo_Format", $"{Cvar.PlayerFormat}") : $"{Cvar.PlayerFormat}";
 
-					if (!string.IsNullOrEmpty(sUsePriority)) g_EWPlayer[player].UsePriorityPlayer.Activate = !string.Equals(sUsePriority, "0");
-					else g_EWPlayer[player].UsePriorityPlayer.Activate = true;
-				}
-			}catch (Exception ex) { Console.WriteLine(ex); }
+					string sUsePriority = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_Use_Priority", "1") : "1";
+					if (player.IsValid && CheckDictionary(player))
+					{
+						if (!string.IsNullOrEmpty(sHUDPos))
+						{
+							try
+							{
+								string[] Pos = sHUDPos.Replace(',','.').Split(['_']);
+								if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
+								{
+									g_EWPlayer[player].HudPlayer.fXEntity = float.Parse(Pos[0], NumberStyles.Any, cultureEN);
+									g_EWPlayer[player].HudPlayer.fYEntity = float.Parse(Pos[1], NumberStyles.Any, cultureEN);
+									g_EWPlayer[player].HudPlayer.fZEntity = float.Parse(Pos[2], NumberStyles.Any, cultureEN);
+								}
+							}
+							catch { }
+						}
+						if (!string.IsNullOrEmpty(sHUDColor))
+						{
+							try
+							{
+								string[] Pos = sHUDColor.Split(['_']);
+								if (Pos[0] != null && Pos[1] != null && Pos[2] != null && Pos[3] != null)
+								{
+									g_EWPlayer[player].HudPlayer.colorEntity[0] = Int32.Parse(Pos[0]);
+									g_EWPlayer[player].HudPlayer.colorEntity[1] = Int32.Parse(Pos[1]);
+									g_EWPlayer[player].HudPlayer.colorEntity[2] = Int32.Parse(Pos[2]);
+									g_EWPlayer[player].HudPlayer.colorEntity[3] = Int32.Parse(Pos[3]);
+								}
+							}
+							catch { }
+						}
+						if (!string.IsNullOrEmpty(sHUDSize))
+						{
+							if (!Int32.TryParse(sHUDSize, out int number)) number = 54;
+							g_EWPlayer[player].HudPlayer.iSize = number;
+						}
+						if (!string.IsNullOrEmpty(sHUDType))
+						{
+							if (!Int32.TryParse(sHUDType, out int number)) number = 3;
+							g_EWPlayer[player].SwitchHud(player, number);
+						}
+						if (!string.IsNullOrEmpty(sHUDRefresh))
+						{
+							if (Int32.TryParse(sHUDRefresh, out int number)) g_EWPlayer[player].HudPlayer.iRefresh = number;
+						}
+						if (!string.IsNullOrEmpty(sHUDSheet))
+						{
+							if (Int32.TryParse(sHUDSheet, out int number)) g_EWPlayer[player].HudPlayer.iSheetMax = number;
+						}
+						if (!string.IsNullOrEmpty(sPlayerInfoFormat))
+						{
+							if (Int32.TryParse(sPlayerInfoFormat, out int number)) g_EWPlayer[player].PFormatPlayer = number;
+						}
+
+						if (!string.IsNullOrEmpty(sUsePriority)) g_EWPlayer[player].UsePriorityPlayer.Activate = !string.Equals(sUsePriority, "0");
+						else g_EWPlayer[player].UsePriorityPlayer.Activate = true;
+					}
+				}catch (Exception ex) { Console.WriteLine(ex); }
+			});
 		}
 
 		public static void ShowHud()
 		{
 			EW.UpdateTime();
-			Utilities.GetPlayers().ForEach(player =>
+			foreach(var pair in EW.g_EWPlayer)
+			{
+				if (g_EWPlayer[pair.Key].HudPlayer != null) g_EWPlayer[pair.Key].HudPlayer.ConstructString(pair.Key);
+			}
+			/*Utilities.GetPlayers().ForEach(player =>
 			{
 				if (player.IsValid && CheckDictionary(player) && g_EWPlayer[player].HudPlayer != null) g_EWPlayer[player].HudPlayer.ConstructString(player);
-			});
+			});*/
 		}
 
 		public static bool IsGameUI(CEntityInstance entity)
