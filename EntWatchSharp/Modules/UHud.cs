@@ -109,7 +109,7 @@ namespace EntWatchSharp.Modules
         {
 			if (EW._GH_api != null && HudPlayer.IsValid)
 			{
-				EW._GH_api.Native_GameHUD_Show(HudPlayer, EW.HUDCHANNEL, sItems, 1.2f);
+				EW._GH_api.Native_GameHUD_ShowPermanent(HudPlayer, EW.HUDCHANNEL, sItems);
 			}
 		}
 	}
