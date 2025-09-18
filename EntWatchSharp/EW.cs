@@ -138,7 +138,7 @@ namespace EntWatchSharp
 
 		public static void DropSpecialWeapon(CCSPlayerController player)
 		{
-			if (player.IsValid)
+			if (player.IsValid && player.PlayerPawn.Value != null && player.PlayerPawn.Value.IsValid)
 			{
 				System.Numerics.Vector3 vecPos = (System.Numerics.Vector3)player.PlayerPawn.Value.AbsOrigin with { Z = player.PlayerPawn.Value.AbsOrigin.Z + 30 };
 				foreach (var weapon in player.PlayerPawn.Value.WeaponServices.MyWeapons)
