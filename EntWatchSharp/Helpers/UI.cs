@@ -24,38 +24,20 @@ namespace EntWatchSharp.Helpers
 			
 			if (!(AbilityTest == null || ItemTest.Chat || AbilityTest.Chat_Uses)) return;
 
-			Task.Run(() =>
-			{
-				Parallel.ForEach(EW.g_EWPlayer, (pair) =>
-				{
-					Server.NextFrame(() =>
-					{
-						if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false }) || !EW.g_EWPlayer.ContainsKey(pair.Key)) return;
-
-						if (Cvar.TeamOnly && pair.Key.TeamNum > 1 && ItemTest.Team != pair.Key.TeamNum && (!AdminManager.PlayerHasPermissions(pair.Key, "@css/ew_chat") || Cvar.AdminChat == 2 || (Cvar.AdminChat == 1 && AbilityTest != null))) return;
-
-						using (new WithTemporaryCulture(pair.Key.GetLanguage()))
-						{
-							pair.Key.PrintToChat(EWChatMessage($"{PlayerInfo(pair.Key, sPlayerInfoFormat)} {sColor}{EntWatchSharp.Strlocalizer[sMessage]} {ItemTest.Color}{ItemTest.Name}{((AbilityTest != null && !string.IsNullOrEmpty(AbilityTest.Name)) ? $" ({AbilityTest.Name})" : "")}"));
-						}
-					});
-				});
-			});
-
-			/*Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(pl =>
+			foreach (var pair in EW.g_EWPlayer)
 			{
 				Server.NextFrame(() =>
 				{
-					if (!pl.IsValid || !EW.g_EWPlayer.ContainsKey(pl)) return;
+					if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false }) || !EW.g_EWPlayer.ContainsKey(pair.Key)) return;
 
-					if (Cvar.TeamOnly && pl.TeamNum > 1 && ItemTest.Team != pl.TeamNum && (!AdminManager.PlayerHasPermissions(pl, "@css/ew_chat") || Cvar.AdminChat == 2 || (Cvar.AdminChat == 1 && AbilityTest != null))) return;
+					if (Cvar.TeamOnly && pair.Key.TeamNum > 1 && ItemTest.Team != pair.Key.TeamNum && (!AdminManager.PlayerHasPermissions(pair.Key, "@css/ew_chat") || Cvar.AdminChat == 2 || (Cvar.AdminChat == 1 && AbilityTest != null))) return;
 
-					using (new WithTemporaryCulture(pl.GetLanguage()))
+					using (new WithTemporaryCulture(pair.Key.GetLanguage()))
 					{
-						pl.PrintToChat(EWChatMessage($"{PlayerInfo(pl, sPlayerInfoFormat)} {sColor}{EntWatchSharp.Strlocalizer[sMessage]} {ItemTest.Color}{ItemTest.Name}{((AbilityTest != null && !string.IsNullOrEmpty(AbilityTest.Name)) ? $" ({AbilityTest.Name})" : "")}"));
+						pair.Key.PrintToChat(EWChatMessage($"{PlayerInfo(pair.Key, sPlayerInfoFormat)} {sColor}{EntWatchSharp.Strlocalizer[sMessage]} {ItemTest.Color}{ItemTest.Name}{((AbilityTest != null && !string.IsNullOrEmpty(AbilityTest.Name)) ? $" ({AbilityTest.Name})" : "")}"));
 					}
 				});
-			});*/
+			}
 		}
 		public static void EWChatAdminBan(string[] sPIF_admin, string[] sPIF_player, string sReason, bool bAction)
 		{
@@ -73,32 +55,18 @@ namespace EntWatchSharp.Helpers
 					LogManager.AdminAction("Chat.Admin.Reason", EW.g_Scheme.color_warning, sReason);
 				});
 
-				Task.Run(() =>
-				{
-					Parallel.ForEach(EW.g_EWPlayer, (pair) =>
-					{
-						Server.NextFrame(() =>
-						{
-							if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
-							using (new WithTemporaryCulture(pair.Key.GetLanguage()))
-							{
-								pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer[bAction ? "Chat.Admin.Restricted" : "Chat.Admin.Unrestricted", EW.g_Scheme.color_warning, PlayerInfo(pair.Key, sPIF_admin), bAction ? EW.g_Scheme.color_disabled : EW.g_Scheme.color_enabled, PlayerInfo(pair.Key, sPIF_player)]));
-								pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Chat.Admin.Reason", EW.g_Scheme.color_warning, sReason]));
-							}
-						});
-					});
-				});
-				/*Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(pl =>
+				foreach (var pair in EW.g_EWPlayer)
 				{
 					Server.NextFrame(() =>
 					{
-						using (new WithTemporaryCulture(pl.GetLanguage()))
+						if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
+						using (new WithTemporaryCulture(pair.Key.GetLanguage()))
 						{
-							pl.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer[bAction ? "Chat.Admin.Restricted" : "Chat.Admin.Unrestricted", EW.g_Scheme.color_warning, PlayerInfo(pl, sPIF_admin), bAction ? EW.g_Scheme.color_disabled : EW.g_Scheme.color_enabled, PlayerInfo(pl, sPIF_player)]));
-							pl.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Chat.Admin.Reason", EW.g_Scheme.color_warning, sReason]));
+							pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer[bAction ? "Chat.Admin.Restricted" : "Chat.Admin.Unrestricted", EW.g_Scheme.color_warning, PlayerInfo(pair.Key, sPIF_admin), bAction ? EW.g_Scheme.color_disabled : EW.g_Scheme.color_enabled, PlayerInfo(pair.Key, sPIF_player)]));
+							pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Chat.Admin.Reason", EW.g_Scheme.color_warning, sReason]));
 						}
 					});
-				});*/
+				}
 			});
 		}
 		public static void EWChatAdminSpawn(string[] sPIF_admin, string[] sPIF_receiver, string sItem)
@@ -115,30 +83,17 @@ namespace EntWatchSharp.Helpers
 					LogManager.AdminAction("Reply.Spawn.Notify", sPIF_admin[3], sItem, sPIF_receiver[3]);
 				});
 
-				Task.Run(() =>
-				{
-					Parallel.ForEach(EW.g_EWPlayer, (pair) =>
-					{
-						Server.NextFrame(() =>
-						{
-							if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
-							using (new WithTemporaryCulture(pair.Key.GetLanguage()))
-							{
-								pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Reply.Spawn.Notify", PlayerInfo(pair.Key, sPIF_admin), sItem, PlayerInfo(pair.Key, sPIF_receiver)]));
-							}
-						});
-					});
-				});
-				/*Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(pl =>
+				foreach (var pair in EW.g_EWPlayer)
 				{
 					Server.NextFrame(() =>
 					{
-						using (new WithTemporaryCulture(pl.GetLanguage()))
+						if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
+						using (new WithTemporaryCulture(pair.Key.GetLanguage()))
 						{
-							pl.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Reply.Spawn.Notify", PlayerInfo(pl, sPIF_admin), sItem, PlayerInfo(pl, sPIF_receiver)]));
+							pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Reply.Spawn.Notify", PlayerInfo(pair.Key, sPIF_admin), sItem, PlayerInfo(pair.Key, sPIF_receiver)]));
 						}
 					});
-				});*/
+				}
 			});
 		}
 		public static void EWChatAdminTransfer(string[] sPIF_admin, string[] sPIF_receiver, string sItem, string[] sPIF_target)
@@ -154,31 +109,18 @@ namespace EntWatchSharp.Helpers
 				{
 					LogManager.AdminAction("Reply.Transfer.Notify", sPIF_admin[3], sItem, sPIF_target[3], sPIF_receiver[3]);
 				});
-				
-				Task.Run(() =>
-				{
-					Parallel.ForEach(EW.g_EWPlayer, (pair) =>
-					{
-						Server.NextFrame(() =>
-						{
-							if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
-							using (new WithTemporaryCulture(pair.Key.GetLanguage()))
-							{
-								pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Reply.Transfer.Notify", PlayerInfo(pair.Key, sPIF_admin), sItem, PlayerInfo(pair.Key, sPIF_target), PlayerInfo(pair.Key, sPIF_receiver)]));
-							}
-						});
-					});
-				});
-				/*Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(pl =>
+
+				foreach (var pair in EW.g_EWPlayer)
 				{
 					Server.NextFrame(() =>
 					{
-						using (new WithTemporaryCulture(pl.GetLanguage()))
+						if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
+						using (new WithTemporaryCulture(pair.Key.GetLanguage()))
 						{
-							pl.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Reply.Transfer.Notify", PlayerInfo(pl, sPIF_admin), sItem, PlayerInfo(pl, sPIF_target), PlayerInfo(pl, sPIF_receiver)]));
+							pair.Key.PrintToChat(EWChatMessage(EntWatchSharp.Strlocalizer["Reply.Transfer.Notify", PlayerInfo(pair.Key, sPIF_admin), sItem, PlayerInfo(pair.Key, sPIF_target), PlayerInfo(pair.Key, sPIF_receiver)]));
 						}
 					});
-				});*/
+				}
 			});
 		}
 
@@ -216,30 +158,17 @@ namespace EntWatchSharp.Helpers
 
 			if (bClientNotify)
 			{
-				Task.Run(() =>
-				{
-					Parallel.ForEach(EW.g_EWPlayer, (pair) =>
-					{
-						Server.NextFrame(() =>
-						{
-							if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
-							using (new WithTemporaryCulture(pair.Key.GetLanguage()))
-							{
-								pair.Key.PrintToChat(EWChatMessage($"{EW.g_Scheme.color_warning}{EntWatchSharp.Strlocalizer["Cvar.Notify", sCvarName, sCvarValue]}"));
-							}
-						});
-					});
-				});
-				/*Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(pl =>
+				foreach (var pair in EW.g_EWPlayer)
 				{
 					Server.NextFrame(() =>
 					{
-						using (new WithTemporaryCulture(pl.GetLanguage()))
+						if (!(pair.Key is { IsValid: true, IsBot: false, IsHLTV: false })) return;
+						using (new WithTemporaryCulture(pair.Key.GetLanguage()))
 						{
-							pl.PrintToChat(EWChatMessage($"{EW.g_Scheme.color_warning}{EntWatchSharp.Strlocalizer["Cvar.Notify", sCvarName, sCvarValue]}"));
+							pair.Key.PrintToChat(EWChatMessage($"{EW.g_Scheme.color_warning}{EntWatchSharp.Strlocalizer["Cvar.Notify", sCvarName, sCvarValue]}"));
 						}
 					});
-				});*/
+				}
 			}
 		}
 
