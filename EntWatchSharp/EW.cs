@@ -138,24 +138,27 @@ namespace EntWatchSharp
 
 		public static void DropSpecialWeapon(CCSPlayerController player)
 		{
-			if (player.IsValid && player.PlayerPawn.Value != null && player.PlayerPawn.Value.IsValid)
+			if (player.IsValid && player.PlayerPawn.Value != null && player.PlayerPawn.Value.IsValid && player.PlayerPawn.Value.AbsOrigin != null && player.PlayerPawn.Value.WeaponServices != null)
 			{
-				System.Numerics.Vector3 vecPos = (System.Numerics.Vector3)player.PlayerPawn.Value.AbsOrigin with { Z = player.PlayerPawn.Value.AbsOrigin.Z + 70 };
-				foreach (var weapon in player.PlayerPawn.Value.WeaponServices.MyWeapons)
+				try
 				{
-					if (!weapon.IsValid || string.IsNullOrEmpty(weapon.Value.UniqueHammerID)) continue;
-
-					CBasePlayerWeapon wpn = new(weapon.Value.Handle);
-
-					player.PlayerPawn.Value.WeaponServices.ActiveWeapon.Raw = weapon.Raw;
-					player.DropActiveWeapon();
-
-					//Fix for item dropping underground
-					Server.NextFrame(() =>
+					System.Numerics.Vector3 vecPos = (System.Numerics.Vector3)player.PlayerPawn.Value.AbsOrigin with { Z = player.PlayerPawn.Value.AbsOrigin.Z + 70 };
+					foreach (var weapon in player.PlayerPawn.Value.WeaponServices.MyWeapons)
 					{
-						if (wpn != null && wpn.IsValid) wpn.Teleport(vecPos);
-					});
-				}
+						if (!weapon.IsValid || weapon.Value == null || string.IsNullOrEmpty(weapon.Value.UniqueHammerID)) continue;
+
+						CBasePlayerWeapon wpn = new(weapon.Value.Handle);
+
+						player.PlayerPawn.Value.WeaponServices.ActiveWeapon.Raw = weapon.Raw;
+						player.DropActiveWeapon();
+
+						//Fix for item dropping underground
+						Server.NextFrame(() =>
+						{
+							if (wpn != null && wpn.IsValid) wpn.Teleport(vecPos);
+						});
+					}
+				} catch { }
 			}
 		}
 
