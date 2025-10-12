@@ -528,7 +528,7 @@ namespace EntWatchSharp
 
 			OfflineFunc.PlayerConnectFull(pl);
 
-			if (!EW.g_CfgLoaded) return HookResult.Continue;
+			//if (!EW.g_CfgLoaded) return HookResult.Continue;
 
 			if (pl.IsValid)
 			{
@@ -551,7 +551,7 @@ namespace EntWatchSharp
 
 			OfflineFunc.PlayerDisconnect(pl);
 
-			if (!EW.g_CfgLoaded) return HookResult.Continue;
+			//if (!EW.g_CfgLoaded) return HookResult.Continue;
 
 			if (EW.g_EWPlayer.ContainsKey(pl))
 				EW.g_EWPlayer.Remove(pl);   //Remove EWPlayer
