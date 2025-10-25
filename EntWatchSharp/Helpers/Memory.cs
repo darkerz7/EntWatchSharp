@@ -13,7 +13,8 @@ namespace EntWatchSharp
 
 		public void VirtualFunctionsInitialize()
 		{
-			VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(OnWeaponCanUse, HookMode.Pre);
+			//VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(OnWeaponCanUse, HookMode.Pre);
+			VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
 			VirtualFunctions.CBaseTrigger_StartTouchFunc.Hook(OnTriggerStartTouch, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponDropFunc.Hook(OnWeaponDrop, HookMode.Post);
 			CEntityIdentity_AcceptInputFunc.Hook(OnInput, HookMode.Pre);
@@ -21,7 +22,8 @@ namespace EntWatchSharp
 
 		public void VirtualFunctionsUninitialize()
 		{
-			VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(OnWeaponCanUse, HookMode.Pre);
+			//VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(OnWeaponCanUse, HookMode.Pre);
+			VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
 			VirtualFunctions.CBaseTrigger_StartTouchFunc.Unhook(OnTriggerStartTouch, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponDropFunc.Unhook(OnWeaponDrop, HookMode.Post);
 			CEntityIdentity_AcceptInputFunc.Unhook(OnInput, HookMode.Pre);

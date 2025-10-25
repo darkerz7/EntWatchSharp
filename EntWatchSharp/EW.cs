@@ -21,6 +21,7 @@ namespace EntWatchSharp
 		public static List<Item> g_ItemList = [];
 		public static Scheme g_Scheme = new();
 		public static bool g_CfgLoaded = false;
+		public static string g_WeaponName = "EntWatchItem_";
 		public static CultureInfo cultureEN = new("en-EN");
 
 #nullable enable
@@ -61,6 +62,8 @@ namespace EntWatchSharp
 		{
 			try
 			{
+				g_WeaponName = $"EntWatchItem_{Server.MapName}";
+				if (g_WeaponName.Length > 64) g_WeaponName = g_WeaponName[..64];
 				string sFileName = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}.json";
 				string sFileNameOverride = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}_override.json";
 				string sData;
@@ -128,6 +131,7 @@ namespace EntWatchSharp
 					{
 						Item cNewItem = new(ItemTest, weapon);
 						g_ItemList.Add(cNewItem);
+						weapon.As<CEconEntity>().AttributeManager.Item.CustomName = EW.g_WeaponName;
 						return true;
 					}
 				}

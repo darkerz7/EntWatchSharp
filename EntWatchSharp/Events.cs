@@ -27,6 +27,7 @@ namespace EntWatchSharp
 			RegisterEventHandler<EventRoundEnd>(OnEventRoundEnd);
 			RegisterEventHandler<EventItemPickup>(OnEventItemPickupPost);
 			//OnWeaponCanUse
+			//OnWeaponCanAcquire
 			//OnWeaponDrop
 			RegisterEventHandler<EventPlayerDeath>(OnEventPlayerDeathPost);
 			RegisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
@@ -419,7 +420,7 @@ namespace EntWatchSharp
 			return HookResult.Continue;
 		}
 
-		private HookResult OnWeaponCanUse(DynamicHook hook)
+		/*private HookResult OnWeaponCanUse(DynamicHook hook)
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
@@ -444,6 +445,34 @@ namespace EntWatchSharp
 							hook.SetReturn(false);
 							return HookResult.Handled;
 						}
+					}
+				}
+			}
+			catch (Exception) { }
+
+			return HookResult.Continue;
+		}*/
+
+		private HookResult OnWeaponCanAcquire(DynamicHook hook)
+		{
+			if (!EW.g_CfgLoaded) return HookResult.Continue;
+
+			try
+			{
+				if (hook.GetParam<AcquireMethod>(2) == AcquireMethod.PickUp)
+				{
+					CCSPlayerController client = hook.GetParam<CCSPlayer_ItemServices>(0).Pawn.Value!.Controller.Value!.As<CCSPlayerController>();
+					
+					if (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bFixSpawnItem)
+					{
+						hook.SetReturn(false);
+						return HookResult.Handled;
+					}
+
+					if (string.Equals(EW.g_WeaponName, hook.GetParam<CEconItemView>(1).CustomName) && (Cvar.BlockEPickup && (client.Buttons & PlayerButtons.Use) != 0 || (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bBanned)))
+					{
+						hook.SetReturn(false);
+						return HookResult.Handled;
 					}
 				}
 			}
@@ -553,8 +582,7 @@ namespace EntWatchSharp
 
 			//if (!EW.g_CfgLoaded) return HookResult.Continue;
 
-			if (EW.g_EWPlayer.ContainsKey(pl))
-				EW.g_EWPlayer.Remove(pl);   //Remove EWPlayer
+			EW.g_EWPlayer.Remove(pl);   //Remove EWPlayer
 
 			EW.DropSpecialWeapon(pl);
 
