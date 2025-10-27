@@ -146,7 +146,7 @@ namespace EntWatchSharp
 		private void TimerUnban()
 		{
 			string sServerName = EW.g_Scheme.server_name;
-			if (!string.IsNullOrEmpty(sServerName)) { sServerName = "Zombies Server"; }
+			if (string.IsNullOrEmpty(sServerName)) { sServerName = "Zombies Server"; }
 			
 			EbanDB.OfflineUnban(sServerName);
 
