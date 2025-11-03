@@ -27,7 +27,7 @@ namespace EntWatchSharp
 			RegisterEventHandler<EventRoundEnd>(OnEventRoundEnd);
 			RegisterEventHandler<EventItemPickup>(OnEventItemPickupPost);
 			//OnWeaponCanUse
-			//OnWeaponCanAcquire
+			//OnWeaponPickup
 			//OnWeaponDrop
 			RegisterEventHandler<EventPlayerDeath>(OnEventPlayerDeathPost);
 			RegisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
@@ -453,31 +453,33 @@ namespace EntWatchSharp
 			return HookResult.Continue;
 		}*/
 
-		private HookResult OnWeaponCanAcquire(DynamicHook hook)
+		private HookResult OnWeaponPickup(DynamicHook hook)
 		{
-			if (!EW.g_CfgLoaded) return HookResult.Continue;
+			if (!EW.g_CfgLoaded)
+			{
+				hook.SetReturn(false);
+				return HookResult.Continue;
+			}
 
 			try
 			{
-				if (hook.GetParam<AcquireMethod>(2) == AcquireMethod.PickUp)
-				{
-					CCSPlayerController client = hook.GetParam<CCSPlayer_ItemServices>(0).Pawn.Value!.Controller.Value!.As<CCSPlayerController>();
-					
-					if (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bFixSpawnItem)
-					{
-						hook.SetReturn(false);
-						return HookResult.Handled;
-					}
+				CCSPlayerController client = hook.GetParam<CPlayer_WeaponServices>(0).Pawn.Value!.Controller.Value!.As<CCSPlayerController>();
 
-					if (string.Equals(EW.g_WeaponName, hook.GetParam<CEconItemView>(1).CustomName) && (Cvar.BlockEPickup && (client.Buttons & PlayerButtons.Use) != 0 || (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bBanned)))
-					{
-						hook.SetReturn(false);
-						return HookResult.Handled;
-					}
+				if (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bFixSpawnItem)
+				{
+					hook.SetReturn(true);
+					return HookResult.Handled;
+				}
+
+				if (string.Equals(EW.g_WeaponName, hook.GetParam<CEconItemView>(1).CustomName) && (Cvar.BlockEPickup && (client.Buttons & PlayerButtons.Use) != 0 || (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bBanned)))
+				{
+					hook.SetReturn(true);
+					return HookResult.Handled;
 				}
 			}
 			catch (Exception) { }
 
+			hook.SetReturn(false);
 			return HookResult.Continue;
 		}
 

@@ -10,11 +10,12 @@ namespace EntWatchSharp
 	{
 		static readonly MemoryFunctionVoid<nint, CPlayer_WeaponServices, CBaseEntity, IntPtr> CPlayer_WeaponServices_WeaponDropFunc = new (GameData.GetSignature("CPlayer_WeaponServices_WeaponDrop"));
 		static readonly MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant, int> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
+		static readonly MemoryFunctionWithReturn<CPlayer_WeaponServices, CEconItemView, IntPtr> CPlayer_WeaponServices_WeaponPickupFunc = new(GameData.GetSignature("CPlayer_WeaponServices_WeaponPickup"));
 
 		public void VirtualFunctionsInitialize()
 		{
 			//VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(OnWeaponCanUse, HookMode.Pre);
-			VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Hook(OnWeaponCanAcquire, HookMode.Pre);
+			CPlayer_WeaponServices_WeaponPickupFunc.Hook(OnWeaponPickup, HookMode.Pre);
 			VirtualFunctions.CBaseTrigger_StartTouchFunc.Hook(OnTriggerStartTouch, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponDropFunc.Hook(OnWeaponDrop, HookMode.Post);
 			CEntityIdentity_AcceptInputFunc.Hook(OnInput, HookMode.Pre);
@@ -23,7 +24,7 @@ namespace EntWatchSharp
 		public void VirtualFunctionsUninitialize()
 		{
 			//VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(OnWeaponCanUse, HookMode.Pre);
-			VirtualFunctions.CCSPlayer_ItemServices_CanAcquireFunc.Unhook(OnWeaponCanAcquire, HookMode.Pre);
+			CPlayer_WeaponServices_WeaponPickupFunc.Unhook(OnWeaponPickup, HookMode.Pre);
 			VirtualFunctions.CBaseTrigger_StartTouchFunc.Unhook(OnTriggerStartTouch, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponDropFunc.Unhook(OnWeaponDrop, HookMode.Post);
 			CEntityIdentity_AcceptInputFunc.Unhook(OnInput, HookMode.Pre);
