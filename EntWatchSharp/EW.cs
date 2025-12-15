@@ -157,7 +157,7 @@ namespace EntWatchSharp
 						player.DropActiveWeapon();
 
 						//Fix for item dropping underground
-						Server.NextFrame(() =>
+						Server.NextWorldUpdate(() =>
 						{
 							if (wpn != null && wpn.IsValid) wpn.Teleport(vecPos);
 						});

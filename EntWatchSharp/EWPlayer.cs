@@ -40,7 +40,7 @@ namespace EntWatchSharp
 
 		public void SwitchHud(CCSPlayerController player, int number)
 		{
-			Server.NextFrame(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				RemoveEntityHud(player);
 

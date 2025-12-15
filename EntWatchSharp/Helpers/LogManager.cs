@@ -140,7 +140,7 @@ namespace EntWatchSharp.Helpers
 						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
 						else if (string.Equals(cfg.Type.ToLower(), "discord"))
 						{
-							Server.NextFrame(async () => { await SendToDistord(cfg.Send, sMsg); });
+							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
 					}
 				}
@@ -159,7 +159,7 @@ namespace EntWatchSharp.Helpers
 						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
 						else if (string.Equals(cfg.Type.ToLower(), "discord"))
 						{
-							Server.NextFrame(async () => { await SendToDistord(cfg.Send, sMsg); });
+							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
 					}
 				}
@@ -178,7 +178,7 @@ namespace EntWatchSharp.Helpers
 						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
 						else if (string.Equals(cfg.Type.ToLower(), "discord"))
 						{
-							Server.NextFrame(async () => { await SendToDistord(cfg.Send, sMsg); });
+							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
 					}
 				}
@@ -197,7 +197,7 @@ namespace EntWatchSharp.Helpers
 						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
 						else if (string.Equals(cfg.Type.ToLower(), "discord"))
 						{
-							Server.NextFrame(async () => { await SendToDistord(cfg.Send, sMsg); });
+							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
 					}
 				}

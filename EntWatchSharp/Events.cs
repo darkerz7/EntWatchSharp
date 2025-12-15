@@ -182,7 +182,7 @@ namespace EntWatchSharp
 			if (entity == null || !entity.IsValid) return;
 			if (entity.DesignerName.Contains("weapon_"))
 			{
-				Server.NextFrame(() =>
+				Server.NextWorldUpdate(() =>
 				{
 					EW.WeaponIsItem(entity);
 				});
@@ -190,7 +190,7 @@ namespace EntWatchSharp
 			else if (string.Equals(entity.DesignerName, "func_button") || string.Equals(entity.DesignerName, "func_rot_button") ||
 				string.Equals(entity.DesignerName, "func_physbox") || string.Equals(entity.DesignerName, "func_door") || string.Equals(entity.DesignerName, "func_door_rotating"))
 			{
-				Server.NextFrame(() =>
+				Server.NextWorldUpdate(() =>
 				{
 					var weapon = EW.EntityParentRecursive(entity);
 					if (weapon != null && weapon.IsValid)
@@ -230,7 +230,7 @@ namespace EntWatchSharp
 				});
 			} else if(string.Equals(entity.DesignerName, "math_counter"))
 			{
-				Server.NextFrame(() =>
+				Server.NextWorldUpdate(() =>
 				{
 					CMathCounter cMathCounter = new(entity.Handle); // Server NextFrame or Timer - Need tests??
 					_ = new CounterStrikeSharp.API.Modules.Timers.Timer(2.0f, () =>
@@ -272,7 +272,7 @@ namespace EntWatchSharp
 			if (entity.DesignerName.Contains("weapon_"))
 			{
 				var weapon = new CBasePlayerWeapon(entity.Handle);
-				Server.NextFrame(() =>
+				Server.NextWorldUpdate(() =>
 				{
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
 					{
@@ -283,7 +283,7 @@ namespace EntWatchSharp
 			else if (string.Equals(entity.DesignerName, "func_button") || string.Equals(entity.DesignerName, "func_rot_button") ||
 				string.Equals(entity.DesignerName, "func_physbox") || string.Equals(entity.DesignerName, "func_door") || string.Equals(entity.DesignerName, "func_door_rotating"))
 			{
-				Server.NextFrame(() =>
+				Server.NextWorldUpdate(() =>
 				{
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
 					{
@@ -300,7 +300,7 @@ namespace EntWatchSharp
 			}else if (string.Equals(entity.DesignerName, "math_counter"))
 			{
 				CMathCounter cMathCounter = new(entity.Handle);
-				Server.NextFrame(() =>
+				Server.NextWorldUpdate(() =>
 				{
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
 					{
@@ -372,7 +372,7 @@ namespace EntWatchSharp
 		[GameEventHandler]
 		private HookResult OnEventRoundEnd(EventRoundEnd @event, GameEventInfo info)
 		{
-			Server.NextFrame(EW.g_ItemList.Clear);
+			Server.NextWorldUpdate(EW.g_ItemList.Clear);
 			return HookResult.Continue;
 		}
 
@@ -497,7 +497,7 @@ namespace EntWatchSharp
 					var weapon = hook.GetParam<CBasePlayerWeapon>(1);
 
 					//Before death the hook is triggered
-					Server.NextFrame(() =>
+					Server.NextWorldUpdate(() =>
 					{
 						foreach (Item ItemTest in EW.g_ItemList.ToList())
 						{

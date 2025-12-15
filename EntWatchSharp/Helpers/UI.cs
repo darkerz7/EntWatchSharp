@@ -24,7 +24,7 @@ namespace EntWatchSharp.Helpers
 			
 			if (!(AbilityTest == null || ItemTest.Chat || AbilityTest.Chat_Uses)) return;
 
-			Server.NextFrameAsync(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				foreach (var pair in EW.g_EWPlayer)
 				{
@@ -53,7 +53,7 @@ namespace EntWatchSharp.Helpers
 				LogManager.AdminAction("Chat.Admin.Reason", EW.g_Scheme.color_warning, sReason);
 			});
 
-			Server.NextFrameAsync(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				foreach (var pair in EW.g_EWPlayer)
 				{
@@ -78,7 +78,7 @@ namespace EntWatchSharp.Helpers
 				LogManager.AdminAction("Reply.Spawn.Notify", sPIF_admin[3], sItem, sPIF_receiver[3]);
 			});
 
-			Server.NextFrameAsync(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				foreach (var pair in EW.g_EWPlayer)
 				{
@@ -102,7 +102,7 @@ namespace EntWatchSharp.Helpers
 				LogManager.AdminAction("Reply.Transfer.Notify", sPIF_admin[3], sItem, sPIF_target[3], sPIF_receiver[3]);
 			});
 
-			Server.NextFrameAsync(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				foreach (var pair in EW.g_EWPlayer)
 				{
@@ -147,7 +147,7 @@ namespace EntWatchSharp.Helpers
 				LogManager.CvarAction(sCvarName, sCvarValue);
 			});
 
-			Server.NextFrameAsync(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				if (bClientNotify)
 				{
@@ -183,7 +183,7 @@ namespace EntWatchSharp.Helpers
 
 		public static void ReplyToCommand(CCSPlayerController player, string sMessage, bool bConsole = false)
 		{
-			Server.NextFrameAsync(() =>
+			Server.NextWorldUpdate(() =>
 			{
 				if (player is { IsValid: true, IsBot: false, IsHLTV: false })
 				{
