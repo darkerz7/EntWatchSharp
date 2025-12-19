@@ -174,6 +174,10 @@ namespace EntWatchSharp
 				EW.g_Timer.Kill();
 				EW.g_Timer = null;
 			}
+			foreach(var offlineplayer in EW.g_OfflinePlayer.ToList())
+			{
+                offlineplayer.UserID = -1;
+            }
 		}
 
 		private void OnEntitySpawned_Listener(CEntityInstance entity)

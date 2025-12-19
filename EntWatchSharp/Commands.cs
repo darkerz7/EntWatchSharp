@@ -1,14 +1,13 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Commands.Targeting;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Items;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
 using System.Globalization;
-using static EntWatchSharp.Helpers.FindTarget;
 using static EntWatchSharp.Modules.Eban.EbanDB;
 
 namespace EntWatchSharp
@@ -396,7 +395,7 @@ namespace EntWatchSharp
 			if (admin != null && !admin.IsValid) return;
 			bool bConsole = command.CallingContext == CommandCallingContext.Console;
 
-			(List<CCSPlayerController> players, string _) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
+			(List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(1), true, true, false);
 
 			OfflineBan target = null;
 
@@ -490,9 +489,9 @@ namespace EntWatchSharp
 			if (admin != null && !admin.IsValid) return;
 			bool bConsole = command.CallingContext == CommandCallingContext.Console;
 
-			(List<CCSPlayerController> players, string _) = Find(admin, command, 1, true, true, MultipleFlags.NORMAL, false);
+            (List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(1), true, true, false);
 
-			EbanPlayer target = new();
+            EbanPlayer target = new();
 			string sTarget = command.GetArg(1);
 
 			bool bOnline = players.Count > 0;
@@ -605,9 +604,13 @@ namespace EntWatchSharp
 			CCSPlayerController target = player;
 			if (command.ArgCount > 1)
 			{
-				(List<CCSPlayerController> players, string _) = Find(player, command, 1, true, false, MultipleFlags.NORMAL);
+                (List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(player, command.GetArg(1), true, false, false);
 
-				if (players.Count == 0) return;
+				if (players.Count == 0)
+				{
+                    UI.EWReplyInfo(player, "Reply.No_matching_client", bConsole);
+                    return;
+				}
 
 				target = players.Single();
 			}
@@ -731,8 +734,12 @@ namespace EntWatchSharp
 				}
 			} else
 			{
-				(List<CCSPlayerController> players, string _) = Find(admin, command, 1, true, true, MultipleFlags.IGNORE_DEAD_PLAYERS);
-				if (players.Count == 0) return;
+                (List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(1), true, true, true);
+				if (players.Count == 0)
+				{
+                    UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
+                    return;
+				}
 				target = players.Single();
 			}
 
@@ -742,8 +749,12 @@ namespace EntWatchSharp
 				return;
 			}
 
-			(List<CCSPlayerController> players1, string _) = Find(admin, command, 2, true, false, MultipleFlags.IGNORE_DEAD_PLAYERS);
-			if (players1.Count == 0) return;
+            (List<CCSPlayerController> players1, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(2), true, true, true);
+			if (players1.Count == 0)
+			{
+                UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
+                return;
+			}
 			CCSPlayerController receiver = players1.Single();
 
 			if (!EW.CheckDictionary(receiver))
@@ -802,8 +813,12 @@ namespace EntWatchSharp
 				return;
 			}
 
-			(List<CCSPlayerController> players, string _) = Find(admin, command, 2, true, false, MultipleFlags.IGNORE_DEAD_PLAYERS);
-			if (players.Count == 0) return;
+            (List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(1), true, true, true);
+			if (players.Count == 0)
+			{
+                UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
+                return;
+			}
 			CCSPlayerController receiver = players.Single();
 
 			if (!EW.CheckDictionary(receiver))

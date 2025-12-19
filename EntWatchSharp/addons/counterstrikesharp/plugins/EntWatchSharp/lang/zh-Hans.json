@@ -32,8 +32,6 @@
   "Reply.No_matching_client": "没有匹配的客户端。",
   "Reply.More_than_one_client_matched": "有多个匹配的客户端。",
   "Reply.You_cannot_target": "由于此人的权限级别高于你，你无法针对此人。",
-  "Reply.You_can_target_only_dead_players": "你只能针对死亡的玩家。",
-  "Reply.You_can_target_only_alive_players": "你只能针对存活的玩家",
   "Reply.Must_be_an_integer": "输入的值必须是一个数字",
   "Reply.Reload_configs": "配置已重新加载。",
   "Reply.NotValid": "您输入的值无效。请使用帮助",
@@ -88,14 +86,5 @@
   "Reply.Offline.OnServer": "{0}. {1}(#{2}/{3})。最后物品：{4}。状态：在线",
   "Reply.Offline.Leave": "{0}. {1}(#{2}/{3})。最后物品：{4}。状态：{5} 分钟前离开",
   "All.Enabled": "启用",
-  "All.Disabled": "禁用",
-  "all": "所有玩家",
-  "bots": "机器人",
-  "humans": "人类玩家",
-  "alive": "存活玩家",
-  "dead": "死亡玩家",
-  "notme": "除自己外的所有玩家",
-  "ct": "CT玩家",
-  "t": "T玩家",
-  "spec": "观察者"
+  "All.Disabled": "禁用"
 }

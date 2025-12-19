@@ -37,7 +37,7 @@ namespace EntWatchSharp.Modules.Eban
 				offlineplayer = new OfflineBan();
 				EW.g_OfflinePlayer.Add(offlineplayer);
 			}
-			offlineplayer.UserID = UserID.UserId ?? 0;
+			offlineplayer.UserID = UserID.UserId ?? -1;
 			offlineplayer.Name = UserID.PlayerName;
 			offlineplayer.SteamID = EW.ConvertSteamID64ToSteamID(UserID.SteamID.ToString());
 			offlineplayer.Immutity = AdminManager.GetPlayerImmunity(UserID);
@@ -97,6 +97,11 @@ namespace EntWatchSharp.Modules.Eban
 					UI.EWReplyInfo(admin, "Reply.Must_be_an_integer", bConsole);
 					return null;
 				}
+				if (iUID < 0)
+				{
+                    UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
+                    return null;
+                }
 				foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 				{
 					if (!OfflineTest.Online && OfflineTest.UserID == iUID)
