@@ -9,6 +9,7 @@ using EntWatchSharp.Items;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
 using static CounterStrikeSharp.API.Core.Listeners;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EntWatchSharp
 {
@@ -124,31 +125,17 @@ namespace EntWatchSharp
 
 		private void TimerRetry()
 		{
-			//Reban after reload plugin
-			if (EbanDB.db.bDBReady)
-			{
-				Task.Run(() =>
-				{
-					Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
-				});
-				/*Utilities.GetPlayers().ForEach(player =>
-				{
-					EbanPlayer.GetBan(player);
-				});*/
-				if (EW.g_TimerRetryDB != null)
-				{
-					EW.g_TimerRetryDB.Kill();
-					EW.g_TimerRetryDB = null;
-				}
-			}
-		}
+			EbanDB.CheckConnection();
+        }
 
 		private void TimerUnban()
 		{
 			string sServerName = EW.g_Scheme.server_name;
 			if (string.IsNullOrEmpty(sServerName)) { sServerName = "Zombies Server"; }
-			
-			EbanDB.OfflineUnban(sServerName);
+
+            int iTime = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+
+            EbanDB.OfflineUnban(sServerName, iTime);
 
 			Task.Run(() =>
 			{
@@ -158,7 +145,11 @@ namespace EntWatchSharp
 			//Update (Un)Bans
 			Task.Run(() =>
 			{
-				Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
+				Parallel.ForEach(EW.g_EWPlayer, (pair) =>
+				{
+					if (pair.Value.BannedPlayer.iDuration > 0 && pair.Value.BannedPlayer.iTimeStamp_Issued < iTime) pair.Value.BannedPlayer.bBanned = false;
+                    EbanPlayer.GetBan(pair.Key);
+				});
 			});
 			/*Utilities.GetPlayers().ForEach(player =>
 			{
@@ -166,7 +157,7 @@ namespace EntWatchSharp
 			});*/
 		}
 
-		private void OnMapEnd_Listener()
+        private void OnMapEnd_Listener()
 		{
 			EW.CleanData();
 			if (EW.g_Timer != null)

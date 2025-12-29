@@ -1,6 +1,6 @@
 ﻿using CounterStrikeSharp.API;
-using EntWatchSharp.Items;
 using CounterStrikeSharp.API.Core;
+using EntWatchSharp.Items;
 
 namespace EntWatchSharp.Modules
 {
@@ -29,7 +29,9 @@ namespace EntWatchSharp.Modules
 		{
 			if (Cvar.ClanTag)
 			{
-				ConstructClanTag(ItemTest);
+                ItemTest.Owner.Score = 9999;
+                Utilities.SetStateChanged(ItemTest.Owner, "CCSPlayerController", "m_iScore");
+                ConstructClanTag(ItemTest);
 				/*Utilities.GetPlayers().ForEach(player =>
 				{
 					if (player.IsValid)
@@ -43,7 +45,9 @@ namespace EntWatchSharp.Modules
 
 		public static void RemoveClanTag(CCSPlayerController player)
 		{
-			SetClanTag(player, "");
+            player.Score = 0;
+            Utilities.SetStateChanged(player, "CCSPlayerController", "m_iScore");
+            SetClanTag(player, "");
 		}
 
 		private static void ConstructClanTag(Item ItemTest)
@@ -73,8 +77,7 @@ namespace EntWatchSharp.Modules
 			else player.Clan = sClanTag;
 			Utilities.SetStateChanged(player, "CCSPlayerController", "m_szClan");
 
-			EventNextlevelChanged fakeEvent = new(false);
-			fakeEvent.FireEventToClient(player);    // <- Need Tests with real people
-		}
+			new EventNextlevelChanged(false).FireEventToClient(player);    // <- Need Tests with real people
+        }
 	}
 }

@@ -101,9 +101,9 @@ namespace EntWatchSharp.Modules.Eban
         {
 			if (player.IsValid && EW.CheckDictionary(player))
             {
-				if (DBQuery_Result.Count > 0)
+                if (DBQuery_Result.Count > 0)
 				{
-					EW.g_EWPlayer[player].BannedPlayer.bBanned = true;
+                    EW.g_EWPlayer[player].BannedPlayer.bBanned = true;
 					EW.g_EWPlayer[player].BannedPlayer.sAdminName = DBQuery_Result[0][0];
 					EW.g_EWPlayer[player].BannedPlayer.sAdminSteamID = DBQuery_Result[0][1];
 					EW.g_EWPlayer[player].BannedPlayer.iDuration = Convert.ToInt32(DBQuery_Result[0][2]);

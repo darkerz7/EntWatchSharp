@@ -28,115 +28,137 @@ namespace EntWatchSharp.Modules.Eban
 				string sDBFile = Path.Join(ModuleDirectory, dbConfig.SQLite_File);
 				db = new DB_SQLite(sDBFile);
             }
-			if (db.bSuccess)
-			{
-				UI.EWSysInfo("Info.DB.Success", 6, dbConfig.TypeDB);
-				#pragma warning disable CS8625
-				Task.Run(() => {
-					if (dbConfig.TypeDB == "sqlite")
-					{
-						db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-																								"client_name varchar(32) NOT NULL, " +
-																								"client_steamid varchar(64) NOT NULL, " +
-																								"admin_name varchar(32) NOT NULL, " +
-																								"admin_steamid varchar(64) NOT NULL, " +
-																								"server varchar(64), " +
-																								"duration INTEGER NOT NULL, " +
-																								"timestamp_issued INTEGER NOT NULL, " +
-																								"reason varchar(64), " +
-																								"reason_unban varchar(64), " +
-																								"admin_name_unban varchar(32), " +
-																								"admin_steamid_unban varchar(64), " +
-																								"timestamp_unban INTEGER);" +
-						"CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-																								"client_name varchar(32) NOT NULL, " +
-																								"client_steamid varchar(64) NOT NULL, " +
-																								"admin_name varchar(32) NOT NULL, " +
-																								"admin_steamid varchar(64) NOT NULL, " +
-																								"server varchar(64), " +
-																								"duration INTEGER NOT NULL, " +
-																								"timestamp_issued INTEGER NOT NULL, " +
-																								"reason varchar(64), " +
-																								"reason_unban varchar(64), " +
-																								"admin_name_unban varchar(32), " +
-																								"admin_steamid_unban varchar(64), " +
-																								"timestamp_unban INTEGER);", null, (_) =>
-						{
-							db.bDBReady = true;
-						}, true);
-					}
-					else if (dbConfig.TypeDB == "mysql")
-					{
-						db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
-																								"client_name varchar(32) NOT NULL, " +
-																								"client_steamid varchar(64) NOT NULL, " +
-																								"admin_name varchar(32) NOT NULL, " +
-																								"admin_steamid varchar(64) NOT NULL, " +
-																								"server varchar(64), " +
-																								"duration int unsigned NOT NULL, " +
-																								"timestamp_issued int NOT NULL, " +
-																								"reason varchar(64), " +
-																								"reason_unban varchar(64), " +
-																								"admin_name_unban varchar(32), " +
-																								"admin_steamid_unban varchar(64), " +
-																								"timestamp_unban int, " +
-																								"PRIMARY KEY(id));" +
-							"CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
-																								"client_name varchar(32) NOT NULL, " +
-																								"client_steamid varchar(64) NOT NULL, " +
-																								"admin_name varchar(32) NOT NULL, " +
-																								"admin_steamid varchar(64) NOT NULL, " +
-																								"server varchar(64), " +
-																								"duration int unsigned NOT NULL, " +
-																								"timestamp_issued int NOT NULL, " +
-																								"reason varchar(64), " +
-																								"reason_unban varchar(64), " +
-																								"admin_name_unban varchar(32), " +
-																								"admin_steamid_unban varchar(64), " +
-																								"timestamp_unban int, " +
-																								"PRIMARY KEY(id));", null, (_) =>
-						{
-							db.bDBReady = true;
-						}, true);
-					}
-					else if (dbConfig.TypeDB == "postgre")
-					{
-						db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id serial, " +
-																								"client_name varchar(32) NOT NULL, " +
-																								"client_steamid varchar(64) NOT NULL, " +
-																								"admin_name varchar(32) NOT NULL, " +
-																								"admin_steamid varchar(64) NOT NULL, " +
-																								"server varchar(64), " +
-																								"duration integer NOT NULL, " +
-																								"timestamp_issued integer NOT NULL, " +
-																								"reason varchar(64), " +
-																								"reason_unban varchar(64), " +
-																								"admin_name_unban varchar(32), " +
-																								"admin_steamid_unban varchar(64), " +
-																								"timestamp_unban integer, " +
-																								"PRIMARY KEY(id));" +
-							"CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id serial, " +
-																								"client_name varchar(32) NOT NULL, " +
-																								"client_steamid varchar(64) NOT NULL, " +
-																								"admin_name varchar(32) NOT NULL, " +
-																								"admin_steamid varchar(64) NOT NULL, " +
-																								"server varchar(64), " +
-																								"duration integer NOT NULL, " +
-																								"timestamp_issued integer NOT NULL, " +
-																								"reason varchar(64), " +
-																								"reason_unban varchar(64), " +
-																								"admin_name_unban varchar(32), " +
-																								"admin_steamid_unban varchar(64), " +
-																								"timestamp_unban integer, " +
-																								"PRIMARY KEY(id));", null, (_) =>
-																								{
-																									db.bDBReady = true;
-																								}, true);
-					}
-				});
-				#pragma warning restore CS8625
-			}
-			else UI.EWSysInfo("Info.DB.Failed", 15, dbConfig.TypeDB);
+        }
+
+        public static void CheckConnection()
+        {
+            bool bLastSuccess = db.bSuccess;
+            db.bSuccess = db.AnyDB.GetLastState() == System.Data.ConnectionState.Open;
+
+            if (db.bSuccess)
+            {
+                if (!bLastSuccess) UI.EWSysInfo("Info.DB.Success", 6, dbConfig.TypeDB);
+                if (!db.bDBReady) Task.Run(() => CreateTables());
+            }
+            else UI.EWSysInfo("Info.DB.Failed", 15, dbConfig.TypeDB);
+        }
+
+		public static void CreateTables()
+		{
+#pragma warning disable CS8625
+            if (dbConfig.TypeDB == "sqlite")
+            {
+                db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                                                                        "client_name varchar(32) NOT NULL, " +
+                                                                                        "client_steamid varchar(64) NOT NULL, " +
+                                                                                        "admin_name varchar(32) NOT NULL, " +
+                                                                                        "admin_steamid varchar(64) NOT NULL, " +
+                                                                                        "server varchar(64), " +
+                                                                                        "duration INTEGER NOT NULL, " +
+                                                                                        "timestamp_issued INTEGER NOT NULL, " +
+                                                                                        "reason varchar(64), " +
+                                                                                        "reason_unban varchar(64), " +
+                                                                                        "admin_name_unban varchar(32), " +
+                                                                                        "admin_steamid_unban varchar(64), " +
+                                                                                        "timestamp_unban INTEGER);" +
+                "CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                                                                        "client_name varchar(32) NOT NULL, " +
+                                                                                        "client_steamid varchar(64) NOT NULL, " +
+                                                                                        "admin_name varchar(32) NOT NULL, " +
+                                                                                        "admin_steamid varchar(64) NOT NULL, " +
+                                                                                        "server varchar(64), " +
+                                                                                        "duration INTEGER NOT NULL, " +
+                                                                                        "timestamp_issued INTEGER NOT NULL, " +
+                                                                                        "reason varchar(64), " +
+                                                                                        "reason_unban varchar(64), " +
+                                                                                        "admin_name_unban varchar(32), " +
+                                                                                        "admin_steamid_unban varchar(64), " +
+                                                                                        "timestamp_unban INTEGER);", null, (_) =>
+                                                                                        {
+                                                                                            db.bDBReady = true;
+                                                                                            Task.Run(() =>
+                                                                                            {
+                                                                                                Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
+                                                                                            });
+                                                                                        }, true, true);
+            }
+            else if (dbConfig.TypeDB == "mysql")
+            {
+                db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
+                                                                                        "client_name varchar(32) NOT NULL, " +
+                                                                                        "client_steamid varchar(64) NOT NULL, " +
+                                                                                        "admin_name varchar(32) NOT NULL, " +
+                                                                                        "admin_steamid varchar(64) NOT NULL, " +
+                                                                                        "server varchar(64), " +
+                                                                                        "duration int unsigned NOT NULL, " +
+                                                                                        "timestamp_issued int NOT NULL, " +
+                                                                                        "reason varchar(64), " +
+                                                                                        "reason_unban varchar(64), " +
+                                                                                        "admin_name_unban varchar(32), " +
+                                                                                        "admin_steamid_unban varchar(64), " +
+                                                                                        "timestamp_unban int, " +
+                                                                                        "PRIMARY KEY(id));" +
+                    "CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id int(10) unsigned NOT NULL auto_increment, " +
+                                                                                        "client_name varchar(32) NOT NULL, " +
+                                                                                        "client_steamid varchar(64) NOT NULL, " +
+                                                                                        "admin_name varchar(32) NOT NULL, " +
+                                                                                        "admin_steamid varchar(64) NOT NULL, " +
+                                                                                        "server varchar(64), " +
+                                                                                        "duration int unsigned NOT NULL, " +
+                                                                                        "timestamp_issued int NOT NULL, " +
+                                                                                        "reason varchar(64), " +
+                                                                                        "reason_unban varchar(64), " +
+                                                                                        "admin_name_unban varchar(32), " +
+                                                                                        "admin_steamid_unban varchar(64), " +
+                                                                                        "timestamp_unban int, " +
+                                                                                        "PRIMARY KEY(id));", null, (_) =>
+                                                                                        {
+                                                                                            db.bDBReady = true;
+                                                                                            Task.Run(() =>
+                                                                                            {
+                                                                                                Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
+                                                                                            });
+                                                                                        }, true, true);
+            }
+            else if (dbConfig.TypeDB == "postgre")
+            {
+                db.AnyDB.QueryAsync("CREATE TABLE IF NOT EXISTS EntWatch_Current_Eban(	id serial, " +
+                                                                                        "client_name varchar(32) NOT NULL, " +
+                                                                                        "client_steamid varchar(64) NOT NULL, " +
+                                                                                        "admin_name varchar(32) NOT NULL, " +
+                                                                                        "admin_steamid varchar(64) NOT NULL, " +
+                                                                                        "server varchar(64), " +
+                                                                                        "duration integer NOT NULL, " +
+                                                                                        "timestamp_issued integer NOT NULL, " +
+                                                                                        "reason varchar(64), " +
+                                                                                        "reason_unban varchar(64), " +
+                                                                                        "admin_name_unban varchar(32), " +
+                                                                                        "admin_steamid_unban varchar(64), " +
+                                                                                        "timestamp_unban integer, " +
+                                                                                        "PRIMARY KEY(id));" +
+                    "CREATE TABLE IF NOT EXISTS EntWatch_Old_Eban(	id serial, " +
+                                                                                        "client_name varchar(32) NOT NULL, " +
+                                                                                        "client_steamid varchar(64) NOT NULL, " +
+                                                                                        "admin_name varchar(32) NOT NULL, " +
+                                                                                        "admin_steamid varchar(64) NOT NULL, " +
+                                                                                        "server varchar(64), " +
+                                                                                        "duration integer NOT NULL, " +
+                                                                                        "timestamp_issued integer NOT NULL, " +
+                                                                                        "reason varchar(64), " +
+                                                                                        "reason_unban varchar(64), " +
+                                                                                        "admin_name_unban varchar(32), " +
+                                                                                        "admin_steamid_unban varchar(64), " +
+                                                                                        "timestamp_unban integer, " +
+                                                                                        "PRIMARY KEY(id));", null, (_) =>
+                                                                                        {
+                                                                                            db.bDBReady = true;
+                                                                                            Task.Run(() =>
+                                                                                            {
+                                                                                                Parallel.ForEach(EW.g_EWPlayer, (pair) => EbanPlayer.GetBan(pair.Key));
+                                                                                            });
+                                                                                        }, true, true);
+            }
+#pragma warning restore CS8625
         }
 
 		public static void BanClient(string sClientName, string sClientSteamID, string sAdminName, string sAdminSteamID, string sServer, long iDuration, long iTimeStamp, string sReason)
@@ -145,7 +167,7 @@ namespace EntWatchSharp.Modules.Eban
 			{
 				Task.Run(() =>
 				{
-					db.AnyDB.QueryAsync("INSERT INTO EntWatch_Current_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason) VALUES ('{ARG}', '{ARG}', '{ARG}', '{ARG}', '{ARG}', {ARG}, {ARG}, '{ARG}');", new List<string>([sClientName, sClientSteamID, sAdminName, sAdminSteamID, sServer, iDuration.ToString(), iTimeStamp.ToString(), sReason]), (_) => { }, true);
+					db.AnyDB.QueryAsync("INSERT INTO EntWatch_Current_Eban (client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason) VALUES ('{ARG}', '{ARG}', '{ARG}', '{ARG}', '{ARG}', {ARG}, {ARG}, '{ARG}');", new List<string>([sClientName, sClientSteamID, sAdminName, sAdminSteamID, sServer, iDuration.ToString(), iTimeStamp.ToString(), sReason]), (_) => { }, true, true);
 				});
 			}
 		}
@@ -163,10 +185,10 @@ namespace EntWatchSharp.Modules.Eban
 												"SELECT client_name, client_steamid, admin_name, admin_steamid, server, duration, timestamp_issued, reason, reason_unban, admin_name_unban, admin_steamid_unban, timestamp_unban FROM EntWatch_Current_Eban " +
 													"WHERE client_steamid='{ARG}' and server='{ARG}';" +
 											"DELETE FROM EntWatch_Current_Eban " +
-													"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sReason, sAdminName, sAdminSteamID, iTimeStamp.ToString(), sClientSteamID, sServer, sClientSteamID, sServer, sClientSteamID, sServer]), (_) => { }, true);
+													"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sReason, sAdminName, sAdminSteamID, iTimeStamp.ToString(), sClientSteamID, sServer, sClientSteamID, sServer, sClientSteamID, sServer]), (_) => { }, true, true);
 					else
 						db.AnyDB.QueryAsync("DELETE FROM EntWatch_Current_Eban " +
-							"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sClientSteamID, sServer]), (_) => { }, true);
+							"WHERE client_steamid='{ARG}' and server='{ARG}';", new List<string>([sClientSteamID, sServer]), (_) => { }, true, true);
 				});
 			}
 		}
@@ -221,11 +243,10 @@ namespace EntWatchSharp.Modules.Eban
 			}
 		}
 
-		public static void OfflineUnban(string sServer)
+		public static void OfflineUnban(string sServer, int iTime)
 		{
 			if (db.bDBReady)
 			{
-				int iTime = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 				Task.Run(() =>
 				{
 				if (Cvar.KeepExpiredBan)

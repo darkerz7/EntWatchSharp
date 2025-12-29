@@ -1,10 +1,10 @@
-﻿using AnyBaseLib;
+﻿using AnyBaseLibNext;
 
 namespace EntWatchSharp.Modules.Eban
 {
     public abstract class Database
     {
-		public IAnyBase AnyDB;
+		public IAnyBaseNext AnyDB;
 		public bool bSuccess = false;
         public bool bDBReady = false;
         public Database(string sDBName, string sDBHost = "", string sDBUser = "", string sDBPassword = "") { }
@@ -14,9 +14,8 @@ namespace EntWatchSharp.Modules.Eban
 	{
 		public DB_Mysql(string sDBName, string sDBHost = "", string sDBUser = "", string sDBPassword = "") : base(sDBName, sDBHost, sDBUser, sDBPassword)
 		{
-			AnyDB = CAnyBase.Base("mysql");
-			AnyDB.Set(AnyBaseLib.Bases.CommitMode.AutoCommit, sDBName, sDBHost, sDBUser, sDBPassword);
-			bSuccess = AnyDB.Init();
+			AnyDB = CAnyBaseNext.Base("mysql");
+			AnyDB.Set(sDBName, sDBHost, sDBUser, sDBPassword);
 		}
 	}
 
@@ -24,10 +23,8 @@ namespace EntWatchSharp.Modules.Eban
 	{
 		public DB_PosgreSQL(string sDBName, string sDBHost = "", string sDBUser = "", string sDBPassword = "") : base(sDBName, sDBHost, sDBUser, sDBPassword)
 		{
-			AnyDB = CAnyBase.Base("postgre");
-			AnyDB.Set(AnyBaseLib.Bases.CommitMode.AutoCommit, sDBName, sDBHost, sDBUser, sDBPassword);
-			AnyDB.Close(); //WTF: Connection already open
-			bSuccess = AnyDB.Init();
+			AnyDB = CAnyBaseNext.Base("postgre");
+			AnyDB.Set(sDBName, sDBHost, sDBUser, sDBPassword);
 		}
 	}
 
@@ -35,9 +32,8 @@ namespace EntWatchSharp.Modules.Eban
 	{
 		public DB_SQLite(string sDBName) : base(sDBName)
 		{
-			AnyDB = CAnyBase.Base("sqlite");
-			AnyDB.Set(AnyBaseLib.Bases.CommitMode.AutoCommit, sDBName);
-			bSuccess = AnyDB.Init();
+			AnyDB = CAnyBaseNext.Base("sqlite");
+			AnyDB.Set(sDBName);
 		}
 	}
 

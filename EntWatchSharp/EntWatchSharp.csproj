@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="AnyBaseLib">
-      <HintPath>API\AnyBaseLib.dll</HintPath>
+    <Reference Include="AnyBaseLibNext">
+      <HintPath>API\AnyBaseLibNext.dll</HintPath>
     </Reference>
     <Reference Include="CS2-GameHUDAPI">
       <HintPath>API\CS2-GameHUDAPI.dll</HintPath>
