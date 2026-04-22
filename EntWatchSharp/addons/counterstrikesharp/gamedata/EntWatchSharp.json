@@ -2,8 +2,8 @@
     "CPlayer_WeaponServices_WeaponDrop": {
         "signatures": {
             "library": "server",
-            "windows": "48 89 5C 24 08 44 89 44 24 18 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 D9",
-            "linux": "48 85 F6 0F 84 ? ? ? ? 55 48 89 E5 41 57 41 56 49 89 F6 41 55 41 54 53 48 83 EC 48"
+            "windows": "48 89 5C 24 08 4C 89 4C 24 20 44 89 44 24 18 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 D9",
+            "linux": "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 83 EC 78 48 89 4D 88"
         }
     },
     "CEntityIdentity_AcceptInput": {
