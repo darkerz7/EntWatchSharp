@@ -10,6 +10,7 @@ env:
   PROJECT_PATH: "EntWatchSharp.sln"
   PROJECT_NAME: "EntWatchSharp"
   OUTPUT_PATH: "./build"
+  OUTPUT_PATH_ALT: "./build_alt_oninput"
 
 jobs:
   build:
@@ -26,6 +27,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+    - name: Build Alt
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore -p:UseAltOnInput=true
   publish:
     if: github.event_name == 'push'
     permissions: write-all
@@ -41,6 +44,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+    - name: Build Alt
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore -p:UseAltOnInput=true
     - name: Set build version
       run: |
         $VER = Get-Content VERSION
@@ -49,10 +54,14 @@ jobs:
       run: |
         cd ${{ env.OUTPUT_PATH }}
         Compress-Archive -Path * -Destination "../${{ env.PROJECT_NAME }}-v.${{ env.BUILD_NUMBER }}.zip"
+    - name: Zip Alt
+      run: |
+        cd ${{ env.OUTPUT_PATH_ALT }}
+        Compress-Archive -Path * -Destination "../${{ env.PROJECT_NAME }}-AltOnInput-v.${{ env.BUILD_NUMBER }}.zip"
     - name: Publish plugin
       uses: ncipollo/release-action@v1.12.0
       with:
-        artifacts: "${{ env.PROJECT_NAME }}-v.${{ env.BUILD_NUMBER }}.zip"
+        artifacts: "${{ env.PROJECT_NAME }}-v.${{ env.BUILD_NUMBER }}.zip,${{ env.PROJECT_NAME }}-AltOnInput-v.${{ env.BUILD_NUMBER }}.zip"
         name: "${{ env.PROJECT_NAME }}-v.${{ env.BUILD_NUMBER }}"
         tag: "${{ env.PROJECT_NAME }}-v.${{ env.BUILD_NUMBER }}"
         generateReleaseNotes: true

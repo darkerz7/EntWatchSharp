@@ -647,7 +647,41 @@ namespace EntWatchSharp
 			return true;
 		}
 
-		private HookResult OnInput(DynamicHook hook)
+#if USE_ALT_ONINPUT
+		[EntityOutputHook("*", "*")]
+        public HookResult OnInput(CEntityIOOutput output, string name, CEntityInstance cActivator, CEntityInstance cCaller, CVariant cValue, float delay)
+        {
+            if (!EW.g_CfgLoaded) return HookResult.Continue;
+
+            if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller)) return HookResult.Continue;
+            var sValue = cValue.FieldType == fieldtype_t.FIELD_CSTRING ? NativeAPI.GetStringFromSymbolLarge(cValue.Handle) : "";
+
+            EW.UpdateTime();
+            foreach (Item ItemTest in EW.g_ItemList.ToList())
+            {
+                foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+                {
+                    if (AbilityTest.ButtonClass.StartsWith("game_ui::", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], sValue.ToLower()))
+                        {
+                            if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == cActivator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
+                            {
+                                AbilityTest.SetFilter(cActivator);
+                                AbilityTest.Used();
+                                UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
+                                EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
+                                return HookResult.Continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return HookResult.Continue;
+        }
+#else
+        private HookResult OnInput(DynamicHook hook)
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
@@ -697,8 +731,9 @@ namespace EntWatchSharp
 			}
 			return HookResult.Continue;
 		}
+#endif
 #nullable enable
-		public static CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
+        public static CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
 #nullable disable
 		{
 			if (entity != null && entity.IsValid && string.Equals(entity.DesignerName, "player"))

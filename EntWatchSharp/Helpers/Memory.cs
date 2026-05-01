@@ -9,8 +9,10 @@ namespace EntWatchSharp
 	public partial class EntWatchSharp : BasePlugin
 	{
 		static readonly MemoryFunctionVoid<nint, CPlayer_WeaponServices, CBaseEntity, IntPtr> CPlayer_WeaponServices_WeaponDropFunc = new (GameData.GetSignature("CPlayer_WeaponServices_WeaponDrop"));
+#if !USE_ALT_ONINPUT
 		static readonly MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant, int> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
-		static readonly MemoryFunctionWithReturn<CPlayer_WeaponServices, CEconItemView, IntPtr> CPlayer_WeaponServices_WeaponPickupFunc = new(GameData.GetSignature("CPlayer_WeaponServices_WeaponPickup"));
+#endif
+        static readonly MemoryFunctionWithReturn<CPlayer_WeaponServices, CEconItemView, IntPtr> CPlayer_WeaponServices_WeaponPickupFunc = new(GameData.GetSignature("CPlayer_WeaponServices_WeaponPickup"));
 
 		public void VirtualFunctionsInitialize()
 		{
@@ -18,19 +20,23 @@ namespace EntWatchSharp
 			CPlayer_WeaponServices_WeaponPickupFunc.Hook(OnWeaponPickup, HookMode.Pre);
 			VirtualFunctions.CBaseTrigger_StartTouchFunc.Hook(OnTriggerStartTouch, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponDropFunc.Hook(OnWeaponDrop, HookMode.Post);
-			CEntityIdentity_AcceptInputFunc.Hook(OnInput, HookMode.Pre);
-		}
+#if !USE_ALT_ONINPUT
+            CEntityIdentity_AcceptInputFunc.Hook(OnInput, HookMode.Pre);
+#endif
+        }
 
-		public void VirtualFunctionsUninitialize()
+        public void VirtualFunctionsUninitialize()
 		{
 			//VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Unhook(OnWeaponCanUse, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponPickupFunc.Unhook(OnWeaponPickup, HookMode.Pre);
 			VirtualFunctions.CBaseTrigger_StartTouchFunc.Unhook(OnTriggerStartTouch, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponDropFunc.Unhook(OnWeaponDrop, HookMode.Post);
-			CEntityIdentity_AcceptInputFunc.Unhook(OnInput, HookMode.Pre);
-		}
+#if !USE_ALT_ONINPUT
+            CEntityIdentity_AcceptInputFunc.Unhook(OnInput, HookMode.Pre);
+#endif
+        }
 
-		public static float MathCounter_GetValue(CMathCounter cMath)
+        public static float MathCounter_GetValue(CMathCounter cMath)
 		{
 			return new CEntityOutputTemplate_float(cMath.Handle + Schema.GetSchemaOffset("CMathCounter", "m_OutValue")).OutValue;
 			//return new CEntityOutputTemplate_float(cMath.Handle + 1264).OutValue;

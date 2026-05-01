@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.343" />
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.367" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,7 +41,20 @@
   <ItemGroup>
     <None Update="addons\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+
+	<PropertyGroup Condition="'$(UseAltOnInput)' == 'true'">
+		<DefineConstants>$(DefineConstants);USE_ALT_ONINPUT</DefineConstants>
+	</PropertyGroup>
+	
+	<Target Name="PostBuildAlt" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(UseAltOnInput)' == 'true'">
+		<Exec Command="copy /Y $(TargetDir)$(TargetName).dll $(TargetDir)addons\counterstrikesharp\plugins\EntWatchSharp\$(TargetName).dll" />
+		<Exec Command="if not exist $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI mkdir $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI" />
+		<Exec Command="copy /Y $(TargetDir)EntWatchSharpAPI.dll $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI\EntWatchSharpAPI.dll" />
+		<Exec Command="if exist $(SolutionDir)build_alt_oninput rmdir /s/q $(SolutionDir)build_alt_oninput" />
+		<Exec Command="move /Y $(TargetDir)addons $(SolutionDir)build_alt_oninput" />
+	</Target>
+
+	<Target Name="PostBuild" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(UseAltOnInput)' != 'true'">
 		<Exec Command="copy /Y $(TargetDir)$(TargetName).dll $(TargetDir)addons\counterstrikesharp\plugins\EntWatchSharp\$(TargetName).dll" />
 		<Exec Command="if not exist $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI mkdir $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI" />
 		<Exec Command="copy /Y $(TargetDir)EntWatchSharpAPI.dll $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI\EntWatchSharpAPI.dll" />
