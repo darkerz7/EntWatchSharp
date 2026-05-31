@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 
-//VersionAPI: 0.DZ.15
+//VersionAPI: 0.DZ.16
 
 namespace EntWatchSharpAPI
 {

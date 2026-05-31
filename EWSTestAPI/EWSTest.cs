@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Admin;
@@ -8,13 +9,14 @@ using EntWatchSharpAPI;
 
 namespace EWSTestAPI
 {
-	public class EWSTest : BasePlugin
+    [MinimumApiVersion(369)]
+    public class EWSTest : BasePlugin
 	{
 		public static IEntWatchSharpAPI? _EW_api;
 		public override string ModuleName => "EntWatchSharp Test API";
 		public override string ModuleDescription => "";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "API.1.DZ.0";
+		public override string ModuleVersion => "API.1.DZ.1";
 		public override void OnAllPluginsLoaded(bool hotReload)
 		{
 			try
