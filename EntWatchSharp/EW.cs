@@ -285,7 +285,9 @@ namespace EntWatchSharp
 			return false;
 		}
 
+#nullable enable
         public static (List<CCSPlayerController> players, string targetname, ProcessTargetResultFlag result) FindTargets(CCSPlayerController? player, string targetString, bool nobots, bool immunity, bool aliveonly)
+#nullable disable
         {
             var filter = ProcessTargetFilterFlag.None;
 
