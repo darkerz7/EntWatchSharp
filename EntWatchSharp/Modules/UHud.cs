@@ -16,11 +16,10 @@ namespace EntWatchSharp.Modules
         int iCurrentNumListH = 0;
         int iCurrentNumListZM = 0;
         double fNextUpdateList = EW.fGameTime - 3;
-        bool bNextUpdateSync = true;
         public UHud() { }
         public void ConstructString(CCSPlayerController HudPlayer)
         {
-            bNextUpdateSync = true;
+            bool bNextUpdateSync = true;
             List<Item> ListShowH = [];
             List<Item> ListShowZM = [];
             bool bAdminPermissions = AdminManager.PlayerHasPermissions(HudPlayer, "@css/ew_hud") && Cvar.AdminHud < 2;
@@ -45,11 +44,8 @@ namespace EntWatchSharp.Modules
                     if (fNextUpdateList <= EW.fGameTime)
                     {
                         iCurrentNumListH++;
-                        if (bNextUpdateSync)
-                        {
-                            fNextUpdateList = EW.fGameTime + iRefresh;
-                            bNextUpdateSync = false;
-                        }
+                        fNextUpdateList = EW.fGameTime + iRefresh;
+                        bNextUpdateSync = false;
                     }
                     if (iCurrentNumListH >= iCountListH) iCurrentNumListH = 0;
 
@@ -78,14 +74,10 @@ namespace EntWatchSharp.Modules
                 {
                     int iCountListZM = (ListShowZM.Count - 1) / iSheetMax + 1;
 
-                    if (bNextUpdateSync == false || fNextUpdateList <= EW.fGameTime)
+                    if (!bNextUpdateSync || fNextUpdateList <= EW.fGameTime)
                     {
                         iCurrentNumListZM++;
-                        if (bNextUpdateSync)
-                        {
-                            fNextUpdateList = EW.fGameTime + iRefresh;
-                            bNextUpdateSync = false;
-                        }
+                        if (bNextUpdateSync) fNextUpdateList = EW.fGameTime + iRefresh;
                     }
                     if (iCurrentNumListZM >= iCountListZM) iCurrentNumListZM = 0;
 
