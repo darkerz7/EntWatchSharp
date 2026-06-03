@@ -27,7 +27,7 @@ namespace EntWatchSharp.Modules
 			{
 				if (ItemTest.Owner != null)
 				{
-                    if (ItemTest.Hud && (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ItemTest.Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0))
+                    if (ItemTest.Hud && (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ItemTest.Team == HudPlayer.TeamNum || bAdminPermissions))
 					{
                         if (ItemTest.Team == 3) ListShowH.Add(ItemTest);
                         else if (ItemTest.Team == 2) ListShowZM.Add(ItemTest);
@@ -54,17 +54,20 @@ namespace EntWatchSharp.Modules
                     for (int i = iCurrentNumListH * iSheetMax; i < ListShowH.Count && i < (iCurrentNumListH + 1) * iSheetMax; i++)
                     {
                         sItems += $"\n{ListShowH[i].ShortName}";
-                        if (ListShowH[i].CheckDelay())
+                        if (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ListShowH[i].Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0)
                         {
-                            int iAbilityCount = 0;
-                            foreach (Ability AbilityTest in ListShowH[i].AbilityList.ToList())
+                            if (ListShowH[i].CheckDelay())
                             {
-                                if (++iAbilityCount > Cvar.DisplayAbility) break;
-                                if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
-                            }
+                                int iAbilityCount = 0;
+                                foreach (Ability AbilityTest in ListShowH[i].AbilityList.ToList())
+                                {
+                                    if (++iAbilityCount > Cvar.DisplayAbility) break;
+                                    if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
+                                }
 
+                            }
+                            else sItems += $"[-{Math.Round(ListShowH[i].fDelay - EW.fGameTime, 1)}]";
                         }
-                        else sItems += $"[-{Math.Round(ListShowH[i].fDelay - EW.fGameTime, 1)}]";
                         sItems += $": {ListShowH[i].Owner.PlayerName}";
                     }
                     if (iCountListH > 1) sItems += $"\nList:[{iCurrentNumListH + 1}/{iCountListH}]";
@@ -88,17 +91,20 @@ namespace EntWatchSharp.Modules
                     for (int i = iCurrentNumListZM * iSheetMax; i < ListShowZM.Count && i < (iCurrentNumListZM + 1) * iSheetMax; i++)
                     {
                         sItems += $"\n{ListShowZM[i].ShortName}";
-                        if (ListShowZM[i].CheckDelay())
+                        if (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ListShowZM[i].Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0)
                         {
-                            int iAbilityCount = 0;
-                            foreach (Ability AbilityTest in ListShowZM[i].AbilityList.ToList())
+                            if (ListShowZM[i].CheckDelay())
                             {
-                                if (++iAbilityCount > Cvar.DisplayAbility) break;
-                                if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
-                            }
+                                int iAbilityCount = 0;
+                                foreach (Ability AbilityTest in ListShowZM[i].AbilityList.ToList())
+                                {
+                                    if (++iAbilityCount > Cvar.DisplayAbility) break;
+                                    if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
+                                }
 
+                            }
+                            else sItems += $"[-{Math.Round(ListShowZM[i].fDelay - EW.fGameTime, 1)}]";
                         }
-                        else sItems += $"[-{Math.Round(ListShowZM[i].fDelay - EW.fGameTime, 1)}]";
                         sItems += $": {ListShowZM[i].Owner.PlayerName}";
                     }
                     if (iCountListZM > 1) sItems += $"\nList:[{iCurrentNumListZM + 1}/{iCountListZM}]";
