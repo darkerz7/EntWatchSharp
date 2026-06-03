@@ -565,7 +565,9 @@ namespace EntWatchSharp
 
 			EbanPlayer.GetBan(pl, true); //Set Eban
 
-			return HookResult.Continue;
+			ClanTag.RemoveClanTag(pl); //Remove any clantag upon reconnection
+
+            return HookResult.Continue;
 		}
 
 		[GameEventHandler(mode: HookMode.Pre)]
@@ -590,8 +592,8 @@ namespace EntWatchSharp
 					ItemTest.Owner = null;
 					UI.EWChatActivity("Chat.Disconnect", EW.g_Scheme.color_disconnect, ItemTest, pl);
 					EW.g_cAPI?.OnPlayerDisconnectWithItem(ItemTest.Name, pl);
-					ClanTag.RemoveClanTag(pl);
-					ItemTest.EnableGlow();
+                    //ClanTag.RemoveClanTag(pl); //causes a bug when kicking a player
+                    ItemTest.EnableGlow();
 					if (!ItemTest.ForceDrop)
 					{
 						ItemTest.WeaponHandle.Remove();

@@ -1,8 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Items;
 using CounterStrikeSharp.API.Modules.Admin;
-using CounterStrikeSharp.API.Modules.Entities;
 
 namespace EntWatchSharp.Modules
 {
@@ -15,56 +13,104 @@ namespace EntWatchSharp.Modules
 		public int iSheetMax = 5;
         public int iRefresh = 3;
         public int iSize = 54;
-        int iCurrentNumList = 0;
+        int iCurrentNumListH = 0;
+        int iCurrentNumListZM = 0;
         double fNextUpdateList = EW.fGameTime - 3;
-		public UHud() { }
+        bool bNextUpdateSync = true;
+        public UHud() { }
         public void ConstructString(CCSPlayerController HudPlayer)
         {
-			List<Item> ListShow = [];
-			bool bAdminPermissions = AdminManager.PlayerHasPermissions(HudPlayer, "@css/ew_hud") && Cvar.AdminHud < 2;
+            bNextUpdateSync = true;
+            List<Item> ListShowH = [];
+            List<Item> ListShowZM = [];
+            bool bAdminPermissions = AdminManager.PlayerHasPermissions(HudPlayer, "@css/ew_hud") && Cvar.AdminHud < 2;
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
 				if (ItemTest.Owner != null)
 				{
-					if (ItemTest.Hud && (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ItemTest.Team == HudPlayer.TeamNum || bAdminPermissions))
+                    if (ItemTest.Hud && (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ItemTest.Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0))
 					{
-						ListShow.Add(ItemTest);
-					}
-				}
-			}
-            if (ListShow.Count > 0)
-            {
-                int iCountList = (ListShow.Count - 1) / iSheetMax + 1;
-
-                if (fNextUpdateList <= EW.fGameTime)
-                {
-                    iCurrentNumList++;
-                    fNextUpdateList = EW.fGameTime + iRefresh;
+                        if (ItemTest.Team == 3) ListShowH.Add(ItemTest);
+                        else if (ItemTest.Team == 2) ListShowZM.Add(ItemTest);
+                    }
                 }
-                if (iCurrentNumList >= iCountList) iCurrentNumList = 0;
-
-				string sItems = "EntWatch:";
-
-                for(int i = iCurrentNumList * iSheetMax; i < ListShow.Count && i < (iCurrentNumList + 1) * iSheetMax; i++)
+			}
+            if (ListShowH.Count > 0 || ListShowZM.Count > 0)
+            {
+                string sItems = "";
+                if (ListShowH.Count > 0)
                 {
-					sItems += $"\n{ListShow[i].ShortName}";
-					if (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ListShow[i].Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0)
-					{
-						if (ListShow[i].CheckDelay())
-						{
-							int iAbilityCount = 0;
-							foreach (Ability AbilityTest in ListShow[i].AbilityList.ToList())
-							{
-								if (++iAbilityCount > Cvar.DisplayAbility) break;
-								if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
-							}
+                    int iCountListH = (ListShowH.Count - 1) / iSheetMax + 1;
 
-						}
-						else sItems += $"[-{Math.Round(ListShow[i].fDelay - EW.fGameTime, 1)}]";
-					}
-                    sItems += $": {ListShow[i].Owner.PlayerName}";
-				}
-                if(iCountList > 1) sItems += $"\nList:[{iCurrentNumList+1}/{iCountList}]";
+                    if (fNextUpdateList <= EW.fGameTime)
+                    {
+                        iCurrentNumListH++;
+                        if (bNextUpdateSync)
+                        {
+                            fNextUpdateList = EW.fGameTime + iRefresh;
+                            bNextUpdateSync = false;
+                        }
+                    }
+                    if (iCurrentNumListH >= iCountListH) iCurrentNumListH = 0;
+
+                    sItems += "EntWatch Humans:";
+
+                    for (int i = iCurrentNumListH * iSheetMax; i < ListShowH.Count && i < (iCurrentNumListH + 1) * iSheetMax; i++)
+                    {
+                        sItems += $"\n{ListShowH[i].ShortName}";
+                        if (ListShowH[i].CheckDelay())
+                        {
+                            int iAbilityCount = 0;
+                            foreach (Ability AbilityTest in ListShowH[i].AbilityList.ToList())
+                            {
+                                if (++iAbilityCount > Cvar.DisplayAbility) break;
+                                if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
+                            }
+
+                        }
+                        else sItems += $"[-{Math.Round(ListShowH[i].fDelay - EW.fGameTime, 1)}]";
+                        sItems += $": {ListShowH[i].Owner.PlayerName}";
+                    }
+                    if (iCountListH > 1) sItems += $"\nList:[{iCurrentNumListH + 1}/{iCountListH}]";
+                }
+
+                if (ListShowZM.Count > 0)
+                {
+                    int iCountListZM = (ListShowZM.Count - 1) / iSheetMax + 1;
+
+                    if (bNextUpdateSync == false || fNextUpdateList <= EW.fGameTime)
+                    {
+                        iCurrentNumListZM++;
+                        if (bNextUpdateSync)
+                        {
+                            fNextUpdateList = EW.fGameTime + iRefresh;
+                            bNextUpdateSync = false;
+                        }
+                    }
+                    if (iCurrentNumListZM >= iCountListZM) iCurrentNumListZM = 0;
+
+                    if (!string.IsNullOrEmpty(sItems)) sItems += "\n\n";
+
+                    sItems += "EntWatch Zombies:";
+
+                    for (int i = iCurrentNumListZM * iSheetMax; i < ListShowZM.Count && i < (iCurrentNumListZM + 1) * iSheetMax; i++)
+                    {
+                        sItems += $"\n{ListShowZM[i].ShortName}";
+                        if (ListShowZM[i].CheckDelay())
+                        {
+                            int iAbilityCount = 0;
+                            foreach (Ability AbilityTest in ListShowZM[i].AbilityList.ToList())
+                            {
+                                if (++iAbilityCount > Cvar.DisplayAbility) break;
+                                if (!AbilityTest.Ignore) sItems += $"[{AbilityTest.GetMessage()}]";
+                            }
+
+                        }
+                        else sItems += $"[-{Math.Round(ListShowZM[i].fDelay - EW.fGameTime, 1)}]";
+                        sItems += $": {ListShowZM[i].Owner.PlayerName}";
+                    }
+                    if (iCountListZM > 1) sItems += $"\nList:[{iCurrentNumListZM + 1}/{iCountListZM}]";
+                }
 				UpdateText(sItems, HudPlayer);
 			}
             else UpdateText("", HudPlayer);
