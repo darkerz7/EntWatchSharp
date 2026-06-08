@@ -132,7 +132,10 @@ namespace EntWatchSharp
 					{
 						Item cNewItem = new(ItemTest, weapon);
 						g_ItemList.Add(cNewItem);
-						weapon.As<CEconEntity>().AttributeManager.Item.CustomName = EW.g_WeaponName;
+                        //Auto block after adding to the list
+                        if (cNewItem.BlockPickup || Cvar.GlobalBlock) cNewItem.WeaponHandle.CanBePickedUp = false;
+                        else cNewItem.WeaponHandle.CanBePickedUp = true;
+                        weapon.As<CEconEntity>().AttributeManager.Item.CustomName = EW.g_WeaponName;
 						return true;
 					}
 				}

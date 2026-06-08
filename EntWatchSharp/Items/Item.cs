@@ -29,8 +29,8 @@ namespace EntWatchSharp.Items
 			if (cNewItem.GlowColor.Length == 4) GlowColor = cNewItem.GlowColor;
             else GlowColor = [255, 255, 255, 255];
 			BlockPickup = cNewItem.BlockPickup;
-            if(BlockPickup || Cvar.GlobalBlock) WeaponHandle.CanBePickedUp = false;
-            else WeaponHandle.CanBePickedUp = true;
+            //if(BlockPickup || Cvar.GlobalBlock) WeaponHandle.CanBePickedUp = false;
+            //else WeaponHandle.CanBePickedUp = true;
 			AllowTransfer = cNewItem.AllowTransfer;
 			ForceDrop = cNewItem.ForceDrop;
 			Chat = cNewItem.Chat;
