@@ -10,7 +10,7 @@ namespace EntWatchSharp
 	{
 		static readonly MemoryFunctionVoid<nint, CPlayer_WeaponServices, CBaseEntity, IntPtr> CPlayer_WeaponServices_WeaponDropFunc = new (GameData.GetSignature("CPlayer_WeaponServices_WeaponDrop"));
 #if !USE_ALT_ONINPUT
-		static readonly MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant, int> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
+		static readonly MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
 #endif
         static readonly MemoryFunctionWithReturn<CPlayer_WeaponServices, CEconItemView, IntPtr> CPlayer_WeaponServices_WeaponPickupFunc = new(GameData.GetSignature("CPlayer_WeaponServices_WeaponPickup"));
 
