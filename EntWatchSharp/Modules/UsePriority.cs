@@ -60,8 +60,8 @@ namespace EntWatchSharp.Modules
                 {
                     int iCountWithoutIgnore = 0;
                     foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
-                        if (!AbilityTest.Ignore && AbilityTest.Mode != 8) iCountWithoutIgnore++;
-					iCount += iCountWithoutIgnore;
+                        if (!AbilityTest.Ignore && AbilityTest.Mode != 8 && AbilityTest.Entity is { IsValid:true } entity && (entity.DesignerName is "func_button" or "func_rot_button" or "func_physbox" || entity.DesignerName.StartsWith("func_door"))) iCountWithoutIgnore++;
+                    iCount += iCountWithoutIgnore;
                     if (!ItemTest.UsePriority || iCount > 1)
                     {
                         OneButton = false;

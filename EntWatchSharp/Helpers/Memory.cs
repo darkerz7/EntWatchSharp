@@ -13,8 +13,11 @@ namespace EntWatchSharp
 		static readonly MemoryFunctionVoid<CEntityIdentity, CUtlSymbolLarge, CEntityInstance, CEntityInstance, CVariant, IntPtr, IntPtr> CEntityIdentity_AcceptInputFunc = new(GameData.GetSignature("CEntityIdentity_AcceptInput"));
 #endif
         static readonly MemoryFunctionWithReturn<CPlayer_WeaponServices, CEconItemView, IntPtr> CPlayer_WeaponServices_WeaponPickupFunc = new(GameData.GetSignature("CPlayer_WeaponServices_WeaponPickup"));
+        
+		static readonly MemoryFunctionVoid<CEntityIdentity, string> CEntityIdentity_SetEntityNameFunc = new(GameData.GetSignature("CEntityIdentity_SetEntityName"));
+        static readonly Action<CEntityIdentity, string> SetTargetName = CEntityIdentity_SetEntityNameFunc.Invoke;
 
-		public void VirtualFunctionsInitialize()
+        public void VirtualFunctionsInitialize()
 		{
 			//VirtualFunctions.CCSPlayer_WeaponServices_CanUseFunc.Hook(OnWeaponCanUse, HookMode.Pre);
 			CPlayer_WeaponServices_WeaponPickupFunc.Hook(OnWeaponPickup, HookMode.Pre);
@@ -36,11 +39,9 @@ namespace EntWatchSharp
 #endif
         }
 
-        public static float MathCounter_GetValue(CMathCounter cMath)
-		{
-			return new CEntityOutputTemplate_float(cMath.Handle + Schema.GetSchemaOffset("CMathCounter", "m_OutValue")).OutValue;
-			//return new CEntityOutputTemplate_float(cMath.Handle + 1264).OutValue;
-		}
+        public static float MathCounter_GetValue(CMathCounter cMath) => new CEntityOutputTemplate_float(cMath.Handle + Schema.GetSchemaOffset("CMathCounter", "m_OutValue")).OutValue;
+
+		public static void SetName(CEntityIdentity Entity, string sName) => SetTargetName(Entity, sName);
 	}
 
 	public class CEntityOutputTemplate_float(IntPtr pointer) : NativeObject(pointer)

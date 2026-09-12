@@ -3,7 +3,6 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Timers;
-using CS2_GameHUDAPI;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharpAPI;
@@ -18,9 +17,9 @@ namespace EntWatchSharp
 		public override string ModuleName => "EntWatchSharp";
 		public override string ModuleDescription => "Notify players about entity interactions";
 		public override string ModuleAuthor => "DarkerZ [RUS]";
-		public override string ModuleVersion => "1.DZ.12.5";
+		public override string ModuleVersion => "1.DZ.13beta1";
 
-		public override void OnAllPluginsLoaded(bool hotReload)
+        public override void OnAllPluginsLoaded(bool hotReload)
 		{
 			EW._PlayerSettingsAPI = EW._PlayerSettingsAPICapability.Get();
 			if (EW._PlayerSettingsAPI == null)
@@ -37,17 +36,6 @@ namespace EntWatchSharp
 				UI.EWSysInfo("Info.Error", 15, "EntWatch API Failed!");
 			}
 
-			try
-			{
-				PluginCapability<IGameHUDAPI> CapabilityCP = new("gamehud:api");
-				EW._GH_api = IGameHUDAPI.Capability.Get();
-			}
-			catch (Exception)
-			{
-				EW._GH_api = null;
-				UI.EWSysInfo("Info.Error", 15, "GameHUD API Failed!");
-			}
-
 			if (hotReload)
 			{
 				Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false }).ToList().ForEach(player =>
@@ -61,7 +49,7 @@ namespace EntWatchSharp
 		{
 			Strlocalizer = Localizer;
 
-			RegisterCVARS();
+            RegisterCVARS();
 
 			try
 			{
@@ -108,32 +96,14 @@ namespace EntWatchSharp
 			UnRegEvents();
 			UnRegCommands();
 			UnRegMapCommands();
-			if (EW.g_Timer != null)
-			{
-				EW.g_Timer.Kill();
-				EW.g_Timer = null;
-			}
-			if (EW.g_TimerRetryDB != null)
-			{
-				EW.g_TimerRetryDB.Kill();
-				EW.g_TimerRetryDB = null;
-			}
-			if (EW.g_TimerUnban != null)
-			{
-				EW.g_TimerUnban.Kill();
-				EW.g_TimerUnban = null;
-			}
-			LogManager.UnInit();
-			Utilities.GetPlayers().ForEach(player =>
-			{
-				if (player.IsValid)
-				{
-					if (EW.CheckDictionary(player))
-					{
-						EW.g_EWPlayer[player].RemoveEntityHud(player);
-					}
-				}
-			});
+            EW.g_Timer?.Kill();
+            EW.g_Timer = null;
+            EW.g_TimerRetryDB?.Kill();
+            EW.g_TimerRetryDB = null;
+            EW.g_TimerUnban?.Kill();
+            EW.g_TimerUnban = null;
+            LogManager.UnInit();
+			if (EW.g_CustomHudLayout is { IsValid: true }) EW.g_CustomHudLayout.Remove();
 			EbanDB.db.AnyDB.UnSet();
 		}
 	}

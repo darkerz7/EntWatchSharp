@@ -1,6 +1,4 @@
-﻿using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
-using EntWatchSharp.Modules;
+﻿using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
 
 namespace EntWatchSharp
@@ -16,54 +14,10 @@ namespace EntWatchSharp
 		public EWPlayer()
 		{
 			BannedPlayer = new EbanPlayer();
-			HudPlayer = new HudNull();
+			HudPlayer = new UHud();
 			UsePriorityPlayer = new UsePriority();
 			PrivilegePlayer = new Privilege();
 			PFormatPlayer = Cvar.PlayerFormat;
-		}
-
-		/*public void RemoveEntityHud()
-		{
-			if (HudPlayer is HudWorldText hud && hud.Entity != null)
-			{
-				if (hud.Entity.IsValid) hud.Entity.Remove();
-				hud.Entity = null;
-			}
-		}*/
-		public void RemoveEntityHud(CCSPlayerController player)
-		{
-			if (EW._GH_api != null && player.IsValid)
-			{
-				EW._GH_api.Native_GameHUD_Remove(player, EW.HUDCHANNEL);
-			}
-		}
-
-		public void SwitchHud(CCSPlayerController player, int number)
-		{
-			Server.NextWorldUpdate(() =>
-			{
-				RemoveEntityHud(player);
-
-				var LastCfg = HudPlayer;
-
-				HudPlayer = number switch
-				{
-					0 => new HudNull(),
-					1 => new HudCenter(),
-					2 => new HudAlert(),
-					3 => new HudWorldText(),
-					_ => new HudNull(),
-				};
-				HudPlayer.fXEntity = LastCfg.fXEntity;
-				HudPlayer.fYEntity = LastCfg.fYEntity;
-				HudPlayer.fZEntity = LastCfg.fZEntity;
-				HudPlayer.colorEntity = LastCfg.colorEntity;
-				HudPlayer.iSheetMax = LastCfg.iSheetMax;
-				HudPlayer.iRefresh = LastCfg.iRefresh;
-				HudPlayer.iSize = LastCfg.iSize;
-				//if (HudPlayer is HudWorldText hud && hud.Entity == null) hud.CreateHud(player);
-				if (HudPlayer is HudWorldText hud) hud.InitHud(player);
-			});
 		}
 	}
 }

@@ -1,0 +1,171 @@
+.ew-root
+{
+	width: 100%;
+	height: 100%;
+}
+
+.ew-hide
+{
+	visibility: collapse;
+}
+
+.ew-show
+{
+	visibility: visible;
+}
+
+#ew-panel
+{
+	horizontal-align: right;
+	vertical-align: center;
+	overflow: noclip;
+	transition-property: opacity;
+	transition-duration: 0.12s;
+	background-color: gradient(linear, 0% 0%, 100% 0%, from(rgba(0, 212, 255, 0.15)), color-stop(0.35, rgba(9, 9, 121, 0.3)), to(rgba(2, 0, 36, 0.5)));
+	border: 1px solid rgba(100, 80, 150, 0.4);
+	border-radius: 2px;
+	flow-children: down;
+}
+
+.panel-size-small{ width: 15%; }
+.panel-size-normal{ width: 17%; }
+.panel-size-big{ width: 20%; }
+.panel-size-large{ width: 22%; }
+
+.ew-btn
+{
+	width: 100%;
+	brightness: 1;
+	transition-property: background-color, border, brightness;
+	transition-duration: 0.0s;
+	flow-children: down;
+}
+
+.ew-btn:hover
+{
+	sound: "UIPanorama.generic_button_rollover";
+	background-color: gradient(linear, 0% 0%, 100% 0%, from(rgba(228, 174, 57, 0.14)), color-stop(0.48, rgba(50, 129, 172, 0.12)), to(rgba(255, 255, 255, 0.025)));
+	border-color: rgba(228, 174, 57, 0.65);
+	brightness: 1.35;
+	transition-duration: 0.15s;
+}
+
+.ew-btn:active
+{
+	sound: "UIPanorama.submenu_select";
+	brightness: 0.95;
+}
+
+.ew-btn-even
+{
+	background-color: gradient(linear, 0% 0%, 100% 0%, from(rgba(0, 212, 255, 0.1)), color-stop(0.35, rgba(9, 9, 121, 0.2)), to(rgba(2, 0, 36, 0.4)));
+}
+
+.ew-btn.null{ height: 0px; }
+.ew-btn.separator{ height: 16px; }
+
+.ew-panel-item
+{
+	width: 100%;
+	flow-children: right;
+}
+
+.ew-itemname
+{
+	width: 45%;
+	text-align: left;
+	vertical-align: center;
+}
+
+.ew-cd
+{
+	width: 20%;
+	text-align: center;
+	vertical-align: center;
+}
+
+.ew-panel-player
+{
+	width: 100%;
+	flow-children: down;
+}
+
+.ew-text
+{
+	font-family: Stratum2, 'Arial Unicode MS';
+	font-weight: black;
+	text-shadow: 1px 1px 2px 2 rgba(0, 0, 0, 0.65);
+}
+
+.ew-text.size-smallest{ font-size: 9px; }
+.ew-text.size-small{ font-size: 10px; }
+.ew-text.size-normal{ font-size: 12px; }
+.ew-text.size-big{ font-size: 14px; }
+.ew-text.size-large{ font-size: 16px; }
+.ew-text.color-white{ color: #ffffff; }
+.ew-text.color-darkred{ color: #9c0000; }
+.ew-text.color-purple{ color: #b642ff; }
+.ew-text.color-team{ color: #36a8ff; }
+.ew-text.color-green{ color: #00ff00; }
+.ew-text.color-lightgreen{ color: #90ee90; }
+.ew-text.color-lime{ color: #bfff00; }
+.ew-text.color-red{ color: #ff0000; }
+.ew-text.color-grey{ color: #a1a1a1; }
+.ew-text.color-yellow{ color: #ffff00; }
+.ew-text.color-orange{ color: #faaf25; }
+.ew-text.color-silver{ color: #c0c0c0; }
+.ew-text.color-lightblue{ color: #87c1ff; }
+.ew-text.color-blue{ color: #3743b8; }
+.ew-text.color-bluegrey{ color: #6a89a7; }
+.ew-text.color-magenta{ color: #ff63c5; }
+.ew-text.color-lightred{ color: #ff474c; }
+
+.ew-pb
+{
+	align: left bottom;
+	width: 0%;
+	height: 3px;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #ff7700ff ), to( #ffaa00ff ) );
+	transition-property: width;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+}
+
+.ew-pb.pct-0   { width: 0%; }
+.ew-pb.pct-5   { width: 5%; }
+.ew-pb.pct-10  { width: 10%; }
+.ew-pb.pct-15  { width: 15%; }
+.ew-pb.pct-20  { width: 20%; }
+.ew-pb.pct-25  { width: 25%; }
+.ew-pb.pct-30  { width: 30%; }
+.ew-pb.pct-35  { width: 35%; }
+.ew-pb.pct-40  { width: 40%; }
+.ew-pb.pct-45  { width: 45%; }
+.ew-pb.pct-50  { width: 50%; }
+.ew-pb.pct-55  { width: 55%; }
+.ew-pb.pct-60  { width: 60%; }
+.ew-pb.pct-65  { width: 65%; }
+.ew-pb.pct-70  { width: 70%; }
+.ew-pb.pct-75  { width: 75%; }
+.ew-pb.pct-80  { width: 80%; }
+.ew-pb.pct-85  { width: 85%; }
+.ew-pb.pct-90  { width: 90%; }
+.ew-pb.pct-95  { width: 95%; }
+.ew-pb.pct-100 { width: 100%; }
+.ew-pb.bg-color-white { background-color: gradient( linear, 0% 0%, 100% 0%, from( #ffffffff ), to( #c0c0c0ff ) ); }
+.ew-pb.bg-color-darkred { background-color: gradient( linear, 0% 0%, 100% 0%, from( #9c0000ff ), to( #600000ff ) ); }
+.ew-pb.bg-color-purple { background-color: gradient( linear, 0% 0%, 100% 0%, from( #b642ffff ), to( #7f1ec4ff ) ); }
+.ew-pb.bg-color-team { background-color: gradient( linear, 0% 0%, 100% 0%, from( #36a8ffff ), to( #0077ccff ) ); }
+.ew-pb.bg-color-green { background-color: gradient( linear, 0% 0%, 100% 0%, from( #00ff00ff ), to( #00b300ff ) ); }
+.ew-pb.bg-color-lightgreen { background-color: gradient( linear, 0% 0%, 100% 0%, from( #90ee90ff ), to( #5cb85cff ) ); }
+.ew-pb.bg-color-lime { background-color: gradient( linear, 0% 0%, 100% 0%, from( #bfff00ff ), to( #86b300ff ) ); }
+.ew-pb.bg-color-red { background-color: gradient( linear, 0% 0%, 100% 0%, from( #ff0000ff ), to( #b30000ff ) ); }
+.ew-pb.bg-color-grey { background-color: gradient( linear, 0% 0%, 100% 0%, from( #a1a1a1ff ), to( #707070ff ) ); }
+.ew-pb.bg-color-yellow { background-color: gradient( linear, 0% 0%, 100% 0%, from( #ffff00ff ), to( #b3b300ff ) ); }
+.ew-pb.bg-color-orange { background-color: gradient( linear, 0% 0%, 100% 0%, from( #faaf25ff ), to( #bf7f0fff ) ); }
+.ew-pb.bg-color-silver { background-color: gradient( linear, 0% 0%, 100% 0%, from( #c0c0c0ff ), to( #8c8c8cff ) ); }
+.ew-pb.bg-color-lightblue { background-color: gradient( linear, 0% 0%, 100% 0%, from( #87c1ffff ), to( #4da0ffff ) ); }
+.ew-pb.bg-color-blue { background-color: gradient( linear, 0% 0%, 100% 0%, from( #3743b8ff ), to( #222a7aff ) ); }
+.ew-pb.bg-color-bluegrey { background-color: gradient( linear, 0% 0%, 100% 0%, from( #6a89a7ff ), to( #465f78ff ) ); }
+.ew-pb.bg-color-magenta { background-color: gradient( linear, 0% 0%, 100% 0%, from( #ff63c5ff ), to( #cc3593ff ) ); }
+.ew-pb.bg-color-lightred { background-color: gradient( linear, 0% 0%, 100% 0%, from( #ff474cff ), to( #cc1419ff ) ); }

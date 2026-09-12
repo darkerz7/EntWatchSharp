@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.371" />
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.374" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,9 +30,6 @@
   <ItemGroup>
     <Reference Include="AnyBaseLibNext">
       <HintPath>API\AnyBaseLibNext.dll</HintPath>
-    </Reference>
-    <Reference Include="CS2-GameHUDAPI">
-      <HintPath>API\CS2-GameHUDAPI.dll</HintPath>
     </Reference>
     <Reference Include="PlayerSettingsApi">
       <HintPath>API\PlayerSettingsApi.dll</HintPath>
@@ -52,6 +49,7 @@
 		<Exec Command="copy /Y $(TargetDir)EntWatchSharpAPI.dll $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI\EntWatchSharpAPI.dll" />
 		<Exec Command="if exist $(SolutionDir)build_alt_oninput rmdir /s/q $(SolutionDir)build_alt_oninput" />
 		<Exec Command="move /Y $(TargetDir)addons $(SolutionDir)build_alt_oninput" />
+		<Exec Command="xcopy $(ProjectDir)workshop_folder $(SolutionDir)build_alt_oninput\workshop_folder /E /I" />
 	</Target>
 
 	<Target Name="PostBuild" AfterTargets="CopyFilesToOutputDirectory" Condition="'$(UseAltOnInput)' != 'true'">
@@ -60,6 +58,7 @@
 		<Exec Command="copy /Y $(TargetDir)EntWatchSharpAPI.dll $(TargetDir)addons\counterstrikesharp\shared\EntWatchSharpAPI\EntWatchSharpAPI.dll" />
 		<Exec Command="if exist $(SolutionDir)build rmdir /s/q $(SolutionDir)build" />
 		<Exec Command="move /Y $(TargetDir)addons $(SolutionDir)build" />
+		<Exec Command="xcopy $(ProjectDir)workshop_folder $(SolutionDir)build\workshop_folder /E /I" />
 	</Target>
   
 

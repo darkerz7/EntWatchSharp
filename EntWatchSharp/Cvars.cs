@@ -38,8 +38,8 @@ namespace EntWatchSharp
 		public FakeConVar<bool> FakeCvar_keepexpiredban = new("ewc_keep_expired_ban", "Enable/Disable keep expired bans", true, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
 		public FakeConVar<int> FakeCvar_offline_clear_time = new("ewc_offline_clear_time", "Time during which data is stored (1-240)", 30, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<int>(1, 240));
 
-		public FakeConVar<bool> FakeCvar_clantag = new("ewc_clantag", "Enable/Disable to display in the ClanTag", true, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
-		public FakeConVar<bool> FakeCvar_clantag_info = new("ewc_clantag_info", "Enable/Disable to display cooldown and other in the ClanTag", true, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_clantag = new("ewc_clantag", "Enable/Disable to display in the ClanTag", false, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
+		public FakeConVar<bool> FakeCvar_clantag_info = new("ewc_clantag_info", "Enable/Disable to display cooldown and other in the ClanTag", false, flags: ConVarFlags.FCVAR_NONE, new RangeValidator<bool>(false, true));
 
 		private void RegisterCVARS()
 		{

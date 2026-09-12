@@ -77,7 +77,11 @@ namespace EntWatchSharp.Modules
 			else player.Clan = sClanTag;
 			Utilities.SetStateChanged(player, "CCSPlayerController", "m_szClan");
 
-			new EventNextlevelChanged(false).FireEventToClient(player);    // <- Need Tests with real people
+            //Name change Hack for changing ClanTag
+            /*if (player.PlayerName.Length > 1 && player.PlayerName[^1] == '\u200B') player.PlayerName = player.PlayerName[..^1];
+            else player.PlayerName = player.PlayerName + '\u200B';
+            Utilities.SetStateChanged(player, "CBasePlayerController", "m_iszPlayerName");*/
+            new EventNextlevelChanged(false).FireEventToClient(player);    // <- Need Tests with real people
         }
 	}
 }

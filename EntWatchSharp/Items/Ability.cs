@@ -6,7 +6,7 @@ namespace EntWatchSharp.Items
     public class Ability
     {
         public string Name { get; set; }
-        public string ButtonClass { get; set; } //func_button, func_door, game_ui, func_physbox
+        public string ButtonClass { get; set; } //func_button, func_door, game_ui, func_physbox and etc
         public bool Chat_Uses { get; set; }
         public int Mode { get; set; }
         public int MaxUses { get; set; }
@@ -20,8 +20,9 @@ namespace EntWatchSharp.Items
         public bool MathDontShowMax { get; set; }
         public bool MathZero { get; set; }
 		public string Filter { get; set; } // <activatorname> or <Context:1> or <$attribute>
+        public string Event { get; set; } // Need Correct ButtonClass. For standard actions, leave blank. OnPressed, OnStartTouch and etc
 
-		public CEntityInstance Entity;
+        public CEntityInstance Entity;
         public CMathCounter MathCounter;
         public double fLastUse;
         public int iCurrentUses;
@@ -43,8 +44,9 @@ namespace EntWatchSharp.Items
             MathDontShowMax = false;
 			MathZero = false;
 			Filter = "";
+            Event = "";
 
-			Entity = null;
+            Entity = null;
 			MathCounter = null;
 			fLastUse = 0.0;
             iCurrentUses = 0;
@@ -66,8 +68,9 @@ namespace EntWatchSharp.Items
 			MathDontShowMax = false;
 			MathZero = false;
 			Filter = "";
+            Event = "";
 
-			Entity = entity;
+            Entity = entity;
             MathCounter = null;
 
 			EW.UpdateTime();
@@ -92,6 +95,7 @@ namespace EntWatchSharp.Items
             MathDontShowMax = cCopyAbility.MathDontShowMax;
             MathZero = cCopyAbility.MathZero;
 			Filter = cCopyAbility.Filter;
+            Event = cCopyAbility.Event;
 
 			Entity = null;
 			MathCounter = null;
@@ -105,21 +109,17 @@ namespace EntWatchSharp.Items
         {
 			if (!string.IsNullOrEmpty(Filter))
 			{
-                if (!string.Equals(activator.DesignerName, "player")) return;
-                CCSPlayerPawn pawn = new CCSPlayerController(activator.Handle).PlayerPawn.Value;
-                if (pawn == null || !pawn.IsValid) return;
-
 				if (Filter[0] == '$')
                 {
-                    if (Filter.Length > 1) pawn.AcceptInput("AddAttribute", null, null, Filter[1..]);
+                    if (Filter.Length > 1) activator.AcceptInput("AddAttribute", null, null, Filter[1..]);
                 }
                 else if (Filter.Contains(':'))
                 {
-					pawn.AcceptInput("AddContext", null, null, Filter);
+                    activator.AcceptInput("AddContext", null, null, Filter);
                 }
                 else
                 {
-					if (pawn.Entity != null) pawn.Entity.Name = Filter;
+                    if (activator.Entity != null) EntWatchSharp.SetName(activator.Entity, Filter);
                 }
 			}
 		}
@@ -226,22 +226,76 @@ namespace EntWatchSharp.Items
                 default: return "+";
             }
         }
-		public bool Ready()
+
+        public (string, byte) GetColorAndProgress()
+        {
+            switch (Mode)
+            {
+                case 2:
+                    if (fLastUse < EW.fGameTime) return ("color-green", 0);
+                    else return ("color-orange", CalculateProgress(Math.Round(fLastUse - EW.fGameTime, 0), CoolDown));
+                case 3:
+                    if (iCurrentUses < MaxUses) return ("color-lightgreen", CalculateProgress(iCurrentUses, MaxUses));
+                    else return ("color-red", 0);
+                case 4:
+                    if (fLastUse < EW.fGameTime)
+                    {
+                        if (iCurrentUses < MaxUses) return ("color-lightgreen", CalculateProgress(iCurrentUses, MaxUses));
+                        else return ("color-red", 0);
+                    }
+                    else return ("color-orange", CalculateProgress(Math.Round(fLastUse - EW.fGameTime, 0), CoolDown));
+                case 5:
+                    if (fLastUse < EW.fGameTime) return ("color-lightgreen", CalculateProgress(iCurrentUses, MaxUses));
+                    else return ("color-orange", CalculateProgress(Math.Round(fLastUse - EW.fGameTime, 0), CoolDown));
+                case 6:
+                    {
+                        if (MathCounter is { IsValid:true } math)
+                        {
+                            float fValue = EntWatchSharp.MathCounter_GetValue(math);
+                            if (fValue > math.Min)
+                            {
+                                if (MathDontShowMax) return ("color-magenta", 0);
+                                else return ("color-lightblue", CalculateProgress(fValue, math.Max));
+                            }
+                            else return ("color-red", 0);
+                        }
+                        else return ("color-white", 0);
+                    }
+                case 7:
+                    {
+                        if (MathCounter is { IsValid: true } math)
+                        {
+                            float fValue = math.Max - EntWatchSharp.MathCounter_GetValue(math);
+                            if (fValue < math.Max)
+                            {
+                                if (MathDontShowMax) return ("color-magenta", 0);
+                                else return ("color-lightblue", CalculateProgress(fValue, math.Max));
+                            }
+                            else return ("color-red", 0);
+                        }
+                        else return ("color-white", 0);
+                    }
+                case 8:
+                    {
+                        if (Entity is { IsValid: true }) return ("color-yellow", 0);
+                        else return ("color-white", 0);
+                    }
+
+                default: return ("color-white", 0);
+            }
+        }
+
+        static byte CalculateProgress(double fCurrent, double fMax)
+        {
+            if (fMax <= 0 || double.IsNaN(fMax) || double.IsInfinity(fMax)) return 0;
+            if (fCurrent < 0) fCurrent = 0;
+            else if (fCurrent > fMax) fCurrent = fMax;
+
+            return (byte)(Math.Round(fCurrent / fMax * 20.0) * 5);
+        }
+
+        public bool Ready()
 		{
-			// Maybe not needed...
-			/*if (string.Equals(Entity.DesignerName, "func_button") || string.Equals(Entity.DesignerName, "func_rot_button"))
-            {
-                if (new CBaseButton(Entity.Handle).Locked) return false;
-            }
-            else if (string.Equals(Entity.DesignerName, "func_door") || string.Equals(Entity.DesignerName, "func_door_rotating"))
-            {
-                if (new CBaseDoor(Entity.Handle).Locked) return false;
-            }
-            else if (string.Equals(Entity.DesignerName, "func_physbox"))
-            {
-				if (!new CPhysBox(Entity.Handle).EnableUseOutput) return false;
-			}
-            else return false;*/
 			if (LockItem) return false;
             if (fLastUse >= EW.fGameTime) return false;
 			switch (Mode)

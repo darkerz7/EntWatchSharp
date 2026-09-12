@@ -7,7 +7,6 @@ using EntWatchSharp.Helpers;
 using EntWatchSharp.Items;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
-using System.Globalization;
 using static EntWatchSharp.Modules.Eban.EbanDB;
 
 namespace EntWatchSharp
@@ -22,11 +21,8 @@ namespace EntWatchSharp
 			RemoveCommand("css_eshowitems", OnEWShow);
 			RemoveCommand("ew_showscheme", OnEWScheme);
 			RemoveCommand("css_eshowscheme", OnEWScheme);
-			RemoveCommand("ehud", OnEWChangeHud);
-			RemoveCommand("ehud_pos", OnEWChangeHudPos);
-			RemoveCommand("ehud_color", OnEWChangeHudColor);
+			RemoveCommand("ehud", OnEWEnableHud);
 			RemoveCommand("ehud_refresh", OnEWChangeHudRefresh);
-			RemoveCommand("ehud_sheet", OnEWChangeHudSheet);
 			RemoveCommand("css_epf", OnEWChangePlayerFormat);
 			RemoveCommand("eup", OnEWChangeUsePriority);
 			RemoveCommand("ew_ban", OnEWBan);
@@ -83,7 +79,7 @@ namespace EntWatchSharp
 						string sMathID = "";
 						if (!string.IsNullOrEmpty(AbilityTest.MathID) && !string.Equals(AbilityTest.MathID, "0")) sMathID = $" {EW.g_Scheme.color_warning}MathID: {EW.g_Scheme.color_tag}{AbilityTest.MathID}";
 						if (AbilityTest.MathCounter != null) sMathID += $" {EW.g_Scheme.color_warning}MathCounterID: {EW.g_Scheme.color_tag}{AbilityTest.MathCounter.Index}";
-						UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}BI: {EW.g_Scheme.color_tag}{AbilityTest.Entity.Index} {EW.g_Scheme.color_warning}Name: {EW.g_Scheme.color_tag}{AbilityTest.Name} {EW.g_Scheme.color_warning}ButtonID: {EW.g_Scheme.color_tag}{AbilityTest.ButtonID} {EW.g_Scheme.color_warning}ButtonClass: {EW.g_Scheme.color_tag}{AbilityTest.ButtonClass} {EW.g_Scheme.color_warning}Chat_Uses: {EW.g_Scheme.color_tag}{AbilityTest.Chat_Uses} {EW.g_Scheme.color_warning}Mode: {EW.g_Scheme.color_tag}{AbilityTest.Mode} {EW.g_Scheme.color_warning}MaxUses: {EW.g_Scheme.color_tag}{AbilityTest.MaxUses} {EW.g_Scheme.color_warning}CoolDown: {EW.g_Scheme.color_tag}{AbilityTest.CoolDown}{sMathID}", bConsole);
+						UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}BI: {EW.g_Scheme.color_tag}{AbilityTest.Entity.Index} {EW.g_Scheme.color_warning}Name: {EW.g_Scheme.color_tag}{AbilityTest.Name} {EW.g_Scheme.color_warning}ButtonID: {EW.g_Scheme.color_tag}{AbilityTest.ButtonID} {EW.g_Scheme.color_warning}ButtonClass: {EW.g_Scheme.color_tag}{AbilityTest.ButtonClass} {EW.g_Scheme.color_warning}Chat_Uses: {EW.g_Scheme.color_tag}{AbilityTest.Chat_Uses} {EW.g_Scheme.color_warning}Mode: {EW.g_Scheme.color_tag}{AbilityTest.Mode} {EW.g_Scheme.color_warning}MaxUses: {EW.g_Scheme.color_tag}{AbilityTest.MaxUses} {EW.g_Scheme.color_warning}Event: {EW.g_Scheme.color_tag}{AbilityTest.Event} {EW.g_Scheme.color_warning}CoolDown: {EW.g_Scheme.color_tag}{AbilityTest.CoolDown}{sMathID}", bConsole);
 					}
 				}
 				UI.ReplyToCommand(player, " ", bConsole);
@@ -114,9 +110,9 @@ namespace EntWatchSharp
 
 		[ConsoleCommand("ehud", "Allows the player to switch the HUD")]
 		[ConsoleCommand("css_hud", "Allows the player to switch the HUD")]
-		[CommandHelper(minArgs: 1, usage: "[number]", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+		[CommandHelper(minArgs: 0, usage: "", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public void OnEWChangeHud(CCSPlayerController? player, CommandInfo command)
+		public void OnEWEnableHud(CCSPlayerController? player, CommandInfo command)
 #nullable disable
 		{
 			if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
@@ -128,106 +124,65 @@ namespace EntWatchSharp
 			}
 			try
 			{
-				if (!Int32.TryParse(command.GetArg(1), out int number)) number = 0;
-				if (number >= 0 && number <= 3)
+				bool bNewValue = EW.g_EWPlayer[player].HudPlayer.bShow;
+				string sValue = command.GetArg(1);
+                if (!string.IsNullOrEmpty(sValue))
+                {
+                    bNewValue = sValue.Contains("true", StringComparison.OrdinalIgnoreCase) || string.Equals(sValue, "1");
+                }
+                else bNewValue = !bNewValue;
+
+                EW.g_EWPlayer[player].HudPlayer.bShow = bNewValue;
+
+				if (bNewValue)
 				{
-					EW.g_EWPlayer[player].SwitchHud(player, number);
-
-					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Type", number.ToString());
-
-					string sMessage = "";
-					sMessage = number switch
-					{
-						0 => $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Type"]} {EW.g_Scheme.color_disabled}{Strlocalizer["All.Disabled"]}",
-						1 => $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Type"]} {EW.g_Scheme.color_enabled}{Strlocalizer["All.Enabled"]} {EW.g_Scheme.color_warning}(Center)",
-						2 => $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Type"]} {EW.g_Scheme.color_enabled}{Strlocalizer["All.Enabled"]} {EW.g_Scheme.color_warning}(Alert)",
-						3 => $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Type"]} {EW.g_Scheme.color_enabled}{Strlocalizer["All.Enabled"]} {EW.g_Scheme.color_warning}(WorldText)",
-						_ => $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Using_number"]}",
-					};
-					UI.ReplyToCommand(player, sMessage, bConsole);
-				}
-				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
-			} catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                    EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Show", "1");
+                    UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Type"]} {EW.g_Scheme.color_enabled}{Strlocalizer["All.Enabled"]}", bConsole);
+                }
+				else
+				{
+                    EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Show", "0");
+                    UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Type"]} {EW.g_Scheme.color_disabled}{Strlocalizer["All.Disabled"]}", bConsole);
+                }
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 		}
 
-		[ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
-		[ConsoleCommand("css_hudpos", "Allows the player to change the position of the HUD")]
-		[CommandHelper(minArgs: 3, usage: "[X Y Z] (default: -6.5 2 7; min -200.0; max 200.0)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+        [ConsoleCommand("ehudcap", "Allows the player to switch the HUD Capture")]
+        [ConsoleCommand("css_hudcap", "Allows the player to switch the HUD Capture")]
+        [CommandHelper(minArgs: 0, usage: "", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
-		public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
+        public void OnEWEnableHudCap(CCSPlayerController? player, CommandInfo command)
 #nullable disable
-		{
-			if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
-			bool bConsole = command.CallingContext == CommandCallingContext.Console;
-			if (!EW.CheckDictionary(player))
-			{
-				UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
-				return;
-			}
-			try
-			{
-				if (!float.TryParse(command.GetArg(1).Replace(',', '.'), NumberStyles.Any, EW.cultureEN, out float fX)) fX = -6.5f;
-				if (!float.TryParse(command.GetArg(2).Replace(',', '.'), NumberStyles.Any, EW.cultureEN, out float fY)) fY = 2.0f;
-				if (!float.TryParse(command.GetArg(3).Replace(',', '.'), NumberStyles.Any, EW.cultureEN, out float fZ)) fZ = 7.0f;
-				fX = (float)Math.Round(fX, 2);
-				fY = (float)Math.Round(fY, 2);
-				fZ = (float)Math.Round(fZ, 2);
-				if (fX >= -200.0f && fX <= 200.0f && fY >= -200.0f && fY <= 200.0f && fZ >= -200.0f && fZ <= 200.0f)
-				{
-					EW.g_EWPlayer[player].HudPlayer.fXEntity = fX;
-					EW.g_EWPlayer[player].HudPlayer.fYEntity = fY;
-					EW.g_EWPlayer[player].HudPlayer.fZEntity = fZ;
+        {
+            if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
+            bool bConsole = command.CallingContext == CommandCallingContext.Console;
+            if (!EW.CheckDictionary(player))
+            {
+                UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
+                return;
+            }
+            try
+            {
+                bool bNewValue = EW.g_EWPlayer[player].HudPlayer.bCaptureEnabled;
+                string sValue = command.GetArg(1);
+                if (!string.IsNullOrEmpty(sValue))
+                {
+                    bNewValue = sValue.Contains("true", StringComparison.OrdinalIgnoreCase) || string.Equals(sValue, "1");
+                }
+                else bNewValue = !bNewValue;
 
-					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
+                EW.g_EWPlayer[player].HudPlayer.CaptureChange(player, bNewValue);
 
-					string sCookie = $"{fX.ToString(EW.cultureEN)}_{fY.ToString(EW.cultureEN)}_{fZ.ToString(EW.cultureEN)}";
-					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Pos", sCookie);
+                if (bNewValue) UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Capture"]} {EW.g_Scheme.color_enabled}{Strlocalizer["All.Enabled"]}", bConsole);
+                else UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Capture"]} {EW.g_Scheme.color_disabled}{Strlocalizer["All.Disabled"]}", bConsole);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+        }
 
-					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Position"]} {EW.g_Scheme.color_enabled}X: {fX} Y: {fY} Z: {fZ}", bConsole);
-				}
-				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
-			}
-			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-		}
-
-		[ConsoleCommand("ehud_color", "Allows the player to change the color of the HUD")]
-		[ConsoleCommand("css_hudcolor", "Allows the player to change the color of the HUD")]
-		[CommandHelper(minArgs: 4, usage: "[R G B A] (default: 255 255 255 255; min 0; max 255)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
-#nullable enable
-		public void OnEWChangeHudColor(CCSPlayerController? player, CommandInfo command)
-#nullable disable
-		{
-			if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
-			bool bConsole = command.CallingContext == CommandCallingContext.Console;
-			if (!EW.CheckDictionary(player))
-			{
-				UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
-				return;
-			}
-			try
-			{
-				if (!int.TryParse(command.GetArg(1), out int iRed)) iRed = 255;
-				if (!int.TryParse(command.GetArg(2), out int iGreen)) iGreen = 255;
-				if (!int.TryParse(command.GetArg(3), out int iBlue)) iBlue = 255;
-				if (!int.TryParse(command.GetArg(4), out int iAlpha)) iAlpha = 255;
-				if (iRed >= 0 && iRed <= 255 && iGreen >= 0 && iGreen <= 255 && iBlue >= 0 && iBlue <= 255 && iAlpha >= 0 && iAlpha <= 255)
-				{
-					EW.g_EWPlayer[player].HudPlayer.colorEntity = [iRed, iGreen, iBlue, iAlpha];
-					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
-
-					string sCookie = $"{iRed}_{iGreen}_{iBlue}_{iAlpha}";
-					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Color", sCookie);
-
-					UI.ReplyToCommand(player, $"{EW.g_Scheme.color_warning}{Strlocalizer["Reply.Hud.Color"]} {EW.g_Scheme.color_enabled}R: {iRed} G: {iGreen} B: {iBlue} A: {iAlpha}", bConsole);
-				}
-				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
-			}
-			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-		}
-
-		[ConsoleCommand("ehud_size", "Allows the player to change the size of the HUD")]
+        [ConsoleCommand("ehud_size", "Allows the player to change the size of the HUD")]
 		[ConsoleCommand("css_hudsize", "Allows the player to change the size of the HUD")]
-		[CommandHelper(minArgs: 1, usage: "[size] (default: 54; min 16; max 128)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+		[CommandHelper(minArgs: 1, usage: "[size] (default: 1; min 0(small); max 3(large)))", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable
 		public void OnEWChangeHudSize(CCSPlayerController? player, CommandInfo command)
 #nullable disable
@@ -241,12 +196,11 @@ namespace EntWatchSharp
 			}
 			try
 			{
-				if (!Int32.TryParse(command.GetArg(1), out int number)) number = 0;
-				if (number >= 16 && number <= 128)
+				if (!byte.TryParse(command.GetArg(1), out byte number)) number = 0;
+				if (number >= 0 && number <= 3)
 				{
 					EW.g_EWPlayer[player].HudPlayer.iSize = number;
-					if (EW.g_EWPlayer[player].HudPlayer is HudWorldText) EW.g_EWPlayer[player].SwitchHud(player, 3);
-					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Size", number.ToString());
+					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_SizeType", number.ToString());
 					UI.EWReplyInfo(player, "Reply.Hud.Size", bConsole, EW.g_Scheme.color_enabled, number);
 				}
 				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
@@ -277,34 +231,6 @@ namespace EntWatchSharp
 					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Refresh", number.ToString());
 					UI.EWReplyInfo(player, "Reply.Hud.Refresh", bConsole, EW.g_Scheme.color_enabled, number, EW.g_Scheme.color_warning);
 				} else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
-			}
-			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-		}
-
-		[ConsoleCommand("ehud_sheet", "Allows the player to change the number of items on the sheet")]
-		[ConsoleCommand("css_hudsheet", "Allows the player to change the number of items on the sheet")]
-		[CommandHelper(minArgs: 1, usage: "[count] (default: 5; min 1; max 15)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
-#nullable enable
-		public void OnEWChangeHudSheet(CCSPlayerController? player, CommandInfo command)
-#nullable disable
-		{
-			if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
-			bool bConsole = command.CallingContext == CommandCallingContext.Console;
-			if (!EW.CheckDictionary(player))
-			{
-				UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
-				return;
-			}
-			try
-			{
-				if (!Int32.TryParse(command.GetArg(1), out int number)) number = 0;
-				if (number >= 1 && number <= 15)
-				{
-					EW.g_EWPlayer[player].HudPlayer.iSheetMax = number;
-					EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_Sheet", number.ToString());
-					UI.EWReplyInfo(player, "Reply.Hud.Sheet", bConsole, EW.g_Scheme.color_enabled, number, EW.g_Scheme.color_warning);
-				}
-				else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
 			}
 			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 		}
@@ -528,21 +454,21 @@ namespace EntWatchSharp
 			} else UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);
 		}
 #nullable enable
-		GetBanCommFunc GetBanComm_Handler = (string sClientSteamID, CCSPlayerController? admin, string reason, bool bConsole, List<List<string>> DBQuery_Result) =>
+		readonly GetBanCommFunc GetBanComm_Handler = (sClientSteamID, admin, reason, bConsole, DBQuery_Result) =>
 #nullable disable
 		{
-			if (DBQuery_Result.Count > 0)
-			{
+			if (DBQuery_Result is { } && DBQuery_Result.Count > 0)
+            {
 				EbanPlayer target = new()
 				{
 					bBanned = true,
-					sAdminName = DBQuery_Result[0][0],
-					sAdminSteamID = DBQuery_Result[0][1],
-					iDuration = Convert.ToInt32(DBQuery_Result[0][2]),
-					iTimeStamp_Issued = Convert.ToInt32(DBQuery_Result[0][3]),
-					sReason = DBQuery_Result[0][4],
-					sClientName = DBQuery_Result[0][5],
-					sClientSteamID = sClientSteamID
+                    sAdminName = DBQuery_Result[0][0] is { } admname ? admname : "-",
+                    sAdminSteamID = DBQuery_Result[0][1] is { } admsteam ? admsteam : "-",
+                    iDuration = Convert.ToInt32(DBQuery_Result[0][2] is { } dur ? dur : "0"),
+                    iTimeStamp_Issued = Convert.ToInt32(DBQuery_Result[0][3] is { } timeiss ? timeiss : "0"),
+                    sReason = DBQuery_Result[0][4] is { } reas ? reas : "-",
+                    sClientName = DBQuery_Result[0][5] is { } clname ? clname : "-",
+                    sClientSteamID = sClientSteamID
 				};
 				UnBanComm(admin, null, target, reason, bConsole);
 				return;
@@ -717,7 +643,7 @@ namespace EntWatchSharp
 			Item item = null;
 			if (sItemName[0] == '$')
 			{
-				sItemName = sItemName.Remove(0, 1).ToLower();
+				sItemName = sItemName[1..].ToLower();
 				foreach (Item ItemTest in EW.g_ItemList.ToList())
 				{
 					if (ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase))

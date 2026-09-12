@@ -2,12 +2,12 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Commands.Targeting;
-using CS2_GameHUDAPI;
 using EntWatchSharp.Helpers;
 using EntWatchSharp.Items;
 using EntWatchSharp.Modules.Eban;
 using EntWatchSharpAPI;
 using PlayerSettings;
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Text.Json;
 
@@ -24,16 +24,17 @@ namespace EntWatchSharp
 		public static bool g_CfgLoaded = false;
 		public static string g_WeaponName = "EntWatchItem_";
 		public static CultureInfo cultureEN = new("en-EN");
+        readonly static HashSet<(string, string)> g_HookedOutputs = [];
+        readonly static HashSet<string> g_HookOutput_TrackedClasses = [];
 
 #nullable enable
-		public static ISettingsApi? _PlayerSettingsAPI;
+		public static CCSCustomHudLayout? g_CustomHudLayout;
+        public static ISettingsApi? _PlayerSettingsAPI;
 		public readonly static PluginCapability<ISettingsApi?> _PlayerSettingsAPICapability = new("settings:nfcore");
 #nullable disable
 
 		public static IEntWatchSharpAPI _EW_api;
 		public static EWAPI g_cAPI = null;
-
-		public static IGameHUDAPI _GH_api;
 
 		public static Dictionary<CCSPlayerController, EWPlayer> g_EWPlayer = [];
 		public static List<OfflineBan> g_OfflinePlayer = [];
@@ -92,7 +93,13 @@ namespace EntWatchSharp
 				UI.EWSysInfo("Info.Error", 15, $"{e.Message}");
 				g_CfgLoaded = false;
 			}
-		}
+            if (g_CfgLoaded && g_ItemConfig is { })
+            {
+                foreach (ItemConfig ItemTest in g_ItemConfig.ToList())
+                    foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+                        AddHookOutput(AbilityTest.ButtonClass, AbilityTest.Event);
+            }
+        }
 
 		public static void LoadScheme()
 		{
@@ -199,63 +206,23 @@ namespace EntWatchSharp
 			{
 				try
 				{
-					string sHUDType = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Type", "3") : "3";
-					string sHUDPos = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Pos", "-6.5_2_7") : "-6.5_2_7";
-					string sHUDSize = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Size", "54") : "54";
-					string sHUDColor = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Color", "255_255_255_255") : "255_255_255_255";
+					string sHUDShow = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Show", "1") : "1";
+					string sHUDSize = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_SizeType", "1") : "1";
 					string sHUDRefresh = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Refresh", "3") : "3";
-					string sHUDSheet = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Sheet", "5") : "5";
 					string sPlayerInfoFormat = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_PInfo_Format", $"{Cvar.PlayerFormat}") : $"{Cvar.PlayerFormat}";
 
 					string sUsePriority = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_Use_Priority", "1") : "1";
 					if (player.IsValid && CheckDictionary(player))
 					{
-						if (!string.IsNullOrEmpty(sHUDPos))
-						{
-							try
-							{
-								string[] Pos = sHUDPos.Replace(',','.').Split(['_']);
-								if (Pos[0] != null && Pos[1] != null && Pos[2] != null)
-								{
-									g_EWPlayer[player].HudPlayer.fXEntity = float.Parse(Pos[0], NumberStyles.Any, cultureEN);
-									g_EWPlayer[player].HudPlayer.fYEntity = float.Parse(Pos[1], NumberStyles.Any, cultureEN);
-									g_EWPlayer[player].HudPlayer.fZEntity = float.Parse(Pos[2], NumberStyles.Any, cultureEN);
-								}
-							}
-							catch { }
-						}
-						if (!string.IsNullOrEmpty(sHUDColor))
-						{
-							try
-							{
-								string[] Pos = sHUDColor.Split(['_']);
-								if (Pos[0] != null && Pos[1] != null && Pos[2] != null && Pos[3] != null)
-								{
-									g_EWPlayer[player].HudPlayer.colorEntity[0] = Int32.Parse(Pos[0]);
-									g_EWPlayer[player].HudPlayer.colorEntity[1] = Int32.Parse(Pos[1]);
-									g_EWPlayer[player].HudPlayer.colorEntity[2] = Int32.Parse(Pos[2]);
-									g_EWPlayer[player].HudPlayer.colorEntity[3] = Int32.Parse(Pos[3]);
-								}
-							}
-							catch { }
-						}
 						if (!string.IsNullOrEmpty(sHUDSize))
 						{
-							if (!Int32.TryParse(sHUDSize, out int number)) number = 54;
+							if (!byte.TryParse(sHUDSize, out byte number)) number = 1;
 							g_EWPlayer[player].HudPlayer.iSize = number;
 						}
-						if (!string.IsNullOrEmpty(sHUDType))
-						{
-							if (!Int32.TryParse(sHUDType, out int number)) number = 3;
-							g_EWPlayer[player].SwitchHud(player, number);
-						}
+                        if (!string.IsNullOrEmpty(sHUDShow)) g_EWPlayer[player].HudPlayer.bShow = !string.Equals(sHUDShow, "0");
 						if (!string.IsNullOrEmpty(sHUDRefresh))
 						{
 							if (Int32.TryParse(sHUDRefresh, out int number)) g_EWPlayer[player].HudPlayer.iRefresh = number;
-						}
-						if (!string.IsNullOrEmpty(sHUDSheet))
-						{
-							if (Int32.TryParse(sHUDSheet, out int number)) g_EWPlayer[player].HudPlayer.iSheetMax = number;
 						}
 						if (!string.IsNullOrEmpty(sPlayerInfoFormat))
 						{
@@ -272,17 +239,110 @@ namespace EntWatchSharp
 		public static void ShowHud()
 		{
 			EW.UpdateTime();
-			/*foreach(var pair in EW.g_EWPlayer)
-			{
-				if (g_EWPlayer[pair.Key].HudPlayer != null) g_EWPlayer[pair.Key].HudPlayer.ConstructString(pair.Key);
-			}*/
 			Utilities.GetPlayers().ForEach(player =>
 			{
-				if (player.IsValid && CheckDictionary(player) && g_EWPlayer[player].HudPlayer != null) g_EWPlayer[player].HudPlayer.ConstructString(player);
+				if (player.IsValid && CheckDictionary(player) && g_EWPlayer[player].HudPlayer != null) g_EWPlayer[player].HudPlayer.UpdateHUD(player);
 			});
 		}
 
-		public static bool IsGameUI(CEntityInstance entity)
+		public static bool HookEntityOutput_Handler(CEntityInstance cActivator, CEntityInstance cCaller, string sOutput)
+		{
+            if (!g_CfgLoaded) return true;
+
+			if (HookOutput_CheckTrackedClasses(cCaller.DesignerName) &&
+				g_HookedOutputs.Contains((cCaller.DesignerName, sOutput.ToLower())))
+				return EntWatchSharp.OnButtonPressed(cActivator, cCaller);
+
+            return true;
+        }
+
+        public static void AddHookOutput(string classname, string output)
+        {
+            if (string.IsNullOrEmpty(output) || string.IsNullOrEmpty(classname)) return;
+
+            string sClassname_Lower = classname.ToLower();
+
+            if (HookOutput_ValidClassList.Contains(sClassname_Lower))
+            {
+                string sOutput_Lower = output.ToLower();
+                if (g_HookedOutputs.Add((sClassname_Lower, sOutput_Lower)))
+                {
+                    g_HookOutput_TrackedClasses.Add(sClassname_Lower);
+                }
+            }
+        }
+
+		public static void ReloadHookOutputs()
+		{
+            g_HookOutput_TrackedClasses.Clear();
+            g_HookedOutputs.Clear();
+
+            AddHookOutput("func_button", "OnPressed");
+            AddHookOutput("func_rot_button", "OnPressed");
+            AddHookOutput("func_door", "OnOpen");
+            AddHookOutput("func_door_rotating", "OnOpen");
+            AddHookOutput("func_physbox", "OnPlayerUse");
+        }
+
+        public static bool HookOutput_CheckTrackedClasses(string classname)
+        {
+            if (string.IsNullOrEmpty(classname)) return false;
+
+            return g_HookOutput_TrackedClasses.Contains(classname.ToLower());
+        }
+
+        static readonly FrozenSet<string> HookOutput_ValidClassList = [
+            "func_button",
+            "func_physbox",
+            "func_door",
+            "func_rot_button",
+            "func_door_rotating",
+            "logic_case",
+            "logic_relay",
+            "logic_timer",
+            "logic_branch_listener",
+            "logic_branch",
+            "logic_compare",
+            "math_counter",
+            "trigger_gravity",
+            "trigger_hurt",
+            "trigger_look",
+            "trigger_multiple",
+            "trigger_once",
+            "trigger_push",
+            "trigger_teleport",
+            "trigger_wind",
+            "env_entity_maker",
+            "point_template",
+            "filter_activator_attribute_int",
+            "filter_activator_class",
+            "filter_activator_context",
+            "filter_activator_model",
+            "filter_activator_name",
+            "filter_multi",
+            "filter_activator_team",
+            "func_breakable"
+            ];
+
+#nullable enable
+        public static CCSCustomHudLayout? GetorCreateHudLayout()
+#nullable disable
+        {
+            if (g_CustomHudLayout is { IsValid: true }) return g_CustomHudLayout;
+			if (Utilities.CreateEntityByName<CCSCustomHudLayout>("custom_hud_layout") is { IsValid: true } customhud)
+			{
+				customhud.StrLayout = "panorama/layout/custom_game/entwatch_dz.vxml_c";
+				return g_CustomHudLayout = customhud;
+			}
+            return null;
+        }
+
+        public static void RemoveHudLayout()
+        {
+            g_CustomHudLayout = null;
+        }
+
+        public static bool IsGameUI(CEntityInstance entity)
 		{
 			if (entity != null && entity.IsValid && string.Equals(entity.DesignerName, "logic_case") && !string.IsNullOrEmpty(entity.PrivateVScripts) && string.Equals(entity.PrivateVScripts.ToLower(), "game_ui")) return true;
 			return false;

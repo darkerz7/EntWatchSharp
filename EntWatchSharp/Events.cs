@@ -9,7 +9,6 @@ using EntWatchSharp.Items;
 using EntWatchSharp.Modules;
 using EntWatchSharp.Modules.Eban;
 using static CounterStrikeSharp.API.Core.Listeners;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EntWatchSharp
 {
@@ -35,39 +34,14 @@ namespace EntWatchSharp
 			RegisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
 			RegisterEventHandler<EventPlayerHurt>(OnEventPlayerHurt);
 
-			//Garbage collector crashes when reloading plugin on these hooks
-			/*HookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
-			HookEntityOutput("func_rot_button", "OnPressed", OnButtonPressed, HookMode.Pre);
-			HookEntityOutput("func_door", "OnOpen", OnButtonPressed, HookMode.Pre);
-			HookEntityOutput("func_door_rotating", "OnOpen", OnButtonPressed, HookMode.Pre);
-			HookEntityOutput("func_physbox", "OnPlayerUse", OnButtonPressed, HookMode.Pre);*/
-
-			HookEntityOutput("func_button", "OnPressed", (_, _, activator, caller, _, _) =>
-			{
-				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
-				return HookResult.Continue;
-			});
-			HookEntityOutput("func_rot_button", "OnPressed", (_, _, activator, caller, _, _) =>
-			{
-				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
-				return HookResult.Continue;
-			});
-			HookEntityOutput("func_door", "OnOpen", (_, _, activator, caller, _, _) =>
-			{
-				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
-				return HookResult.Continue;
-			});
-			HookEntityOutput("func_door_rotating", "OnOpen", (_, _, activator, caller, _, _) =>
-			{
-				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
-				return HookResult.Continue;
-			});
-			HookEntityOutput("func_physbox", "OnPlayerUse", (_, _, activator, caller, _, _) =>
-			{
-				if (!OnButtonPressed(activator, caller)) return HookResult.Handled;
-				return HookResult.Continue;
-			});
-		}
+            //Garbage collector crashes when reloading plugin on these hooks (maybe UnHookEntityOutput)
+            //ex. HookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
+            HookEntityOutput("*", "*", (_, name, activator, caller, _, _) =>
+            {
+                if (!EW.HookEntityOutput_Handler(activator, caller, name)) return HookResult.Handled;
+                return HookResult.Continue;
+            });
+        }
 
 		public void UnRegEvents()
 		{
@@ -85,12 +59,6 @@ namespace EntWatchSharp
 			DeregisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
 			DeregisterEventHandler<EventPlayerDisconnect>(OnEventPlayerDisconnect);
 			DeregisterEventHandler<EventPlayerHurt>(OnEventPlayerHurt);
-
-			/*UnhookEntityOutput("func_button", "OnPressed", OnButtonPressed, HookMode.Pre);
-			UnhookEntityOutput("func_rot_button", "OnPressed", OnButtonPressed, HookMode.Pre);
-			UnhookEntityOutput("func_door", "OnOpen", OnButtonPressed, HookMode.Pre);
-			UnhookEntityOutput("func_door_rotating", "OnOpen", OnButtonPressed, HookMode.Pre);
-			UnhookEntityOutput("func_physbox", "OnPlayerUse", OnButtonPressed, HookMode.Pre);*/
 		}
 
 		private void OnPrecacheResources(ResourceManifest manifest)
@@ -101,19 +69,21 @@ namespace EntWatchSharp
 		private void OnMapStart_Listener(string sMapName)
 		{
 			EW.CleanData();
-			EW.LoadScheme();
+            EW.ReloadHookOutputs();
+            EW.LoadScheme();
 			EW.LoadConfig();
-			if (EW.g_Timer != null)
-			{
-				EW.g_Timer.Kill();
-				EW.g_Timer = null;
-			}
-			EW.g_Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerUpdate, TimerFlags.REPEAT);
+            EW.g_Timer?.Kill();
+            EW.g_Timer = null;
+            EW.g_Timer = new CounterStrikeSharp.API.Modules.Timers.Timer(1.0f, TimerUpdate, TimerFlags.REPEAT);
 			Task.Run(() =>
 			{
 				LogManager.SystemAction("Info.ChangeMap", sMapName);
 			});
-		}
+            Server.NextFrame(() =>
+            {
+                EW.GetorCreateHudLayout();
+            });
+        }
 
 		private void TimerUpdate()
 		{
@@ -159,13 +129,11 @@ namespace EntWatchSharp
 
         private void OnMapEnd_Listener()
 		{
-			EW.CleanData();
-			if (EW.g_Timer != null)
-			{
-				EW.g_Timer.Kill();
-				EW.g_Timer = null;
-			}
-			foreach(var offlineplayer in EW.g_OfflinePlayer.ToList())
+            EW.RemoveHudLayout();
+            EW.CleanData();
+            EW.g_Timer?.Kill();
+            EW.g_Timer = null;
+            foreach (var offlineplayer in EW.g_OfflinePlayer.ToList())
 			{
                 offlineplayer.UserID = -1;
             }
@@ -182,42 +150,28 @@ namespace EntWatchSharp
 					EW.WeaponIsItem(entity);
 				});
 			}
-			else if (string.Equals(entity.DesignerName, "func_button") || string.Equals(entity.DesignerName, "func_rot_button") ||
-				string.Equals(entity.DesignerName, "func_physbox") || string.Equals(entity.DesignerName, "func_door") || string.Equals(entity.DesignerName, "func_door_rotating"))
-			{
+			else if (EW.HookOutput_CheckTrackedClasses(entity.DesignerName))
+            {
 				Server.NextWorldUpdate(() =>
 				{
-					var weapon = EW.EntityParentRecursive(entity);
-					if (weapon != null && weapon.IsValid)
+					if (EW.EntityParentRecursive(entity) is { IsValid:true } weapon && new CBaseEntity(entity.Handle) is { IsValid:true } baseentity)
 					{
-						string sButtonID = "";
-						if (string.Equals(entity.DesignerName, "func_button") || string.Equals(entity.DesignerName, "func_rot_button"))
-							sButtonID = new CBaseButton(entity.Handle).UniqueHammerID;
-						else if(string.Equals(entity.DesignerName, "func_physbox"))
-						{
-							sButtonID = new CPhysBox(entity.Handle).UniqueHammerID;
-						}
-						else 
-						{
-							var cDoor = new CBasePropDoor(entity.Handle);
-							if ((cDoor.Spawnflags & 256) != 1) return;
-							sButtonID = cDoor.UniqueHammerID;
-						}
+                        if (baseentity.DesignerName.StartsWith("func_door") && ((baseentity.Spawnflags & 256) != 1)) return;
 						foreach (Item ItemTest in EW.g_ItemList.ToList())
 						{
 							if (weapon.Index == ItemTest.WeaponHandle.Index)
 							{
 								foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 								{
-									if (string.Equals(AbilityTest.ButtonID, sButtonID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
+									if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
 									{
 										AbilityTest.Entity = entity;
-										AbilityTest.ButtonID = sButtonID;
+										AbilityTest.ButtonID = baseentity.UniqueHammerID;
 										AbilityTest.ButtonClass = entity.DesignerName;
 										return;
 									}
 								}
-								Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, sButtonID, entity);
+								Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
 								ItemTest.AbilityList.Add(abilitytest);
 							}
 						}
@@ -245,8 +199,7 @@ namespace EntWatchSharp
 										if (iIndexWeapon == -1) continue;
 										int iIndexMathCounter = cMathCounter.Entity.Name.LastIndexOf('_');
 										if (iIndexMathCounter == -1) return; //Another math_counter or bad EW config
-										string sFix = cMathCounter.Entity.Name[iIndexMathCounter..];
-										if (!string.Equals(sFix, ItemTest.WeaponHandle.Entity.Name[iIndexWeapon..])) continue;
+										if (!string.Equals(cMathCounter.Entity.Name[iIndexMathCounter..], ItemTest.WeaponHandle.Entity.Name[iIndexWeapon..])) continue;
 									}
 									AbilityTest.MathCounter = cMathCounter;
 									return;
@@ -275,9 +228,8 @@ namespace EntWatchSharp
 					}
 				});
 			}
-			else if (string.Equals(entity.DesignerName, "func_button") || string.Equals(entity.DesignerName, "func_rot_button") ||
-				string.Equals(entity.DesignerName, "func_physbox") || string.Equals(entity.DesignerName, "func_door") || string.Equals(entity.DesignerName, "func_door_rotating"))
-			{
+			else if (EW.HookOutput_CheckTrackedClasses(entity.DesignerName))
+            {
 				Server.NextWorldUpdate(() =>
 				{
 					foreach (Item ItemTest in EW.g_ItemList.ToList())
@@ -618,29 +570,31 @@ namespace EntWatchSharp
 		//[EntityOutputHook("func_door", "OnOpen")]
 		//[EntityOutputHook("func_door_rotating", "OnOpen")]
 		//public HookResult OnButtonPressed(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
-		private static bool OnButtonPressed(CEntityInstance activator, CEntityInstance caller)
+		public static bool OnButtonPressed(CEntityInstance activator, CEntityInstance entity)
 		{
 			if (!EW.g_CfgLoaded) return true;
 			try
 			{
-				if (activator == null || !activator.IsValid || caller == null || !caller.IsValid) return true;
-
-				EW.UpdateTime();
 				foreach (Item ItemTest in EW.g_ItemList.ToList())
 				{
 					foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 					{
-						if (AbilityTest.Entity != null && AbilityTest.Entity.IsValid && caller == AbilityTest.Entity)
+						if (AbilityTest.Entity is { IsValid:true } button && entity == button)
 						{
-							if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == activator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
+                            if (!ItemTest.CheckDelay() || !AbilityTest.Ready()) return false;
+                            if (activator is { IsValid: true } act && //activator valid
+                                !(ItemTest.Owner is { IsValid: true } owner && owner.Pawn.Index == act.Index) && //Doesn't owned
+                                (entity.DesignerName is "func_button" or "func_rot_button" or "func_physbox" || entity.DesignerName.StartsWith("func_door"))) //Only buttons
+                                return false;
+
+                            if (activator is { IsValid: true }) AbilityTest.SetFilter(activator);
+                            AbilityTest.Used();
+                            if (ItemTest.Owner is { IsValid: true })
 							{
-								AbilityTest.SetFilter(activator);
-								AbilityTest.Used();
-								UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
-								EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
-								return true;
-							}
-							else return false;
+                                UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
+                                EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
+                                return true;
+                            }
 						}
 					}
 				}
@@ -658,7 +612,6 @@ namespace EntWatchSharp
             if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller)) return HookResult.Continue;
             var sValue = cValue.FieldType == fieldtype_t.FIELD_CSTRING ? NativeAPI.GetStringFromSymbolLarge(cValue.Handle) : "";
 
-            EW.UpdateTime();
             foreach (Item ItemTest in EW.g_ItemList.ToList())
             {
                 foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
@@ -667,7 +620,7 @@ namespace EntWatchSharp
                     {
                         if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], sValue.ToLower()))
                         {
-                            if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == cActivator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
+                            if (ItemTest.CheckDelay() && AbilityTest.Ready() && ItemTest.Owner is { IsValid: true } owner && owner.Pawn.Index == cActivator.Index)
                             {
                                 AbilityTest.SetFilter(cActivator);
                                 AbilityTest.Used();
@@ -692,25 +645,10 @@ namespace EntWatchSharp
 			if (string.IsNullOrEmpty(sInput)) return HookResult.Continue;
 			var cActivator = hook.GetParam<CEntityInstance>(2);
 			var cCaller = hook.GetParam<CEntityInstance>(3);
-			//Fix func_physbox:OnPlayerUse begin
-			/*if (cActivator == null || !cActivator.IsValid) return HookResult.Continue;
-			if (string.Equals(cEntity?.DesignerName, "func_physbox"))
-			{
-				Console.WriteLine($"Input: cEntity - {cEntity.DesignerName} sInput - {sInput}");
-				if(string.Equals(sInput.ToLower(), "use"))
-				{
-					if (!OnButtonPressed(cActivator, cEntity.EntityInstance)) return HookResult.Handled;
-					return HookResult.Continue;
-				}
-				return HookResult.Continue;
-			}
-			if (!EW.IsGameUI(cCaller) || !string.Equals(sInput.ToLower(), "invalue")) return HookResult.Continue;*/
-			//Fix func_physbox:OnPlayerUse end
 			if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || !string.Equals(sInput.ToLower(), "invalue")) return HookResult.Continue;
 			var cValue = hook.GetParam<CVariant>(4);
 			var sValue = cValue.FieldType == fieldtype_t.FIELD_CSTRING ? NativeAPI.GetStringFromSymbolLarge(cValue.Handle) : "";
 
-			EW.UpdateTime();
 			foreach (Item ItemTest in EW.g_ItemList.ToList())
 			{
 				foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
@@ -719,7 +657,7 @@ namespace EntWatchSharp
 					{
 						if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], sValue.ToLower()))
 						{
-							if (ItemTest.Owner != null && ItemTest.Owner.IsValid && ItemTest.Owner.Pawn.IsValid && ItemTest.Owner.Pawn.Index == cActivator.Index && ItemTest.CheckDelay() && AbilityTest.Ready())
+                            if (ItemTest.CheckDelay() && AbilityTest.Ready() && ItemTest.Owner is { IsValid: true } owner && owner.Pawn.Index == cActivator.Index)
 							{
 								AbilityTest.SetFilter(cActivator);
 								AbilityTest.Used();

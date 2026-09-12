@@ -23,22 +23,20 @@ Notify players about entity interactions
 19. Applying filters for the activator
 20. Items spawn
 21. API for interaction with other plugins
-22. Usage GameHUD API
-23. Display in clantag
-24. Allows you to select the player display format
+22. Display in clantag
+23. Allows you to select the player display format
 
 ## Required packages:
 1. [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/)
 2. [CS2-AnyBaseLibNext](https://github.com/darkerz7/CS2-AnyBaseLibNext)
 3. Metamod HammerID Fix or CS2Fixes or CSSharp-Fixes
 4. [CS2-PlayerSettingsNext](https://github.com/darkerz7/CS2-PlayerSettingsNext)
-5. [CS2-GameHUD](https://github.com/darkerz7/CS2-GameHUD)
-6. Recomended [CS2-EntityFix](https://github.com/darkerz7/CS2-EntityFix)
-7. Recomended [CS2-CustomIO](https://github.com/darkerz7/CS2-CustomIO)
-8. Recomended [CSSharp-Fixes](https://github.com/darkerz7/CSSharp-Fixes)
+5. Recomended [CS2-EntityFix](https://github.com/darkerz7/CS2-EntityFix)
+6. Recomended [CS2-CustomIO](https://github.com/darkerz7/CS2-CustomIO)
+7. Recomended [CSSharp-Fixes](https://github.com/darkerz7/CSSharp-Fixes)
 
 ## Installation:
-1. Install `HammerIDFix`, `CS2-AnyBaseLibNext`, `CS2-PlayerSettingsNext`, `CS2-GameHUD`, `CS2-CustomIO`, `CS2-EntityFix` and `CSSharp-Fixes`
+1. Install `HammerIDFix`, `CS2-AnyBaseLibNext`, `CS2-PlayerSettingsNext`, `CS2-CustomIO`, `CS2-EntityFix` and `CSSharp-Fixes`
 2. Compile or copy EntWatchSharp to `counterstrikesharp/plugins/EntWatchSharp` folger
 3. Copy and configure the configuration file `db_config.json` and `log_config.json` to `counterstrikesharp/plugins/EntWatchSharp` folger
 4. Copy `lang` folger to `counterstrikesharp/plugins/EntWatchSharp/lang` folger
@@ -46,7 +44,8 @@ Notify players about entity interactions
 6. Copy and configure `mapsconfig` and `schemes` to `addons/entwatch` folger
 7. Compile or copy EntWatchSharpAPI to `counterstrikesharp/shared/EntWatchSharpAPI` folger
 8. Add CVARs to server.cfg
-9. Restart server
+9. Add the custom HUD files from the `workshop_folder` folder to your addon
+10. Restart server
 
 ## Example MapConfig
 ```
@@ -81,7 +80,8 @@ Notify players about entity interactions
 				"MathNameFix": false,		//Bool, Fix the name of the math_counter (Work with flag: Preserve entity names (Don't do name fixup) ->point_template/env_entity_maker)
 				"MathFindSpawned": false,	//Bool, Search for math_counter on map after weapon spawn(e.x. The math_counter is not included in the point_template and spawns at the beginning of the round, and the weapon spawns much later than 2 seconds)
 				"MathDontShowMax": false,	//Bool, Do not show maximum value
-				"MathZero": false		//Bool, Allows pressing the button when the math_counter value is zero
+				"MathZero": false,		//Bool, Allows pressing the button when the math_counter value is zero
+				"Event": ""			//String, An event after activation of which the button will be considered pressed. ex. OnPressed, OnStartTouch and etc. Need Correct ButtonClass. For standard actions, leave blank.
 			},
 			{
 				"Name": "",
@@ -98,7 +98,8 @@ Notify players about entity interactions
 				"MathNameFix": false,
 				"MathFindSpawned": false,
 				"MathDontShowMax": false,
-				"MathZero": false
+				"MathZero": false,
+				"Event": ""
 			}
 		]
 	},
@@ -151,17 +152,16 @@ Cvar | Parameters | Description
 `ewc_unbanreason` | `<string>` | Default unban reason. (Default Giving another chance)
 `ewc_keep_expired_ban` | `<false-true>` | Enable/Disable keep expired bans. (Default true)
 `ewc_offline_clear_time` | `<1-240>` | Time during which data is stored. (Default 30)
-`ewc_clantag` | `<false-true>` | Enable/Disable to display in the ClanTag. (Default true)
-`ewc_clantag_info` | `<false-true>` | Enable/Disable to display cooldown and other in the ClanTag. (Default true)
+`ewc_clantag` | `<false-true>` | Enable/Disable to display in the ClanTag. (Default false)
+`ewc_clantag_info` | `<false-true>` | Enable/Disable to display cooldown and other in the ClanTag. (Default false)
 
 ## Commands
 Client Command | Description
 --- | ---
-`ehud`<br>`css_hud` | Allows the player to switch the HUD (0 - Disabled, 1 - Center, 2 - Alert, 3 - WorldText)
-`ehud_pos`<br>`css_hudpos` | Allows the player to change the position of the HUD {X Y Z} (default: -8 2 7; min -200,0; max 200,0)
-`ehud_size`<br>`css_hudsize` | Allows the player to change the size of the HUD {size} (default: 54; min 16; max 128)
+`ehud`<br>`css_hud` | Allows the player to toggle the HUD (bool)
+`ehudcap`<br>`css_hudcap` | Allows the player to toggle mouse capture (bool)
+`ehud_size`<br>`css_hudsize` | Allows the player to change the size of the HUD {size} (default: 1; min 0; max 3)
 `ehud_refresh`<br>`css_hudrefresh` | Allows the player to change the time it takes to scroll through the list {sec} (default: 3; min 1; max 10)
-`ehud_sheet`<br>`css_hudsheet` | Allows the player to change the number of items on the sheet {count} (default: 5; min 1; max 15)
 `epf`<br>`css_epf` | Allows the player to change the player display format (0 - Only Nickname, 1 - Nickname and UserID, 2 - Nickname and SteamID, 3 - Nickname, UserID and SteamID)
 `eup`<br>`css_eup` | Allows the player to use UsePriority {bool}
 `ew_status`<br>`css_estatus` | Allows the player to view the restrictions {null/target}
@@ -237,4 +237,4 @@ after<br>
 
 ## Future plans
 1. Fixes Errors
-2. GameHUD Annoncer
+2. CustomHudLayout menu
