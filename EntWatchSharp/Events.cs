@@ -154,27 +154,51 @@ namespace EntWatchSharp
             {
 				Server.NextWorldUpdate(() =>
 				{
-					if (EW.EntityParentRecursive(entity) is { IsValid:true } weapon && new CBaseEntity(entity.Handle) is { IsValid:true } baseentity)
+					if (new CBaseEntity(entity.Handle) is { IsValid:true } baseentity)
 					{
                         if (baseentity.DesignerName.StartsWith("func_door") && ((baseentity.Spawnflags & 256) != 1)) return;
-						foreach (Item ItemTest in EW.g_ItemList.ToList())
+						if (EW.EntityParentRecursive(entity) is { IsValid: true } weapon) // Parented weapon
 						{
-							if (weapon.Index == ItemTest.WeaponHandle.Index)
+							foreach (Item ItemTest in EW.g_ItemList.ToList())
 							{
-								foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+								if (weapon.Index == ItemTest.WeaponHandle.Index)
 								{
-									if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
+									foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 									{
-										AbilityTest.Entity = entity;
-										AbilityTest.ButtonID = baseentity.UniqueHammerID;
-										AbilityTest.ButtonClass = entity.DesignerName;
-										return;
+										if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
+										{
+											AbilityTest.Entity = entity;
+											AbilityTest.ButtonID = baseentity.UniqueHammerID;
+											AbilityTest.ButtonClass = entity.DesignerName;
+											return;
+										}
 									}
+									Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
+									ItemTest.AbilityList.Add(abilitytest);
 								}
-								Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
-								ItemTest.AbilityList.Add(abilitytest);
 							}
 						}
+						else
+						{
+                            foreach (Item ItemTest in EW.g_ItemList.ToList())
+							{
+                                foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+								{
+                                    if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID))
+                                    {
+										if (AbilityTest.Entity is not { IsValid: true })
+										{
+											AbilityTest.Entity = entity;
+											AbilityTest.ButtonID = baseentity.UniqueHammerID;
+											AbilityTest.ButtonClass = entity.DesignerName;
+										}
+                                        return;
+                                    }
+                                }
+
+                            }
+
+                        }
 					}
 				});
 			} else if(string.Equals(entity.DesignerName, "math_counter"))
