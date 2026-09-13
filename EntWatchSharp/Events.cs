@@ -190,12 +190,7 @@ namespace EntWatchSharp
 								{
                                     if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID))
                                     {
-										if (AbilityTest.Entity is not { IsValid: true })
-										{
-											AbilityTest.Entity = entity;
-											AbilityTest.ButtonID = baseentity.UniqueHammerID;
-											AbilityTest.ButtonClass = entity.DesignerName;
-										}
+										if (AbilityTest.Entity is not { IsValid: true }) AbilityTest.Entity = entity;
                                         return;
                                     }
                                 }
