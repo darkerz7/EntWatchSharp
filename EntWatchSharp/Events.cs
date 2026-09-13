@@ -177,9 +177,9 @@ namespace EntWatchSharp
                                     {
 										Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
 										ItemTest.AbilityList.Add(abilitytest);
-										return;
 									}
-								}
+                                    return;
+                                }
 							}
 						}
 						else
