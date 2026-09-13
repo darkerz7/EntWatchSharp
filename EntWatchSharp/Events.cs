@@ -173,8 +173,12 @@ namespace EntWatchSharp
 											return;
 										}
 									}
-									Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
-									ItemTest.AbilityList.Add(abilitytest);
+									if (entity.DesignerName is "func_button" or "func_rot_button" or "func_physbox" || entity.DesignerName.StartsWith("func_door")) //Only the buttons create a new ability
+                                    {
+										Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
+										ItemTest.AbilityList.Add(abilitytest);
+										return;
+									}
 								}
 							}
 						}
