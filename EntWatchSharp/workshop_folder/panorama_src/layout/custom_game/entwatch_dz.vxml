@@ -3,7 +3,7 @@
 		<include src="s2r://panorama/styles/custom_game/entwatch_dz.vcss_c" />
 	</styles>
 	<Panel class="ew-root">
-		<Panel id="ew-panel" class="ew-hide panel-size-normal">
+		<Panel id="ew-panel" class="ew-hide panel-size-normal panel-valign-0">
 			<Button id="entwatch-btn-01" class="ew-btn">
 				<Panel class="ew-panel-item">
 					<Label id="entwatch-itemname-01" text="{s:entwatch-itemname-text-01}" class="ew-text ew-itemname" />

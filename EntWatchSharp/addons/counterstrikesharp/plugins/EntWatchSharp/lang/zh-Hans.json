@@ -40,6 +40,7 @@
   "Reply.Hud.Type": "HUD 现在是",
   "Reply.Hud.Capture": "电脑鼠标捕获",
   "Reply.Hud.Size": "HUD 尺寸: {0}{1}",
+  "Reply.Hud.PositionNum": "HUD 位置: {0}{1}",
   "Reply.Hud.Refresh": "每 {0}{1} {2}秒刷新 HUD",
   "Reply.PlayerInfo.NicknameOnly": "玩家显示格式：{0}仅限昵称",
   "Reply.PlayerInfo.UserID": "玩家显示格式：{0}昵称和用户 ID",

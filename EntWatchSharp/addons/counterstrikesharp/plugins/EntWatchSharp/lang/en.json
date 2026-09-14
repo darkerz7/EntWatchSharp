@@ -40,6 +40,7 @@
   "Reply.Hud.Type": "The HUD is now",
   "Reply.Hud.Capture": "Mouse capture",
   "Reply.Hud.Size": "Size HUD: {0}{1}",
+  "Reply.Hud.PositionNum": "Position HUD: {0}{1}",
   "Reply.Hud.Refresh": "Update HUD every {0}{1} {2}sec",
   "Reply.PlayerInfo.NicknameOnly": "Player display format: {0}Nickname only",
   "Reply.PlayerInfo.UserID": "Player display format: {0}Nickname and UserID",

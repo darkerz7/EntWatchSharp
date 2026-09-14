@@ -1,7 +1,6 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Extensions;
-using CounterStrikeSharp.API.Modules.Utils;
 using EntWatchSharp.Items;
 
 namespace EntWatchSharp.Modules
@@ -173,6 +172,7 @@ namespace EntWatchSharp.Modules
         readonly UHudItem[] UHudArray = new UHudItem[15];
         public int iRefresh = 3;
         public byte iSize = 1;
+        public byte iPosition = 0;
         int iCurrentNumListH = 0;
         int iCurrentNumListZM = 0;
         double fNextUpdateList = EW.fGameTime - 3;
@@ -188,6 +188,20 @@ namespace EntWatchSharp.Modules
                 bCaptureEnabled = bEnabled;
                 if (bEnabled) hud.SetInputCaptureEnabled(HudPlayer, true);
                 else hud.SetInputCaptureEnabled(HudPlayer, false);
+            }
+        }
+
+        public void ChangePosition(CCSPlayerController HudPlayer, byte _Position)
+        {
+            if (iPosition != _Position)
+            {
+                if (EW.GetorCreateHudLayout() is { } hud)
+                {
+                    hud.SetHasClassForPlayer(HudPlayer, "ew-panel", $"panel-valign-{iPosition}", false);
+                    hud.SetHasClassForPlayer(HudPlayer, "ew-panel", $"panel-valign-{_Position}", true);
+                }
+
+                iPosition = _Position;
             }
         }
 

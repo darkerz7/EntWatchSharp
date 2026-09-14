@@ -22,10 +22,20 @@ namespace EntWatchSharp
 			RemoveCommand("ew_showscheme", OnEWScheme);
 			RemoveCommand("css_eshowscheme", OnEWScheme);
 			RemoveCommand("ehud", OnEWEnableHud);
-			RemoveCommand("ehud_refresh", OnEWChangeHudRefresh);
-			RemoveCommand("css_epf", OnEWChangePlayerFormat);
+            RemoveCommand("css_hud", OnEWEnableHud);
+            RemoveCommand("ehudcap", OnEWEnableHudCap);
+            RemoveCommand("css_hudcap", OnEWEnableHudCap);
+            RemoveCommand("ehud_size", OnEWChangeHudSize);
+            RemoveCommand("css_hudsize", OnEWChangeHudSize);
+            RemoveCommand("ehud_pos", OnEWChangeHudPos);
+            RemoveCommand("css_hudpos", OnEWChangeHudPos);
+            RemoveCommand("ehud_refresh", OnEWChangeHudRefresh);
+            RemoveCommand("css_hudrefresh", OnEWChangeHudRefresh);
+            RemoveCommand("epf", OnEWChangePlayerFormat);
+            RemoveCommand("css_epf", OnEWChangePlayerFormat);
 			RemoveCommand("eup", OnEWChangeUsePriority);
-			RemoveCommand("ew_ban", OnEWBan);
+            RemoveCommand("css_eup", OnEWChangeUsePriority);
+            RemoveCommand("ew_ban", OnEWBan);
 			RemoveCommand("css_eban", OnEWBan);
 			RemoveCommand("ew_unban", OnEWUnBan);
 			RemoveCommand("css_eunban", OnEWUnBan);
@@ -208,7 +218,35 @@ namespace EntWatchSharp
 			catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 		}
 
-		[ConsoleCommand("ehud_refresh", "Allows the player to change the time it takes to scroll through the list")]
+        [ConsoleCommand("ehud_pos", "Allows the player to change the position of the HUD")]
+        [ConsoleCommand("css_hudpos", "Allows the player to change the position of the HUD")]
+        [CommandHelper(minArgs: 1, usage: "[position] (default: 0; min 0(middle); max 4(top)))", whoCanExecute: CommandUsage.CLIENT_ONLY)]
+#nullable enable
+        public void OnEWChangeHudPos(CCSPlayerController? player, CommandInfo command)
+#nullable disable
+        {
+            if (EW._PlayerSettingsAPI == null || player == null || !player.IsValid) return;
+            bool bConsole = command.CallingContext == CommandCallingContext.Console;
+            if (!EW.CheckDictionary(player))
+            {
+                UI.EWReplyInfo(player, "Info.Error", bConsole, "Player not found in dictionary");
+                return;
+            }
+            try
+            {
+                if (!byte.TryParse(command.GetArg(1), out byte number)) number = 0;
+                if (number >= 0 && number <= 4)
+                {
+                    EW.g_EWPlayer[player].HudPlayer.ChangePosition(player, number);
+                    EW._PlayerSettingsAPI.SetPlayerSettingsValue(player, "EW_HUD_PosNum", number.ToString());
+                    UI.EWReplyInfo(player, "Reply.Hud.PositionNum", bConsole, EW.g_Scheme.color_enabled, number);
+                }
+                else UI.EWReplyInfo(player, "Reply.NotValid", bConsole);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+        }
+
+        [ConsoleCommand("ehud_refresh", "Allows the player to change the time it takes to scroll through the list")]
 		[ConsoleCommand("css_hudrefresh", "Allows the player to change the time it takes to scroll through the list")]
 		[CommandHelper(minArgs: 1, usage: "[sec] (default: 3; min 1; max 10)", whoCanExecute: CommandUsage.CLIENT_ONLY)]
 #nullable enable

@@ -208,7 +208,8 @@ namespace EntWatchSharp
 				{
 					string sHUDShow = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Show", "1") : "1";
 					string sHUDSize = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_SizeType", "1") : "1";
-					string sHUDRefresh = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Refresh", "3") : "3";
+                    string sHUDPos = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_PosNum", "0") : "0";
+                    string sHUDRefresh = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_HUD_Refresh", "3") : "3";
 					string sPlayerInfoFormat = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_PInfo_Format", $"{Cvar.PlayerFormat}") : $"{Cvar.PlayerFormat}";
 
 					string sUsePriority = _PlayerSettingsAPI != null ? _PlayerSettingsAPI.GetPlayerSettingsValue(player, "EW_Use_Priority", "1") : "1";
@@ -219,6 +220,14 @@ namespace EntWatchSharp
 							if (!byte.TryParse(sHUDSize, out byte number)) number = 1;
 							g_EWPlayer[player].HudPlayer.iSize = number;
 						}
+                        if (!string.IsNullOrEmpty(sHUDPos))
+                        {
+                            if (!byte.TryParse(sHUDPos, out byte number)) number = 0;
+							Server.NextWorldUpdate(() =>
+							{
+								if (player.IsValid && CheckDictionary(player)) g_EWPlayer[player].HudPlayer.ChangePosition(player, number);
+                            });
+                        }
                         if (!string.IsNullOrEmpty(sHUDShow)) g_EWPlayer[player].HudPlayer.bShow = !string.Equals(sHUDShow, "0");
 						if (!string.IsNullOrEmpty(sHUDRefresh))
 						{

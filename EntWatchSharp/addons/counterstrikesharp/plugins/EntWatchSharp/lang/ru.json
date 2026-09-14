@@ -40,6 +40,7 @@
   "Reply.Hud.Type": "Информация в HUD",
   "Reply.Hud.Capture": "Захват мыши",
   "Reply.Hud.Size": "Размер HUD: {0}{1}",
+  "Reply.Hud.PositionNum": "Позиция HUD: {0}{1}",
   "Reply.Hud.Refresh": "HUD обновляется каждые {0}{1} {2}секунд",
   "Reply.PlayerInfo.NicknameOnly": "Формат отображения игрока: {0}Только ник",
   "Reply.PlayerInfo.UserID": "Формат отображения игрока: {0}Ник и UserID",
