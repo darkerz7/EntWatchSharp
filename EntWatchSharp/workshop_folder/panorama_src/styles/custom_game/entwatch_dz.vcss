@@ -27,10 +27,10 @@
 	flow-children: down;
 }
 
-.panel-size-small{ width: 15%; }
-.panel-size-normal{ width: 17%; }
-.panel-size-big{ width: 20%; }
-.panel-size-large{ width: 22%; }
+.panel-size-small{ width: 12%; }
+.panel-size-normal{ width: 14%; }
+.panel-size-big{ width: 16%; }
+.panel-size-large{ width: 18%; }
 
 .panel-valign-0{margin-top: 50%;}
 .panel-valign-1{margin-top: 40%;}
@@ -68,63 +68,47 @@
 }
 
 .ew-btn.null{ height: 0px; }
-.ew-btn.separator{ height: 16px; }
 
-.ew-panel-item
+.ew-item
 {
 	width: 100%;
-	flow-children: right;
-}
-
-.ew-itemname
-{
-	width: 45%;
 	text-align: left;
 	vertical-align: center;
 }
 
-.ew-cd
+.ew-spr
 {
-	width: 20%;
-	text-align: center;
-	vertical-align: center;
+	align: left bottom;
+	width: 100%;
+	height: 0px;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #3474ebcc ), to( #6534ebcc ) );
 }
 
-.ew-panel-player
-{
-	width: 100%;
-	flow-children: down;
-}
+.ew-spr.show{ height: 3px; }
 
 .ew-text
 {
 	font-family: Stratum2, 'Arial Unicode MS';
-	font-weight: black;
+	font-stretch: semi-condensed;
+	font-weight: bold;
 	text-shadow: 1px 1px 2px 2 rgba(0, 0, 0, 0.65);
 }
 
-.ew-text.size-smallest{ font-size: 9px; }
-.ew-text.size-small{ font-size: 10px; }
-.ew-text.size-normal{ font-size: 12px; }
-.ew-text.size-big{ font-size: 14px; }
-.ew-text.size-large{ font-size: 16px; }
+.ew-text.size-smallest{ font-size: 12px; }
+.ew-text.size-small{ font-size: 14px; }
+.ew-text.size-normal{ font-size: 16px; }
+.ew-text.size-big{ font-size: 18px; }
+.ew-text.size-large{ font-size: 20px; }
 .ew-text.color-white{ color: #ffffff; }
-.ew-text.color-darkred{ color: #9c0000; }
-.ew-text.color-purple{ color: #b642ff; }
-.ew-text.color-team{ color: #36a8ff; }
 .ew-text.color-green{ color: #00ff00; }
 .ew-text.color-lightgreen{ color: #90ee90; }
-.ew-text.color-lime{ color: #bfff00; }
 .ew-text.color-red{ color: #ff0000; }
-.ew-text.color-grey{ color: #a1a1a1; }
 .ew-text.color-yellow{ color: #ffff00; }
 .ew-text.color-orange{ color: #faaf25; }
 .ew-text.color-silver{ color: #c0c0c0; }
 .ew-text.color-lightblue{ color: #87c1ff; }
 .ew-text.color-blue{ color: #3743b8; }
-.ew-text.color-bluegrey{ color: #6a89a7; }
 .ew-text.color-magenta{ color: #ff63c5; }
-.ew-text.color-lightred{ color: #ff474c; }
 
 .ew-pb
 {

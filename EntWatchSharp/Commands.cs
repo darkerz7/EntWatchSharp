@@ -431,7 +431,7 @@ namespace EntWatchSharp
 			if (string.IsNullOrEmpty(reason)) reason = Cvar.BanReason;
 
 			EbanPlayer ebanPlayer = target.Online ? EW.g_EWPlayer[target.Player].BannedPlayer : new EbanPlayer();
-			if (ebanPlayer.SetBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.Name, target.SteamID, time, reason))
+			if (ebanPlayer.SetBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID) : "SERVER", target.Name, target.SteamID, time, reason))
 				UI.EWSysInfo("Reply.Eban.Ban.Success", 6);
 			else
 			{
@@ -480,7 +480,7 @@ namespace EntWatchSharp
 				target.iTimeStamp_Issued = EW.g_EWPlayer[targetController].BannedPlayer.iTimeStamp_Issued;
 				target.sReason = EW.g_EWPlayer[targetController].BannedPlayer.sReason;
 				target.sClientName = targetController.PlayerName;
-				target.sClientSteamID = EW.ConvertSteamID64ToSteamID(targetController.SteamID.ToString());
+				target.sClientSteamID = EW.ConvertSteamID64ToSteamID(targetController.SteamID);
 			}
 
 			string reason = command.GetArg(2);
@@ -535,13 +535,13 @@ namespace EntWatchSharp
 				return;
 			}
 
-			if (admin != null && !string.Equals(target.sAdminSteamID, EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString())) && !AdminManager.PlayerHasPermissions(admin, "@css/ew_unban_other"))
+			if (admin != null && !string.Equals(target.sAdminSteamID, EW.ConvertSteamID64ToSteamID(admin.SteamID)) && !AdminManager.PlayerHasPermissions(admin, "@css/ew_unban_other"))
 			{
 				UI.EWReplyInfo(admin, "Reply.Eban.Access.Other", bConsole);
 				return;
 			}
 
-			if (target.UnBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID.ToString()) : "SERVER", target.sClientSteamID, reason))
+			if (target.UnBan(admin != null ? admin.PlayerName : "Console", admin != null ? EW.ConvertSteamID64ToSteamID(admin.SteamID) : "SERVER", target.sClientSteamID, reason))
 			{
 				if (player != null) EW.g_EWPlayer[player].BannedPlayer.bBanned = false;
 				UI.EWSysInfo("Reply.Eban.UnBan.Success", 6);
@@ -777,7 +777,7 @@ namespace EntWatchSharp
 				return;
 			}
 
-            (List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(1), true, true, true);
+            (List<CCSPlayerController> players, string _, ProcessTargetResultFlag _) = EW.FindTargets(admin, command.GetArg(2), true, true, true);
 			if (players.Count == 0)
 			{
                 UI.EWReplyInfo(admin, "Reply.No_matching_client", bConsole);

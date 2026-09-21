@@ -26,7 +26,7 @@ namespace EntWatchSharp.Modules.Eban
 			OfflineBan offlineplayer = null;
 			foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 			{
-				if (string.Equals(OfflineTest.SteamID, EW.ConvertSteamID64ToSteamID(UserID.SteamID.ToString())))
+				if (string.Equals(OfflineTest.SteamID, EW.ConvertSteamID64ToSteamID(UserID.SteamID)))
 				{
 					offlineplayer = OfflineTest;
 					break;
@@ -39,7 +39,7 @@ namespace EntWatchSharp.Modules.Eban
 			}
 			offlineplayer.UserID = UserID.UserId ?? -1;
 			offlineplayer.Name = UserID.PlayerName;
-			offlineplayer.SteamID = EW.ConvertSteamID64ToSteamID(UserID.SteamID.ToString());
+			offlineplayer.SteamID = EW.ConvertSteamID64ToSteamID(UserID.SteamID);
 			offlineplayer.Immutity = AdminManager.GetPlayerImmunity(UserID);
 			return offlineplayer;
 		}

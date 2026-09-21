@@ -235,7 +235,7 @@ namespace EntWatchSharp.Modules.Eban
 				Task.Run(() =>
 				{
 					db.AnyDB.QueryAsync("SELECT admin_name, admin_steamid, duration, timestamp_issued, reason FROM EntWatch_Current_Eban " +
-											"WHERE client_steamid={ARG} and server={ARG};", new List<string>([EW.ConvertSteamID64ToSteamID(pl.SteamID.ToString()), sServer]), (res) =>
+											"WHERE client_steamid={ARG} and server={ARG};", new List<string>([EW.ConvertSteamID64ToSteamID(pl.SteamID), sServer]), (res) =>
 											{
 												getbanfunc(pl, res, bShow);
 											});

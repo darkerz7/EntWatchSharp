@@ -5,183 +5,75 @@
 	<Panel class="ew-root">
 		<Panel id="ew-panel" class="ew-hide panel-size-normal panel-valign-0">
 			<Button id="entwatch-btn-01" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-01" text="{s:entwatch-itemname-text-01}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-01" text="{s:entwatch-cd-text-01}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-01" text="{s:entwatch-nickname-text-01}" class="ew-text" />
-						<Label id="entwatch-steam-01" text="{s:entwatch-steam-text-01}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-01" text="{s:entwatch-item-text-01}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-01" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-02" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-02" text="{s:entwatch-itemname-text-02}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-02" text="{s:entwatch-cd-text-02}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-02" text="{s:entwatch-nickname-text-02}" class="ew-text" />
-						<Label id="entwatch-steam-02" text="{s:entwatch-steam-text-02}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-02" text="{s:entwatch-item-text-02}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-02" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-03" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-03" text="{s:entwatch-itemname-text-03}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-03" text="{s:entwatch-cd-text-03}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-03" text="{s:entwatch-nickname-text-03}" class="ew-text" />
-						<Label id="entwatch-steam-03" text="{s:entwatch-steam-text-03}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-03" text="{s:entwatch-item-text-03}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-03" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-04" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-04" text="{s:entwatch-itemname-text-04}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-04" text="{s:entwatch-cd-text-04}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-04" text="{s:entwatch-nickname-text-04}" class="ew-text" />
-						<Label id="entwatch-steam-04" text="{s:entwatch-steam-text-04}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-04" text="{s:entwatch-item-text-04}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-04" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-05" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-05" text="{s:entwatch-itemname-text-05}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-05" text="{s:entwatch-cd-text-05}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-05" text="{s:entwatch-nickname-text-05}" class="ew-text" />
-						<Label id="entwatch-steam-05" text="{s:entwatch-steam-text-05}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-05" text="{s:entwatch-item-text-05}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-05" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-06" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-06" text="{s:entwatch-itemname-text-06}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-06" text="{s:entwatch-cd-text-06}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-06" text="{s:entwatch-nickname-text-06}" class="ew-text" />
-						<Label id="entwatch-steam-06" text="{s:entwatch-steam-text-06}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-06" text="{s:entwatch-item-text-06}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-06" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-07" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-07" text="{s:entwatch-itemname-text-07}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-07" text="{s:entwatch-cd-text-07}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-07" text="{s:entwatch-nickname-text-07}" class="ew-text" />
-						<Label id="entwatch-steam-07" text="{s:entwatch-steam-text-07}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-07" text="{s:entwatch-item-text-07}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-07" class="ew-pb" />
 			</Button>
 			
+			<Panel id="entwatch-separator" class="ew-spr" />
+			
 			<Button id="entwatch-btn-08" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-08" text="{s:entwatch-itemname-text-08}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-08" text="{s:entwatch-cd-text-08}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-08" text="{s:entwatch-nickname-text-08}" class="ew-text" />
-						<Label id="entwatch-steam-08" text="{s:entwatch-steam-text-08}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-08" text="{s:entwatch-item-text-08}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-08" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-09" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-09" text="{s:entwatch-itemname-text-09}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-09" text="{s:entwatch-cd-text-09}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-09" text="{s:entwatch-nickname-text-09}" class="ew-text" />
-						<Label id="entwatch-steam-09" text="{s:entwatch-steam-text-09}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-09" text="{s:entwatch-item-text-09}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-09" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-10" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-10" text="{s:entwatch-itemname-text-10}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-10" text="{s:entwatch-cd-text-10}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-10" text="{s:entwatch-nickname-text-10}" class="ew-text" />
-						<Label id="entwatch-steam-10" text="{s:entwatch-steam-text-10}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-10" text="{s:entwatch-item-text-10}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-10" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-11" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-11" text="{s:entwatch-itemname-text-11}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-11" text="{s:entwatch-cd-text-11}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-11" text="{s:entwatch-nickname-text-11}" class="ew-text" />
-						<Label id="entwatch-steam-11" text="{s:entwatch-steam-text-11}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-11" text="{s:entwatch-item-text-11}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-11" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-12" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-12" text="{s:entwatch-itemname-text-12}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-12" text="{s:entwatch-cd-text-12}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-12" text="{s:entwatch-nickname-text-12}" class="ew-text" />
-						<Label id="entwatch-steam-12" text="{s:entwatch-steam-text-12}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-12" text="{s:entwatch-item-text-12}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-12" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-13" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-13" text="{s:entwatch-itemname-text-13}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-13" text="{s:entwatch-cd-text-13}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-13" text="{s:entwatch-nickname-text-13}" class="ew-text" />
-						<Label id="entwatch-steam-13" text="{s:entwatch-steam-text-13}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-13" text="{s:entwatch-item-text-13}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-13" class="ew-pb" />
 			</Button>
 			
 			<Button id="entwatch-btn-14" class="ew-btn ew-btn-even">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-14" text="{s:entwatch-itemname-text-14}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-14" text="{s:entwatch-cd-text-14}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-14" text="{s:entwatch-nickname-text-14}" class="ew-text" />
-						<Label id="entwatch-steam-14" text="{s:entwatch-steam-text-14}" class="ew-text" />
-					</Panel>
-				</Panel>
+				<Label id="entwatch-item-14" text="{s:entwatch-item-text-14}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-14" class="ew-pb" />
-			</Button>
-			
-			<Button id="entwatch-btn-15" class="ew-btn">
-				<Panel class="ew-panel-item">
-					<Label id="entwatch-itemname-15" text="{s:entwatch-itemname-text-15}" class="ew-text ew-itemname" />
-					<Label id="entwatch-cd-15" text="{s:entwatch-cd-text-15}" class="ew-text ew-cd" />
-					<Panel class="ew-panel-player">
-						<Label id="entwatch-nickname-15" text="{s:entwatch-nickname-text-15}" class="ew-text" />
-						<Label id="entwatch-steam-15" text="{s:entwatch-steam-text-15}" class="ew-text" />
-					</Panel>
-				</Panel>
-				<Panel id="entwatch-pb-15" class="ew-pb" />
 			</Button>
 		</Panel>
 	</Panel>

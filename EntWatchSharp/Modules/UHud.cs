@@ -8,81 +8,38 @@ namespace EntWatchSharp.Modules
     class UHudItem
     {
         bool bNull = false;
-        bool bSeparator = false;
-        string sItemNameText = "";
+        string sItemText = "";
         string sItemColorClass = "";
         byte iTextSize = 99; //small - 0, normal - 1, big - 2, large - 3
-        string sCooldownText = "";
-        string sCooldownColorClass = "";
-        string sNicknameText = "";
-        string sNicknameColorClass = "";
-        string sSteamIDText = "";
-        string sSteamIDColorClass = "";
+        string sProgressColorClass = "";
         byte iProgressValue = 0;
 
-        readonly string __Cache_ItemName;
-        readonly string __Cache_Cooldown;
-        readonly string __Cache_Nickname;
-        readonly string __Cache_Steam;
+        readonly string __Cache_Item;
         readonly string __Cache_ProgressBar;
         readonly string __Cache_Button;
-        readonly string __Cache_ItemName_Text;
-        readonly string __Cache_Cooldown_Text;
-        readonly string __Cache_Nickname_Text;
-        readonly string __Cache_Steam_Text;
+        readonly string __Cache_Item_Text;
 
         public UHudItem(byte iNum)
         {
             string sNum = iNum.ToString("D2");
-            __Cache_ItemName = $"entwatch-itemname-{sNum}";
-            __Cache_Cooldown = $"entwatch-cd-{sNum}";
-            __Cache_Nickname = $"entwatch-nickname-{sNum}";
-            __Cache_Steam = $"entwatch-steam-{sNum}";
+            __Cache_Item = $"entwatch-item-{sNum}";
             __Cache_ProgressBar = $"entwatch-pb-{sNum}";
             __Cache_Button = $"entwatch-btn-{sNum}";
-            __Cache_ItemName_Text = $"entwatch-itemname-text-{sNum}";
-            __Cache_Cooldown_Text = $"entwatch-cd-text-{sNum}";
-            __Cache_Nickname_Text = $"entwatch-nickname-text-{sNum}";
-            __Cache_Steam_Text = $"entwatch-steam-text-{sNum}";
-        }
-
-        public void SetButtonSeparator(CCSCustomHudLayout eHud, CCSPlayerController HudPlayer)
-        {
-            if (bNull)
-            {
-                eHud.SetHasClassForPlayer(HudPlayer, __Cache_Button, "null", false);
-                bNull = false;
-            }
-            if (!bSeparator)
-            {
-                eHud.SetHasClassForPlayer(HudPlayer, __Cache_Button, "separator", true);
-                ChangeValue(eHud, HudPlayer, "", sItemColorClass, iTextSize, "", sCooldownColorClass, "", sNicknameColorClass, "", sSteamIDColorClass, 0);
-                bSeparator = true;
-            }
+            __Cache_Item_Text = $"entwatch-item-text-{sNum}";
         }
 
         public void SetButtonNull(CCSCustomHudLayout eHud, CCSPlayerController HudPlayer)
         {
-            if (bSeparator)
-            {
-                eHud.SetHasClassForPlayer(HudPlayer, __Cache_Button, "separator", false);
-                bSeparator = false;
-            }
             if (!bNull)
             {
                 eHud.SetHasClassForPlayer(HudPlayer, __Cache_Button, "null", true);
-                ChangeValue(eHud, HudPlayer, "", sItemColorClass, iTextSize, "", sCooldownColorClass, "", sNicknameColorClass, "", sSteamIDColorClass, 0);
+                ChangeValue(eHud, HudPlayer, "", sItemColorClass, iTextSize, 0, "");
                 bNull = true;
             }
         }
 
         public void SetButtonItem(CCSCustomHudLayout eHud, CCSPlayerController HudPlayer)
         {
-            if (bSeparator)
-            {
-                eHud.SetHasClassForPlayer(HudPlayer, __Cache_Button, "separator", false);
-                bSeparator = false;
-            }
             if (bNull)
             {
                 eHud.SetHasClassForPlayer(HudPlayer, __Cache_Button, "null", false);
@@ -90,27 +47,12 @@ namespace EntWatchSharp.Modules
             }
         }
 
-        public void ChangeValue(CCSCustomHudLayout eHud, CCSPlayerController HudPlayer, string _ItemNameText, string _ItemColorClass, byte _TextSize, string _CooldownText, string _CooldownColorClass, string _NicknameText, string _NicknameColorClass, string _SteamIDText, string _SteamIDColorClass, byte _ProgressValue)
+        public void ChangeValue(CCSCustomHudLayout eHud, CCSPlayerController HudPlayer, string _ItemText, string _ItemColorClass, byte _TextSize, byte _ProgressValue, string _ProgressColorClass)
         {
-            if (!string.Equals(sItemNameText, _ItemNameText, StringComparison.Ordinal))
+            if (!string.Equals(sItemText, _ItemText, StringComparison.Ordinal))
             {
-                eHud.SetDialogVariableStringForPlayer(HudPlayer, __Cache_ItemName, __Cache_ItemName_Text, _ItemNameText);
-                sItemNameText = _ItemNameText;
-            }
-            if (!string.Equals(sCooldownText, _CooldownText, StringComparison.Ordinal))
-            {
-                eHud.SetDialogVariableStringForPlayer(HudPlayer, __Cache_Cooldown, __Cache_Cooldown_Text, _CooldownText);
-                sCooldownText = _CooldownText;
-            }
-            if (!string.Equals(sNicknameText, _NicknameText, StringComparison.Ordinal))
-            {
-                eHud.SetDialogVariableStringForPlayer(HudPlayer, __Cache_Nickname, __Cache_Nickname_Text, _NicknameText);
-                sNicknameText = _NicknameText;
-            }
-            if (!string.Equals(sSteamIDText, _SteamIDText, StringComparison.Ordinal))
-            {
-                eHud.SetDialogVariableStringForPlayer(HudPlayer, __Cache_Steam, __Cache_Steam_Text, _SteamIDText);
-                sSteamIDText = _SteamIDText;
+                eHud.SetDialogVariableStringForPlayer(HudPlayer, __Cache_Item, __Cache_Item_Text, _ItemText);
+                sItemText = _ItemText;
             }
 
             bool UpdateColorClasses(string sOldClass, string sNewClass, string sCacheName)
@@ -124,29 +66,23 @@ namespace EntWatchSharp.Modules
                 return false;
             }
 
-            UpdateColorClasses(sItemColorClass, _ItemColorClass, __Cache_ItemName);
-            if (UpdateColorClasses($"bg-{sItemColorClass}", $"bg-{_ItemColorClass}", __Cache_ProgressBar)) sItemColorClass = _ItemColorClass;
-            if (UpdateColorClasses(sCooldownColorClass, _CooldownColorClass, __Cache_Cooldown)) sCooldownColorClass = _CooldownColorClass;
-            if (UpdateColorClasses(sNicknameColorClass, _NicknameColorClass, __Cache_Nickname)) sNicknameColorClass = _NicknameColorClass;
-            if (UpdateColorClasses(sSteamIDColorClass, _SteamIDColorClass, __Cache_Steam)) sSteamIDColorClass = _SteamIDColorClass;
+            if (UpdateColorClasses(sItemColorClass, _ItemColorClass, __Cache_Item)) sItemColorClass = _ItemColorClass;
+            if (UpdateColorClasses($"bg-{sProgressColorClass}", $"bg-{_ProgressColorClass}", __Cache_ProgressBar)) sProgressColorClass = _ProgressColorClass;
 
             if (iTextSize != _TextSize)
             {
                 void UpdateSizeClasses(int iTextSizeValue, bool status)
                 {
-                    var (sSizeSteamID, sSizeAll) = iTextSizeValue switch
+                    string sSizeAll = iTextSizeValue switch
                     {
-                        0 => ("size-smallest", "size-small"),
-                        1 => ("size-smallest", "size-normal"),
-                        2 => ("size-smallest", "size-big"),
-                        3 => ("size-smallest", "size-large"),
-                        _ => ("size-smallest", "size-normal")
+                        0 => "size-small",
+                        1 => "size-normal",
+                        2 => "size-big",
+                        3 => "size-large",
+                        _ => "size-normal"
                     };
 
-                    eHud.SetHasClassForPlayer(HudPlayer, __Cache_ItemName, sSizeAll, status);
-                    eHud.SetHasClassForPlayer(HudPlayer, __Cache_Cooldown, sSizeAll, status);
-                    eHud.SetHasClassForPlayer(HudPlayer, __Cache_Nickname, sSizeAll, status);
-                    eHud.SetHasClassForPlayer(HudPlayer, __Cache_Steam, sSizeSteamID, status);
+                    eHud.SetHasClassForPlayer(HudPlayer, __Cache_Item, sSizeAll, status);
                     eHud.SetHasClassForPlayer(HudPlayer, "ew-panel", $"panel-{sSizeAll}", status);
                 }
 
@@ -169,7 +105,8 @@ namespace EntWatchSharp.Modules
     {
         public bool bShow = true;
         public bool bCaptureEnabled = false;
-        readonly UHudItem[] UHudArray = new UHudItem[15];
+        bool bSeparator = false;
+        readonly UHudItem[] UHudArray = new UHudItem[14];
         public int iRefresh = 3;
         public byte iSize = 1;
         public byte iPosition = 0;
@@ -242,14 +179,16 @@ namespace EntWatchSharp.Modules
                     hud.SetHasClassForPlayer(HudPlayer, "ew-panel", "ew-hide", false);
                     hud.SetHasClassForPlayer(HudPlayer, "ew-panel", "ew-show", true);
 
-                    int iPlFormat = EW.CheckDictionary(HudPlayer) ? EW.g_EWPlayer[HudPlayer].PFormatPlayer : Cvar.PlayerFormat;
-
                     byte iCurrentNumHUD = 0;
                     bool bNextUpdateSync = true;
                     if (ListShowH.Count > 0)
                     {
                         byte iCountForList = 5;
-                        if (ListShowZM.Count == 0) iCountForList = 13;
+                        if (ListShowZM.Count == 0)
+                        {
+                            iCountForList = 10;
+                            SetSeparator(hud, HudPlayer, false);
+                        }
                         int iCountListH = (ListShowH.Count - 1) / iCountForList + 1;
 
                         if (fNextUpdateList <= EW.fGameTime)
@@ -261,12 +200,12 @@ namespace EntWatchSharp.Modules
                         if (iCurrentNumListH >= iCountListH) iCurrentNumListH = 0;
 
                         UHudArray[iCurrentNumHUD].SetButtonItem(hud, HudPlayer);
-                        UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, "EntWatch Humans:", "color-team", iSize, "", "", "", "", "", "", 0);
+                        UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, "EntWatch Humans:", "color-lightblue", iSize, 0, "");
 
                         for (int i = iCurrentNumListH * iCountForList; i < ListShowH.Count && i < (iCurrentNumListH + 1) * iCountForList; i++)
                         {
-                            string sAbilityMessage = "";
-                            (string, byte) ColorAbilityProgress = ("color-white", 0);
+                            string sMessage = ListShowH[i].ShortName;
+                            (string, byte) ColorProgress = ("color-white", 0);
                             if (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ListShowH[i].Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0)
                             {
                                 if (ListShowH[i].CheckDelay())
@@ -278,37 +217,40 @@ namespace EntWatchSharp.Modules
                                         if (!AbilityTest.Ignore)
                                         {
                                             iAbilityCount++;
-                                            sAbilityMessage += $"|{AbilityTest.GetMessage()}";
-                                            if (iAbilityCount == 1) ColorAbilityProgress = AbilityTest.GetColorAndProgress();
+                                            sMessage += $"|{AbilityTest.GetMessage()}";
+                                            if (iAbilityCount == 1) ColorProgress = AbilityTest.GetColorAndProgress();
                                         }
                                     }
-                                    if (!string.IsNullOrEmpty(sAbilityMessage)) sAbilityMessage = sAbilityMessage[1..];
-                                    if (iAbilityCount != 1) ColorAbilityProgress = ("color-white", 0);
+                                    if (iAbilityCount != 1) ColorProgress = ("color-white", 0);
                                 }
                                 else
                                 {
-                                    sAbilityMessage = $"-{Math.Round(ListShowH[i].fDelay - EW.fGameTime, 1)}";
-                                    ColorAbilityProgress = ("color-blue", 0);
+                                    sMessage += $"|-{Math.Round(ListShowH[i].fDelay - EW.fGameTime, 1)}";
+                                    ColorProgress = ("color-blue", 0);
                                 }
                             }
-                            string sOwnerSteam = "";
-                            if (ListShowH[i].Owner is { } client) sOwnerSteam = PlayerInfoHUDFormat(client, iPlFormat);
+                            sMessage += $": {ListShowH[i].Owner?.PlayerName}";
 
                             UHudArray[iCurrentNumHUD].SetButtonItem(hud, HudPlayer);
-                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, ListShowH[i].ShortName, GetCSSClassColor(ListShowH[i].Color), iSize, sAbilityMessage, ColorAbilityProgress.Item1, $"{ListShowH[i].Owner?.PlayerName}", "color-white", sOwnerSteam, "color-grey", ColorAbilityProgress.Item2);
+                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, sMessage, ColorProgress.Item1, iSize, ColorProgress.Item2, GetCSSClassColor(ListShowH[i].Color));
                         }
                         if (iCountListH > 1)
                         {
                             UHudArray[iCurrentNumHUD].SetButtonItem(hud, HudPlayer);
-                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, "List:", "color-silver", iSize, $"[{iCurrentNumListH + 1}/{iCountListH}]", "color-silver", "", "", "", "", 0);
+                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, $"List: [{iCurrentNumListH + 1}/{iCountListH}]", "color-silver", iSize, 0, "");
                         }
+                        for (; iCurrentNumHUD < 7; iCurrentNumHUD++) UHudArray[iCurrentNumHUD].SetButtonNull(hud, HudPlayer);
                     }
 
                     if (ListShowZM.Count > 0)
                     {
                         byte iCountForList = 5;
-                        if (ListShowH.Count == 0) iCountForList = 13;
-                        else UHudArray[iCurrentNumHUD++].SetButtonSeparator(hud, HudPlayer);
+                        if (ListShowH.Count == 0)
+                        {
+                            iCountForList = 10;
+                            SetSeparator(hud, HudPlayer, false);
+                        }
+                        else SetSeparator(hud, HudPlayer, true);
 
                         int iCountListZM = (ListShowZM.Count - 1) / iCountForList + 1;
 
@@ -320,12 +262,12 @@ namespace EntWatchSharp.Modules
                         if (iCurrentNumListZM >= iCountListZM) iCurrentNumListZM = 0;
 
                         UHudArray[iCurrentNumHUD].SetButtonItem(hud, HudPlayer);
-                        UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, "EntWatch Zombies:", "color-red", iSize, "", "", "", "", "", "", 0);
+                        UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, "EntWatch Zombies:", "color-red", iSize, 0, "");
 
                         for (int i = iCurrentNumListZM * iCountForList; i < ListShowZM.Count && i < (iCurrentNumListZM + 1) * iCountForList; i++)
                         {
-                            string sAbilityMessage = "";
-                            (string, byte) ColorAbilityProgress = ("color-white", 0);
+                            string sMessage = ListShowZM[i].ShortName;
+                            (string, byte) ColorProgress = ("color-white", 0);
                             if (!Cvar.TeamOnly || HudPlayer.TeamNum < 2 || ListShowZM[i].Team == HudPlayer.TeamNum || bAdminPermissions && Cvar.AdminHud == 0)
                             {
                                 if (ListShowZM[i].CheckDelay())
@@ -337,45 +279,40 @@ namespace EntWatchSharp.Modules
                                         if (!AbilityTest.Ignore)
                                         {
                                             iAbilityCount++;
-                                            sAbilityMessage += $"|{AbilityTest.GetMessage()}";
-                                            if (iAbilityCount == 1) ColorAbilityProgress = AbilityTest.GetColorAndProgress();
+                                            sMessage += $"|{AbilityTest.GetMessage()}";
+                                            if (iAbilityCount == 1) ColorProgress = AbilityTest.GetColorAndProgress();
                                         }
                                     }
-                                    if (!string.IsNullOrEmpty(sAbilityMessage)) sAbilityMessage = sAbilityMessage[1..];
-                                    if (iAbilityCount != 1) ColorAbilityProgress = ("color-white", 0);
+                                    if (iAbilityCount != 1) ColorProgress = ("color-white", 0);
                                 }
                                 else
                                 {
-                                    sAbilityMessage = $"-{Math.Round(ListShowZM[i].fDelay - EW.fGameTime, 1)}";
-                                    ColorAbilityProgress = ("color-blue", 0);
+                                    sMessage += $"-{Math.Round(ListShowZM[i].fDelay - EW.fGameTime, 1)}";
+                                    ColorProgress = ("color-blue", 0);
                                 }
                             }
-                            string sOwnerSteam = "";
-                            if (ListShowZM[i].Owner is { } client) sOwnerSteam = PlayerInfoHUDFormat(client, iPlFormat);
+                            sMessage += $": {ListShowZM[i].Owner?.PlayerName}";
 
                             UHudArray[iCurrentNumHUD].SetButtonItem(hud, HudPlayer);
-                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, ListShowZM[i].ShortName, GetCSSClassColor(ListShowZM[i].Color), iSize, sAbilityMessage, ColorAbilityProgress.Item1, $"{ListShowZM[i].Owner?.PlayerName}", "color-white", sOwnerSteam, "color-grey", ColorAbilityProgress.Item2);
+                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, sMessage, ColorProgress.Item1, iSize, ColorProgress.Item2, GetCSSClassColor(ListShowZM[i].Color));
                         }
                         if (iCountListZM > 1)
                         {
                             UHudArray[iCurrentNumHUD].SetButtonItem(hud, HudPlayer);
-                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, "List:", "color-silver", iSize, $"[{iCurrentNumListZM + 1}/{iCountListZM}]", "color-silver", "", "", "", "", 0);
+                            UHudArray[iCurrentNumHUD++].ChangeValue(hud, HudPlayer, $"List: [{iCurrentNumListZM + 1}/{iCountListZM}]", "color-silver", iSize, 0, "");
                         }
                     }
-                    for (int i = iCurrentNumHUD; i < UHudArray.Length; i++) UHudArray[i].SetButtonNull(hud, HudPlayer);
+                    for (; iCurrentNumHUD < UHudArray.Length; iCurrentNumHUD++) UHudArray[iCurrentNumHUD].SetButtonNull(hud, HudPlayer);
                 }
             }
         }
 
-        static string PlayerInfoHUDFormat(CCSPlayerController client, int iType)
+        void SetSeparator(CCSCustomHudLayout eHud, CCSPlayerController HudPlayer, bool bEnabled)
         {
-            return iType switch
-            {
-                1 => $"#{client.UserId}",
-                2 => $"#{EW.ConvertSteamID64ToSteamID(client.SteamID.ToString())}",
-                3 => $"#{client.UserId}|#{EW.ConvertSteamID64ToSteamID(client.SteamID.ToString())}",
-                _ => ""
-            };
+            if (bSeparator == bEnabled) return;
+
+            eHud.SetHasClassForPlayer(HudPlayer, "entwatch-separator", "show", bEnabled);
+            bSeparator = bEnabled;
         }
 
         public static string GetCSSClassColor(string color)
