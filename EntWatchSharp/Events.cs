@@ -90,7 +90,6 @@ namespace EntWatchSharp
 			if (!EW.g_CfgLoaded) return;
 
 			EW.ShowHud();
-			ClanTag.UpdateClanTag();
 		}
 
 		private void TimerRetry()
@@ -333,7 +332,6 @@ namespace EntWatchSharp
 			EW.g_ItemList.Clear();
 			Utilities.GetPlayers().Where(p => p is { IsValid: true, IsBot: false, IsHLTV: false, PawnIsAlive: true }).ToList().ForEach(player =>
 			{
-				ClanTag.RemoveClanTag(player);
 				if (EW.CheckDictionary(player)) EW.g_EWPlayer[player].UsePriorityPlayer.UpdateCountButton(player);
 			});
 			return HookResult.Continue;
@@ -372,7 +370,6 @@ namespace EntWatchSharp
 							if (EW.CheckDictionary(pl)) EW.g_EWPlayer[pl].UsePriorityPlayer.UpdateCountButton(pl);
 							UI.EWChatActivity("Chat.Pickup", EW.g_Scheme.color_pickup, ItemTest, ItemTest.Owner);
 							EW.g_cAPI?.OnPickUpItem(ItemTest.Name, pl);
-							ClanTag.UpdatePickUp(ItemTest);
 							ItemTest.DisableGlow();
 							foreach (OfflineBan OfflineTest in EW.g_OfflinePlayer.ToList())
 							{
@@ -390,16 +387,15 @@ namespace EntWatchSharp
 			return HookResult.Continue;
 		}
 
-		/*private HookResult OnWeaponCanUse(DynamicHook hook)
+		private HookResult OnWeaponCanUse(DynamicHook hook)
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
 
 			try
 			{
-				var service = hook.GetParam<CCSPlayer_WeaponServices>(0);
-				if (service.Pawn.Value.Controller.Value != null)
+				if (hook.GetParam<CCSPlayer_WeaponServices>(0).Pawn.Value.Controller.Value is { } cbasecontroller)
 				{
-					var client = new CCSPlayerController(service.Pawn.Value.Controller.Value.Handle);
+					var client = new CCSPlayerController(cbasecontroller.Handle);
 					var weapon = hook.GetParam<CBasePlayerWeapon>(1);
 
 					if (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bFixSpawnItem)
@@ -420,36 +416,6 @@ namespace EntWatchSharp
 			}
 			catch (Exception) { }
 
-			return HookResult.Continue;
-		}*/
-
-		private HookResult OnWeaponPickup(DynamicHook hook)
-		{
-			if (!EW.g_CfgLoaded)
-			{
-				hook.SetReturn(false);
-				return HookResult.Continue;
-			}
-
-			try
-			{
-				CCSPlayerController client = hook.GetParam<CPlayer_WeaponServices>(0).Pawn.Value!.Controller.Value!.As<CCSPlayerController>();
-
-				if (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bFixSpawnItem)
-				{
-					hook.SetReturn(true);
-					return HookResult.Handled;
-				}
-
-				if (string.Equals(EW.g_WeaponName, hook.GetParam<CEconItemView>(1).CustomName) && (Cvar.BlockEPickup && (client.Buttons & PlayerButtons.Use) != 0 || (EW.CheckDictionary(client) && EW.g_EWPlayer[client].BannedPlayer.bBanned)))
-				{
-					hook.SetReturn(true);
-					return HookResult.Handled;
-				}
-			}
-			catch (Exception) { }
-
-			hook.SetReturn(false);
 			return HookResult.Continue;
 		}
 
@@ -479,7 +445,6 @@ namespace EntWatchSharp
 									if (EW.CheckDictionary(client)) EW.g_EWPlayer[client].UsePriorityPlayer.UpdateCountButton(client);
 									UI.EWChatActivity("Chat.Drop", EW.g_Scheme.color_drop, ItemTest, client);
 									EW.g_cAPI?.OnDropItem(ItemTest.Name, client);
-									ClanTag.RemoveClanTag(client);
 									ItemTest.EnableGlow();
 								}
 								return;
@@ -508,7 +473,6 @@ namespace EntWatchSharp
 						if (EW.CheckDictionary(pl)) EW.g_EWPlayer[pl].UsePriorityPlayer.UpdateCountButton(pl);
 						UI.EWChatActivity("Chat.Death", EW.g_Scheme.color_death, ItemTest, pl);
 						EW.g_cAPI?.OnPlayerDeathWithItem(ItemTest.Name, pl);
-						ClanTag.RemoveClanTag(pl);
 						ItemTest.EnableGlow();
 						if (!ItemTest.ForceDrop)
 						{
@@ -539,8 +503,6 @@ namespace EntWatchSharp
 			}
 
 			EbanPlayer.GetBan(pl, true); //Set Eban
-
-			ClanTag.RemoveClanTag(pl); //Remove any clantag upon reconnection
 
             return HookResult.Continue;
 		}
@@ -626,39 +588,6 @@ namespace EntWatchSharp
 			return true;
 		}
 
-#if USE_ALT_ONINPUT
-		[EntityOutputHook("*", "*")]
-        public HookResult OnInput(CEntityIOOutput output, string name, CEntityInstance cActivator, CEntityInstance cCaller, CVariant cValue, float delay)
-        {
-            if (!EW.g_CfgLoaded) return HookResult.Continue;
-
-            if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller)) return HookResult.Continue;
-            var sValue = cValue.FieldType == fieldtype_t.FIELD_CSTRING ? NativeAPI.GetStringFromSymbolLarge(cValue.Handle) : "";
-
-            foreach (Item ItemTest in EW.g_ItemList.ToList())
-            {
-                foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
-                {
-                    if (AbilityTest.ButtonClass.StartsWith("game_ui::", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], sValue.ToLower()))
-                        {
-                            if (ItemTest.CheckDelay() && AbilityTest.Ready() && ItemTest.Owner is { IsValid: true } owner && owner.Pawn.Index == cActivator.Index)
-                            {
-                                AbilityTest.SetFilter(cActivator);
-                                AbilityTest.Used();
-                                UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
-                                EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
-                                return HookResult.Continue;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return HookResult.Continue;
-        }
-#else
         private HookResult OnInput(DynamicHook hook)
 		{
 			if (!EW.g_CfgLoaded) return HookResult.Continue;
@@ -694,7 +623,6 @@ namespace EntWatchSharp
 			}
 			return HookResult.Continue;
 		}
-#endif
 #nullable enable
         public static CCSPlayerController? EntityIsPlayer(CEntityInstance? entity)
 #nullable disable

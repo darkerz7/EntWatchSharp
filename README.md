@@ -152,8 +152,6 @@ Cvar | Parameters | Description
 `ewc_unbanreason` | `<string>` | Default unban reason. (Default Giving another chance)
 `ewc_keep_expired_ban` | `<false-true>` | Enable/Disable keep expired bans. (Default true)
 `ewc_offline_clear_time` | `<1-240>` | Time during which data is stored. (Default 30)
-`ewc_clantag` | `<false-true>` | Enable/Disable to display in the ClanTag. (Default false)
-`ewc_clantag_info` | `<false-true>` | Enable/Disable to display cooldown and other in the ClanTag. (Default false)
 
 ## Commands
 Client Command | Description

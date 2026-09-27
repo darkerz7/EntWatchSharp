@@ -22,7 +22,6 @@ namespace EntWatchSharp
 		public static List<Item> g_ItemList = [];
 		public static Scheme g_Scheme = new();
 		public static bool g_CfgLoaded = false;
-		public static string g_WeaponName = "EntWatchItem_";
 		public static CultureInfo cultureEN = new("en-EN");
         readonly static HashSet<(string, string)> g_HookedOutputs = [];
         readonly static HashSet<string> g_HookOutput_TrackedClasses = [];
@@ -64,8 +63,6 @@ namespace EntWatchSharp
 		{
 			try
 			{
-				g_WeaponName = $"EntWatchItem_{Server.MapName}";
-				if (g_WeaponName.Length > 64) g_WeaponName = g_WeaponName[..64];
 				string sFileName = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}.json";
 				string sFileNameOverride = $"../../csgo/{Cvar.PathCfg}{(Cvar.LowerMapname ? Server.MapName.ToLower() : Server.MapName)}_override.json";
 				string sData;
@@ -142,7 +139,6 @@ namespace EntWatchSharp
                         //Auto block after adding to the list
                         if (cNewItem.BlockPickup || Cvar.GlobalBlock) cNewItem.WeaponHandle.CanBePickedUp = false;
                         else cNewItem.WeaponHandle.CanBePickedUp = true;
-                        weapon.As<CEconEntity>().AttributeManager.Item.CustomName = EW.g_WeaponName;
 						return true;
 					}
 				}

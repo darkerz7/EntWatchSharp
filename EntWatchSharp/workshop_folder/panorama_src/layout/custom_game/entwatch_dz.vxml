@@ -75,6 +75,10 @@
 				<Label id="entwatch-item-14" text="{s:entwatch-item-text-14}" class="ew-text ew-item" />
 				<Panel id="entwatch-pb-14" class="ew-pb" />
 			</Button>
+			
+			<Button id="entwatch-btn-tools" class="ew-btn-tools null">
+				<Label text="EntWatch Tools" class="ew-text ew-tools color-green" />
+			</Button>
 		</Panel>
 	</Panel>
 </root>
