@@ -256,7 +256,7 @@ namespace EntWatchSharp
 
 			if (HookOutput_CheckTrackedClasses(cCaller.DesignerName) &&
 				g_HookedOutputs.Contains((cCaller.DesignerName, sOutput.ToLower())))
-				return EntWatchSharp.OnButtonPressed(cActivator, cCaller);
+				return EntWatchSharp.OnButtonPressed(cActivator, cCaller, sOutput);
 
             return true;
         }
@@ -349,7 +349,7 @@ namespace EntWatchSharp
 
         public static bool IsGameUI(CEntityInstance entity)
 		{
-			if (entity != null && entity.IsValid && string.Equals(entity.DesignerName, "logic_case") && !string.IsNullOrEmpty(entity.PrivateVScripts) && string.Equals(entity.PrivateVScripts.ToLower(), "game_ui")) return true;
+			if (entity != null && entity.IsValid && string.Equals(entity.DesignerName, "logic_case") && !string.IsNullOrEmpty(entity.PrivateVScripts) && string.Equals(entity.PrivateVScripts, "game_ui", StringComparison.OrdinalIgnoreCase)) return true;
 			return false;
 		}
 

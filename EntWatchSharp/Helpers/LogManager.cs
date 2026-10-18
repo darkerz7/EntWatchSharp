@@ -79,8 +79,8 @@ namespace EntWatchSharp.Helpers
 			if (string.IsNullOrEmpty(CfgTest.Type) || string.IsNullOrEmpty(CfgTest.Send) || string.IsNullOrEmpty(CfgTest.Lang)) return;
 			
 			byte iSend = 0;
-			if (string.Equals(CfgTest.Type.ToLower(), "file")) { iSend = 1; }
-			if (string.Equals(CfgTest.Type.ToLower(), "discord")) { iSend = 2; }
+			if (string.Equals(CfgTest.Type, "file", StringComparison.OrdinalIgnoreCase)) { iSend = 1; }
+			if (string.Equals(CfgTest.Type, "discord", StringComparison.OrdinalIgnoreCase)) { iSend = 2; }
 
 			if (iSend == 1) CfgTest.Send = ReplaceInvalid(CfgTest.Send);
 			else if (iSend == 2) { if(!CfgTest.Send.StartsWith("https://discord.com/api/webhooks/")) return; }
@@ -92,7 +92,7 @@ namespace EntWatchSharp.Helpers
 
 			foreach (LogCfg cfg in LM_CFG.ToList())
 			{
-				if (string.Equals(CfgTest.Type.ToLower(), cfg.Type.ToLower()) && string.Equals(CfgTest.Send, cfg.Send))
+				if (string.Equals(CfgTest.Type, cfg.Type, StringComparison.OrdinalIgnoreCase) && string.Equals(CfgTest.Send, cfg.Send))
 				{
 					if (iSend == 2 && CultureInfo.GetCultureInfo(CfgTest.Lang) != CultureInfo.GetCultureInfo(cfg.Lang)) continue;
 					if (CfgTest.ItemInfo) cfg.ItemInfo = true;
@@ -137,8 +137,8 @@ namespace EntWatchSharp.Helpers
 					using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(cfg.Lang)))
 					{
 						string sMsg = UI.ReplaceColorTags($"{sPlayerInfo} {EntWatchSharp.Strlocalizer[sMessage]} {sItemWithAbility}", false);
-						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
-						else if (string.Equals(cfg.Type.ToLower(), "discord"))
+						if (string.Equals(cfg.Type, "file", StringComparison.OrdinalIgnoreCase) && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
+						else if (string.Equals(cfg.Type, "discord", StringComparison.OrdinalIgnoreCase))
 						{
 							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
@@ -156,8 +156,8 @@ namespace EntWatchSharp.Helpers
 					using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(cfg.Lang)))
 					{
 						string sMsg = UI.ReplaceColorTags(EntWatchSharp.Strlocalizer[sMessage, arg], false);
-						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
-						else if (string.Equals(cfg.Type.ToLower(), "discord"))
+						if (string.Equals(cfg.Type, "file", StringComparison.OrdinalIgnoreCase) && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
+						else if (string.Equals(cfg.Type, "discord", StringComparison.OrdinalIgnoreCase))
 						{
 							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
@@ -175,8 +175,8 @@ namespace EntWatchSharp.Helpers
 					using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(cfg.Lang)))
 					{
 						string sMsg = EntWatchSharp.Strlocalizer[sMessage, arg];
-						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
-						else if (string.Equals(cfg.Type.ToLower(), "discord"))
+						if (string.Equals(cfg.Type, "file", StringComparison.OrdinalIgnoreCase) && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
+						else if (string.Equals(cfg.Type, "discord", StringComparison.OrdinalIgnoreCase))
 						{
 							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}
@@ -194,8 +194,8 @@ namespace EntWatchSharp.Helpers
 					using (new WithTemporaryCulture(CultureInfo.GetCultureInfo(cfg.Lang)))
 					{
 						string sMsg = EntWatchSharp.Strlocalizer["Cvar.Notify", sCvarName, sCvarValue];
-						if (string.Equals(cfg.Type.ToLower(), "file") && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
-						else if (string.Equals(cfg.Type.ToLower(), "discord"))
+						if (string.Equals(cfg.Type, "file", StringComparison.OrdinalIgnoreCase) && cfg.LWritter != null) cfg.LWritter.Information(sMsg);
+						else if (string.Equals(cfg.Type, "discord", StringComparison.OrdinalIgnoreCase))
 						{
 							Server.NextWorldUpdate(async () => { await SendToDistord(cfg.Send, sMsg); });
 						}

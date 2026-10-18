@@ -681,7 +681,7 @@ namespace EntWatchSharp
 			Item item = null;
 			if (sItemName[0] == '$')
 			{
-				sItemName = sItemName[1..].ToLower();
+				sItemName = sItemName[1..];
 				foreach (Item ItemTest in EW.g_ItemList.ToList())
 				{
 					if (ItemTest.Name.Contains(sItemName, StringComparison.OrdinalIgnoreCase) || ItemTest.ShortName.Contains(sItemName, StringComparison.OrdinalIgnoreCase))

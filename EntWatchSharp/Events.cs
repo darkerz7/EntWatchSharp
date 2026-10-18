@@ -555,7 +555,7 @@ namespace EntWatchSharp
 		//[EntityOutputHook("func_door", "OnOpen")]
 		//[EntityOutputHook("func_door_rotating", "OnOpen")]
 		//public HookResult OnButtonPressed(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
-		public static bool OnButtonPressed(CEntityInstance activator, CEntityInstance entity)
+		public static bool OnButtonPressed(CEntityInstance activator, CEntityInstance entity, string sOutput)
 		{
 			if (!EW.g_CfgLoaded) return true;
 			try
@@ -564,7 +564,7 @@ namespace EntWatchSharp
 				{
 					foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 					{
-						if (AbilityTest.Entity is { IsValid:true } button && entity == button)
+						if (AbilityTest.Entity is { IsValid:true } button && entity == button && (string.IsNullOrEmpty(AbilityTest.Event) || string.Equals(AbilityTest.Event, sOutput, StringComparison.OrdinalIgnoreCase)))
 						{
                             if (!ItemTest.CheckDelay() || !AbilityTest.Ready()) return false;
                             if (activator is { IsValid: true } act && //activator valid
@@ -597,7 +597,7 @@ namespace EntWatchSharp
 			if (string.IsNullOrEmpty(sInput)) return HookResult.Continue;
 			var cActivator = hook.GetParam<CEntityInstance>(2);
 			var cCaller = hook.GetParam<CEntityInstance>(3);
-			if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || !string.Equals(sInput.ToLower(), "invalue")) return HookResult.Continue;
+			if (cActivator == null || !cActivator.IsValid || !EW.IsGameUI(cCaller) || !string.Equals(sInput, "invalue", StringComparison.OrdinalIgnoreCase)) return HookResult.Continue;
 			var cValue = hook.GetParam<CVariant>(4);
 			var sValue = cValue.FieldType == fieldtype_t.FIELD_CSTRING ? NativeAPI.GetStringFromSymbolLarge(cValue.Handle) : "";
 
@@ -607,7 +607,7 @@ namespace EntWatchSharp
 				{
 					if (AbilityTest.ButtonClass.StartsWith("game_ui::", StringComparison.OrdinalIgnoreCase))
 					{
-						if (string.Equals(AbilityTest.ButtonClass.ToLower()[9..], sValue.ToLower()))
+						if (string.Equals(AbilityTest.ButtonClass[9..], sValue, StringComparison.OrdinalIgnoreCase))
 						{
                             if (ItemTest.CheckDelay() && AbilityTest.Ready() && ItemTest.Owner is { IsValid: true } owner && owner.Pawn.Index == cActivator.Index)
 							{
