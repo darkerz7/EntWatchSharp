@@ -151,10 +151,11 @@ namespace EntWatchSharp
 			}
 			else if (EW.HookOutput_CheckTrackedClasses(entity.DesignerName))
             {
-				Server.NextWorldUpdate(() =>
+                if (new CBaseEntity(entity.Handle) is { IsValid:true } baseentity)
 				{
-					if (new CBaseEntity(entity.Handle) is { IsValid:true } baseentity)
+					_ = new CounterStrikeSharp.API.Modules.Timers.Timer(0.2f, () =>
 					{
+                        if (baseentity == null || !baseentity.IsValid) return; //Bad entity
                         if (baseentity.DesignerName.StartsWith("func_door") && ((baseentity.Spawnflags & 256) != 1)) return;
 						if (EW.EntityParentRecursive(entity) is { IsValid: true } weapon) // Parented weapon
 						{
@@ -166,39 +167,37 @@ namespace EntWatchSharp
 									{
 										if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
 										{
-											AbilityTest.Entity = entity;
+											AbilityTest.Entity = baseentity;
 											AbilityTest.ButtonID = baseentity.UniqueHammerID;
 											AbilityTest.ButtonClass = entity.DesignerName;
-											return;
 										}
 									}
 									if (entity.DesignerName is "func_button" or "func_rot_button" or "func_physbox" || entity.DesignerName.StartsWith("func_door")) //Only the buttons create a new ability
-                                    {
+									{
 										Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
 										ItemTest.AbilityList.Add(abilitytest);
 									}
-                                    return;
-                                }
+									return;
+								}
 							}
 						}
 						else
 						{
-                            foreach (Item ItemTest in EW.g_ItemList.ToList())
+							foreach (Item ItemTest in EW.g_ItemList.ToList())
 							{
-                                foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
+								foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 								{
-                                    if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID))
-                                    {
-										if (AbilityTest.Entity is not { IsValid: true }) AbilityTest.Entity = entity;
-                                        return;
-                                    }
-                                }
+									if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID))
+									{
+										if (AbilityTest.Entity is not { IsValid: true }) AbilityTest.Entity = baseentity;
+									}
+								}
 
-                            }
+							}
 
-                        }
-					}
-				});
+						}
+					});
+                }
 			} else if(string.Equals(entity.DesignerName, "math_counter"))
 			{
 				Server.NextWorldUpdate(() =>
