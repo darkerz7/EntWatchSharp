@@ -22,7 +22,7 @@ namespace EntWatchSharp.Helpers
 				LogManager.ItemAction(sMessage, sPlayerInfoFormat[3], $"{ItemTest.Name}{((AbilityTest != null && !string.IsNullOrEmpty(AbilityTest.Name)) ? $" ({AbilityTest.Name})" : "")}");
 			});
 			
-			if (!(AbilityTest == null || ItemTest.Chat || AbilityTest.Chat_Uses)) return;
+			if (AbilityTest == null || !ItemTest.Chat || !AbilityTest.Chat_Uses) return;
 
 			Server.NextWorldUpdate(() =>
 			{

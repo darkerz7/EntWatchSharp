@@ -163,6 +163,7 @@ namespace EntWatchSharp
 							{
 								if (weapon.Index == ItemTest.WeaponHandle.Index)
 								{
+									bool bNotAdded = true;
 									foreach (Ability AbilityTest in ItemTest.AbilityList.ToList())
 									{
 										if (string.Equals(AbilityTest.ButtonID, baseentity.UniqueHammerID) || string.IsNullOrEmpty(AbilityTest.ButtonID) || string.Equals(AbilityTest.ButtonID, "0"))
@@ -170,9 +171,10 @@ namespace EntWatchSharp
 											AbilityTest.Entity = baseentity;
 											AbilityTest.ButtonID = baseentity.UniqueHammerID;
 											AbilityTest.ButtonClass = entity.DesignerName;
-										}
+											bNotAdded = false;
+                                        }
 									}
-									if (entity.DesignerName is "func_button" or "func_rot_button" or "func_physbox" || entity.DesignerName.StartsWith("func_door")) //Only the buttons create a new ability
+									if (bNotAdded && (entity.DesignerName is "func_button" or "func_rot_button" or "func_physbox" || entity.DesignerName.StartsWith("func_door"))) //Only the buttons create a new ability
 									{
 										Ability abilitytest = new("", entity.DesignerName, true, 0, 0, 0, baseentity.UniqueHammerID, entity);
 										ItemTest.AbilityList.Add(abilitytest);
@@ -577,7 +579,6 @@ namespace EntWatchSharp
 							{
                                 UI.EWChatActivity("Chat.Use", EW.g_Scheme.color_use, ItemTest, ItemTest.Owner, AbilityTest);
                                 EW.g_cAPI?.OnUseItem(ItemTest.Name, ItemTest.Owner, AbilityTest.Name);
-                                return true;
                             }
 						}
 					}
